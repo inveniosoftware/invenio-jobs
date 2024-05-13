@@ -20,3 +20,9 @@ def create_jobs_bp(app):
     """Create jobs blueprint."""
     ext = app.extensions["invenio-jobs"]
     return ext.jobs_resource.as_blueprint()
+
+
+def create_tasks_bp(app):
+    """Create tasks blueprint."""
+    ext = app.extensions["invenio-jobs"]
+    return ext.tasks_resource.as_blueprint()

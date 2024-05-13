@@ -11,6 +11,14 @@ from invenio_records_resources.services.records import RecordService
 from invenio_records_resources.services.uow import unit_of_work
 
 
+class TasksService(RecordService):
+    """Tasks service."""
+
+    def search(self, identity, **kwargs):
+        """Search for jobs."""
+        raise NotImplementedError()
+
+
 class JobsService(RecordService):
     """Jobs service."""
 

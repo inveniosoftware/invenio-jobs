@@ -10,8 +10,13 @@
 from invenio_i18n import gettext as _
 
 from . import config
-from .resources import JobsResource, JobsResourceConfig
-from .services import JobsService, JobsServiceConfig
+from .resources import (
+    JobsResource,
+    JobsResourceConfig,
+    TasksResource,
+    TasksResourceConfig,
+)
+from .services import JobsService, JobsServiceConfig, TasksService, TasksServiceConfig
 
 
 class InvenioJobs:
@@ -38,10 +43,14 @@ class InvenioJobs:
     def init_services(self, app):
         """Initialize services."""
         self.service = JobsService(JobsServiceConfig.build(app))
+        self.tasks_service = TasksService(TasksServiceConfig.build(app))
 
     def init_resource(self, app):
         """Initialize resources."""
         self.jobs_resource = JobsResource(JobsResourceConfig.build(app), self.service)
+        self.tasks_resource = TasksResource(
+            TasksResourceConfig.build(app), self.tasks_service
+        )
 
 
 def finalize_app(app):
@@ -51,3 +60,4 @@ def finalize_app(app):
 
     # services
     rr_ext.registry.register(ext.service, service_id="jobs")
+    rr_ext.registry.register(ext.tasks_service, service_id="tasks")

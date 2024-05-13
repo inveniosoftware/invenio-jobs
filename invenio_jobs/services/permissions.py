@@ -11,6 +11,16 @@ from invenio_administration.generators import Administration
 from invenio_records_permissions.policies import BasePermissionPolicy
 
 
+class TasksPermissionPolicy(BasePermissionPolicy):
+    """Access control configuration for tasks."""
+
+    can_search = [Administration()]
+    can_create = [Administration()]
+    can_read = [Administration()]
+    can_update = [Administration()]
+    can_delete = [Administration()]
+
+
 class JobPermissionPolicy(BasePermissionPolicy):
     """Access control configuration for jobs."""
 

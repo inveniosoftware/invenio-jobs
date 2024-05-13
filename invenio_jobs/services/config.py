@@ -18,8 +18,22 @@ from invenio_records_resources.services.records.results import RecordItem, Recor
 
 from ..models import Job, Run
 from .links import JobLink
-from .permissions import JobPermissionPolicy
+from .permissions import JobPermissionPolicy, TasksPermissionPolicy
 from .schema import JobSchema
+
+
+class TasksServiceConfig(ServiceConfig, ConfiguratorMixin):
+    """TaskService factory configuration."""
+
+    # Common configuration
+    service_id = "tasks"
+    permission_policy_cls = TasksPermissionPolicy
+
+    result_list_cls = RecordList
+
+    links_item = {
+        "self": JobLink("{+api}/tasks"),
+    }
 
 
 class JobSearchOptions(SearchOptionsBase):
