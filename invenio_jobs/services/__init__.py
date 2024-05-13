@@ -7,14 +7,16 @@
 
 """Services."""
 
-from .config import JobsServiceConfig, TasksServiceConfig
+from .config import JobsServiceConfig, RunsServiceConfig, TasksServiceConfig
 from .schema import JobSchema
-from .services import JobsService, TasksService
+from .services import JobsService, RunsService, TasksService
 
 __all__ = (
     "JobSchema",
     "JobsService",
     "JobsServiceConfig",
+    "RunsService",
+    "RunsServiceConfig",
     "TasksService",
     "TasksServiceConfig",
 )

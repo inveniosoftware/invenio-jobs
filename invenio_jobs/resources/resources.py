@@ -59,7 +59,7 @@ class JobsResource(ErrorHandlersMixin, Resource):
         self.service = service
 
     def create_url_rules(self):
-        """Create the URL rules for the OAI-PMH server resource."""
+        """Create the URL rules for the jobs resource."""
         routes = self.config.routes
         url_rules = [
             route("GET", routes["list"], self.search),
@@ -101,7 +101,7 @@ class JobsResource(ErrorHandlersMixin, Resource):
         """Read an item."""
         item = self.service.read(
             g.identity,
-            resource_requestctx.view_args["id"],
+            resource_requestctx.view_args["job_id"],
         )
         return item.to_dict(), 200
 
@@ -113,7 +113,7 @@ class JobsResource(ErrorHandlersMixin, Resource):
         """Update an item."""
         item = self.service.update(
             g.identity,
-            resource_requestctx.view_args["id"],
+            resource_requestctx.view_args["job_id"],
             resource_requestctx.data,
         )
         return item.to_dict(), 200
@@ -124,7 +124,7 @@ class JobsResource(ErrorHandlersMixin, Resource):
         """Delete an item."""
         self.service.delete(
             g.identity,
-            resource_requestctx.view_args["id"],
+            resource_requestctx.view_args["job_id"],
         )
         return "", 204
 
@@ -138,14 +138,13 @@ class RunsResource(ErrorHandlersMixin, Resource):
         self.service = service
 
     def create_url_rules(self):
-        """Create the URL rules for the OAI-PMH server resource."""
+        """Create the URL rules for runs resource."""
         routes = self.config.routes
         url_rules = [
-            route("GET", routes["list"], self.search),
-            route("POST", routes["list"], self.create),
-            route("GET", routes["item"], self.read),
-            route("PUT", routes["item"], self.update),
-            route("DELETE", routes["item"], self.delete),
+            route("GET", routes["runs"], self.search),
+            route("POST", routes["runs"], self.create),
+            route("DELETE", routes["run_item"], self.delete),
+            route("GET", routes["logs"], self.logs),
         ]
 
         return url_rules
@@ -176,7 +175,7 @@ class RunsResource(ErrorHandlersMixin, Resource):
 
     @request_view_args
     @response_handler()
-    def read(self):
+    def logs(self):
         """Read an item."""
         item = self.service.read(
             g.identity,

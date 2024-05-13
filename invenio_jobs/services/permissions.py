@@ -30,4 +30,14 @@ class JobPermissionPolicy(BasePermissionPolicy):
     can_update = [Administration()]
     can_delete = [Administration()]
 
-    # TODO: Should run permissions reuse the above or we make a new class?
+
+class RunPermissionPolicy(BasePermissionPolicy):
+    """Access control configuration for runs.
+       Later the runs may be done by librarians.
+    """
+
+    can_search = [Administration()]
+    can_create = [Administration()]
+    can_read = [Administration()]
+    can_update = [Administration()]
+    can_delete = [Administration()]
