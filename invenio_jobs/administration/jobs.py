@@ -80,7 +80,7 @@ class JobDetailView(AdminResourceDetailView):
     resource_config = "jobs_resource"
     title = "Job Details"
 
-    template = "invenio_administration/details.html"  # "invenio_rdm_records/system/jobs/jobs-details.html"
+    template = "invenio_administration/details.html"
     display_delete = False
     display_edit = False
     display_search = False
