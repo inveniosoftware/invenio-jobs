@@ -10,8 +10,8 @@
 from invenio_i18n import gettext as _
 
 from . import config
-from .resources import JobResource, JobResourceConfig
-from .services import JobService, JobServiceConfig
+from .resources import JobsResource, JobsResourceConfig
+from .services import JobsService, JobsServiceConfig
 
 
 class InvenioJobs:
@@ -37,11 +37,11 @@ class InvenioJobs:
 
     def init_services(self, app):
         """Initialize services."""
-        self.service = JobService(JobServiceConfig.build(app))
+        self.service = JobsService(JobsServiceConfig.build(app))
 
     def init_resource(self, app):
         """Initialize resources."""
-        self.jobs_resource = JobResource(JobResourceConfig.build(app), self.service)
+        self.jobs_resource = JobsResource(JobsResourceConfig.build(app), self.service)
 
 
 def finalize_app(app):

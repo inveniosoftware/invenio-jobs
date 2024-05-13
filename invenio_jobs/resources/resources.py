@@ -50,7 +50,7 @@ class TasksResource(ErrorHandlersMixin, Resource):
         return hits.to_dict(), 200
 
 
-class JobResource(ErrorHandlersMixin, Resource):
+class JobsResource(ErrorHandlersMixin, Resource):
     """Jobs resource."""
 
     def __init__(self, config, service):

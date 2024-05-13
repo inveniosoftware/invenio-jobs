@@ -15,11 +15,12 @@ from invenio_administration.views.base import (
     AdminResourceDetailView,
     AdminResourceListView,
 )
+from invenio_i18n import lazy_gettext as _
 from invenio_search_ui.searchconfig import search_app_config
 
 
-class JobListView(AdminResourceListView):
-    """Search admin view for jobs."""
+class JobsListView(AdminResourceListView):
+    """Configuration for Jobs list view."""
 
     api_endpoint = "/jobs"
     name = "jobs"
@@ -29,73 +30,67 @@ class JobListView(AdminResourceListView):
     menu_label = "Jobs"
     category = "System"
     pid_path = "id"
-    icon = "cogs"
+    icon = "settings"
     template = "invenio_administration/search.html"
 
-    display_search = True
+    display_search = False
     display_delete = False
-    display_create = True
-    display_edit = True
+    display_create = False
+    display_edit = False
 
     item_field_list = {
-        "title": {"text": "Title", "order": 1, "width": 4},
+        "job": {"text": _("Jobs"), "order": 1, "width": 3},
+        "last_run_start_time": {"text": _("Last run"), "order": 2, "width": 3},
+        "last_run_status": {"text": _("Status"), "order": 3, "width": 1},
+        "user": {"text": _("Started by"), "order": 4, "width": 3},
+        "next_run": {"text": _("Next run"), "order": 5, "width": 3},
     }
+
+    search_config_name = "RDM_JOBS_SEARCH"
+    search_sort_config_name = "RDM_JOBS_SORT_OPTIONS"
+    search_facets_config_name = "RDM_JOBS_FACETS"
 
     actions = {
-        # TODO: Define actions
-        # "delete": {
-        #     "text": "Delete",
-        #     "payload_schema": None,
-        #     "order": 2,
-        # },
+        "settings": {
+            "text": "Settings",
+            "payload_schema": None,
+            "order": 1,
+            "icon": "star",
+        },
+        "schedule": {
+            "text": "Schedule",
+            "payload_schema": None,
+            "order": 2,
+        },
+        "run": {
+            "text": "Run Now",
+            "payload_schema": None,
+            "order": 2,
+        },
     }
-    # TODO: Define search config for jobs
-    # search_config_name = "JOBS_SEARCH"
-    # search_facets_config_name = "JOBS_FACETS"
-    # search_sort_config_name = "JOBS_SORT_OPTIONS"
-
-    # def init_search_config(self):
-    #     """Build search view config."""
-    #     return partial(
-    #         search_app_config,
-    #         config_name=self.get_search_app_name(),
-    #         available_facets=current_app.config.get(self.search_facets_config_name),
-    #         sort_options=current_app.config[self.search_sort_config_name],
-    #         endpoint=self.get_api_endpoint(),
-    #         headers=self.get_search_request_headers(),
-    #         initial_filters=[["status", "P"]],
-    #         hidden_params=[
-    #             ["include_deleted", "1"],
-    #         ],
-    #         page=1,
-    #         size=30,
-    #     )
-
-    @staticmethod
-    def disabled():
-        """Disable the view on demand."""
-        return current_app.config["JOBS_ADMINISTRATION_DISABLED"]
 
 
 class JobDetailView(AdminResourceDetailView):
-    """Admin job detail view."""
+    """Configuration for Jobs detail view."""
 
     url = "/jobs/<pid_value>"
     api_endpoint = "/jobs"
-    name = "job-details"
+    search_request_headers = {"Accept": "application/json"}
+    name = "Job Details"
     resource_config = "jobs_resource"
-    title = "Job"
+    title = "Job Details"
 
-    template = "invenio_administration/details.html"
-    display_delete = True
-    display_edit = True
+    template = "invenio_administration/details.html"  # "invenio_rdm_records/system/jobs/jobs-details.html"
+    display_delete = False
+    display_edit = False
+    display_search = False
 
     list_view_name = "jobs"
     pid_path = "id"
-    request_headers = {"Accept": "application/vnd.inveniordm.v1+json"}
-
-    actions = {}
 
     item_field_list = {
-        "title": {"text": "Title", "order": 1},
+        "run": {"text": _("Runs"), "order": 1},
+        "duration": {"text": _("Duration"), "order": 2},
+        "message": {"text": _("Message"), "order": 3},
+        "user": {"text": _("Started by"), "order": 4},
     }

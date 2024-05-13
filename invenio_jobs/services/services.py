@@ -11,7 +11,7 @@ from invenio_records_resources.services.records import RecordService
 from invenio_records_resources.services.uow import unit_of_work
 
 
-class JobService(RecordService):
+class JobsService(RecordService):
     """Jobs service."""
 
     def search(self, identity, **kwargs):

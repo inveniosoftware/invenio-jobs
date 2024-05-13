@@ -23,13 +23,13 @@ class TasksResourceConfig(ResourceConfig, ConfiguratorMixin):
     routes = {"list": ""}
 
 
-class JobSearchRequestArgsSchema(SearchRequestArgsSchema):
+class JobsSearchRequestArgsSchema(SearchRequestArgsSchema):
     """Jobs search request parameters."""
 
     active = ma.fields.Boolean()
 
 
-class JobResourceConfig(ResourceConfig, ConfiguratorMixin):
+class JobsResourceConfig(ResourceConfig, ConfiguratorMixin):
     """Jobs resource config."""
 
     # Blueprint configuration
@@ -43,7 +43,7 @@ class JobResourceConfig(ResourceConfig, ConfiguratorMixin):
     # Request parsing
     request_read_args = {}
     request_view_args = {"id": ma.fields.Int()}
-    request_search_args = JobSearchRequestArgsSchema
+    request_search_args = JobsSearchRequestArgsSchema
 
     error_handlers = {
         **ErrorHandlersMixin.error_handlers,

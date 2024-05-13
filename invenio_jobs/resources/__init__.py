@@ -7,10 +7,10 @@
 
 """Jobs resources."""
 
-from .config import JobResourceConfig
-from .resources import JobResource
+from .config import JobsResourceConfig
+from .resources import JobsResource
 
 __all__ = (
-    "JobResource",
-    "JobResourceConfig",
+    "JobsResource",
+    "JobsResourceConfig",
 )

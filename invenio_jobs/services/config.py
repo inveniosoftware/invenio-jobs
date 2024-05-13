@@ -28,7 +28,7 @@ class JobSearchOptions(SearchOptionsBase):
     # TODO: See what we need to override
 
 
-class JobServiceConfig(ServiceConfig, ConfiguratorMixin):
+class JobsServiceConfig(ServiceConfig, ConfiguratorMixin):
     """Service factory configuration."""
 
     # Common configuration
