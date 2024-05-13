@@ -46,9 +46,9 @@ class JobsListView(AdminResourceListView):
         "next_run": {"text": _("Next run"), "order": 5, "width": 3},
     }
 
-    search_config_name = "RDM_JOBS_SEARCH"
-    search_sort_config_name = "RDM_JOBS_SORT_OPTIONS"
-    search_facets_config_name = "RDM_JOBS_FACETS"
+    search_config_name = "JOBS_SEARCH"
+    search_sort_config_name = "JOBS_SORT_OPTIONS"
+    search_facets_config_name = "JOBS_FACETS"
 
     actions = {
         "settings": {

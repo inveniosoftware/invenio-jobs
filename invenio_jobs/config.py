@@ -10,15 +10,15 @@
 JOBS_ADMINISTRATION_DISABLED = False
 from invenio_i18n import lazy_gettext as _
 
-RDM_JOBS_FACETS = {}
+JOBS_FACETS = {}
 
-RDM_JOBS_SORT_OPTIONS = {
+JOBS_SORT_OPTIONS = {
     "jobs": dict(
         title=_("Jobs"),
         fields=["jobs"],
     ),
     "last_run_start_time": dict(
-        # title=_("Last run"),
+        title=_("Last run"),
         fields=["last_run_start_time"],
     ),
     "user": dict(
@@ -32,7 +32,7 @@ RDM_JOBS_SORT_OPTIONS = {
 }
 """Definitions of available Jobs sort options. """
 
-RDM_JOBS_SEARCH = {
+JOBS_SEARCH = {
     "facets": [],
     "sort": ["jobs", "last_run_start_time", "user", "next_run"],
 }

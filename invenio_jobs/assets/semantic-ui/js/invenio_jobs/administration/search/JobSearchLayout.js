@@ -14,7 +14,10 @@ export class JobSearchLayout extends Component {
   render() {
     const { config, appName } = this.props;
     return (
-      <SearchAppResultsPane layoutOptions={config.layoutOptions} appName={appName} />
+      <SearchAppResultsPane
+        layoutOptions={config.layoutOptions}
+        appName={appName}
+      />
     );
   }
 }

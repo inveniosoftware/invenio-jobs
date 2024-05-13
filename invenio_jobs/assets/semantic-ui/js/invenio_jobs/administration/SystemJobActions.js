@@ -11,9 +11,9 @@ import { Button, Icon } from "semantic-ui-react";
 import { i18next } from "@translations/invenio_app_rdm/i18next";
 
 export class SystemJobActions extends Component {
-//   constructor(props) {
-//     super(props);
-//   }
+  //   constructor(props) {
+  //     super(props);
+  //   }
 
   handleAction = async (action) => {
     const actionConfig = {
