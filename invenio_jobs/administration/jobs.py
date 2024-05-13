@@ -70,7 +70,7 @@ class JobsListView(AdminResourceListView):
     }
 
 
-class JobDetailView(AdminResourceDetailView):
+class JobsDetailView(AdminResourceDetailView):
     """Configuration for Jobs detail view."""
 
     url = "/jobs/<pid_value>"
