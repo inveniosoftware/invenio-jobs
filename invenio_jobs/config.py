@@ -6,3 +6,5 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 
 """Configuration."""
+
+JOBS_ADMINISTRATION_DISABLED = False

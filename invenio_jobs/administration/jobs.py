@@ -83,7 +83,7 @@ class JobDetailView(AdminResourceDetailView):
     url = "/jobs/<pid_value>"
     api_endpoint = "/jobs"
     name = "job-details"
-    resource_config = "JOBS_resource"
+    resource_config = "jobs_resource"
     title = "Job"
 
     template = "invenio_administration/details.html"
