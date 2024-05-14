@@ -177,11 +177,12 @@ class RunsResource(ErrorHandlersMixin, Resource):
     @response_handler()
     def logs(self):
         """Read an item."""
-        item = self.service.read(
-            g.identity,
-            resource_requestctx.view_args["id"],
+        identity = g.identity
+        hits = self.service.search(
+            identity=identity,
+            params=resource_requestctx.args,
         )
-        return item.to_dict(), 200
+        return hits.to_dict(), 200
 
     @request_headers
     @request_view_args
