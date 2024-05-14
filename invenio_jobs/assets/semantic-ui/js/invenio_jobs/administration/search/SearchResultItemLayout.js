@@ -7,7 +7,7 @@
  */
 
 import { BoolFormatter } from "@js/invenio_administration";
-import { SystemJobActions } from "../SystemJobActions";
+import { SystemJobActions } from "./SystemJobActions";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
 import { Table } from "semantic-ui-react";
