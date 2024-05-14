@@ -142,10 +142,10 @@ class RunsResource(ErrorHandlersMixin, Resource):
         """Create the URL rules for runs resource."""
         routes = self.config.routes
         url_rules = [
-            route("GET", routes["runs"], self.search),
-            route("POST", routes["runs"], self.create),
-            route("DELETE", routes["run_item"], self.delete),
-            route("GET", routes["logs"], self.logs),
+            route("GET", routes["list"], self.search),
+            route("POST", routes["item"], self.create),
+            route("DELETE", routes["item"], self.delete),
+            route("GET", routes["logs_list"], self.logs),
         ]
 
         return url_rules
