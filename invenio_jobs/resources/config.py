@@ -43,7 +43,7 @@ class JobsResourceConfig(ResourceConfig, ConfiguratorMixin):
 
     # Request parsing
     request_read_args = {}
-    request_view_args = {"job_id": ma.fields.Int()}
+    request_view_args = {"job_id": ma.fields.UUID()}
     request_search_args = JobsSearchRequestArgsSchema
 
     error_handlers = {
@@ -60,15 +60,16 @@ class RunsResourceConfig(ResourceConfig, ConfiguratorMixin):
     url_prefix = ""
 
     routes = {
-        "runs": "/jobs/<job_id>/runs",
-        "run_item": "/jobs/<job_id>/runs/<run_id>",
-        "logs": "/jobs/<job_id>/runs/<run_id>/logs",
+        "list": "/jobs/<job_id>/runs",
+        "item": "/jobs/<job_id>/runs/<run_id>",
+        "logs_list": "/jobs/<job_id>/runs/<run_id>/logs",
+        "actions_stop": "/jobs/<job_id>/runs/<run_id>/actions/stop",
     }
 
     # Request parsing
     request_view_args = {
-        "job_id": ma.fields.Int(),
-        "run_id": ma.fields.Int(),
+        "job_id": ma.fields.UUID(),
+        "run_id": ma.fields.UUID(),
     }
 
     error_handlers = {

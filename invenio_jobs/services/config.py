@@ -102,8 +102,7 @@ class RunsServiceConfig(ServiceConfig, ConfiguratorMixin):
     schema = JobSchema
 
     links_item = {
-        "self": JobLink("{+api}/jobs/{id}/runs"),
-        "start": JobLink("{+api}/jobs/{id}/runs"),
-        "delete": JobLink("{+api}/jobs/{id}/runs/{run_id}"),
-        "logs": JobLink("{+api}/jobs/{id}/runs/{run_id}/logs"),
+        "self": JobLink("{+api}/jobs/{job_id}/runs/{run_id}"),
+        "stop": JobLink("{+api}/jobs/{job_id}/runs/{run_id}/actions/stop"),
+        "logs": JobLink("{+api}/jobs/{job_id}/runs/{run_id}/logs"),
     }
