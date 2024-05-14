@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2024 CERN.
+# Copyright (C) 2024 University of Münster.
 #
 # Invenio-Jobs is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -37,13 +38,39 @@ class JobsResourceConfig(ResourceConfig, ConfiguratorMixin):
     url_prefix = "/jobs"
     routes = {
         "list": "",
-        "item": "/<id>",
+        "item": "/<job_id>",
     }
 
     # Request parsing
     request_read_args = {}
-    request_view_args = {"id": ma.fields.Int()}
+    request_view_args = {"job_id": ma.fields.UUID()}
     request_search_args = JobsSearchRequestArgsSchema
+
+    error_handlers = {
+        **ErrorHandlersMixin.error_handlers,
+        # TODO: Add custom error handlers here
+    }
+
+
+class RunsResourceConfig(ResourceConfig, ConfiguratorMixin):
+    """Runs resource config."""
+
+    # Blueprint configuration
+    blueprint_name = "job_runs"
+    url_prefix = ""
+
+    routes = {
+        "list": "/jobs/<job_id>/runs",
+        "item": "/jobs/<job_id>/runs/<run_id>",
+        "logs_list": "/jobs/<job_id>/runs/<run_id>/logs",
+        "actions_stop": "/jobs/<job_id>/runs/<run_id>/actions/stop",
+    }
+
+    # Request parsing
+    request_view_args = {
+        "job_id": ma.fields.UUID(),
+        "run_id": ma.fields.UUID(),
+    }
 
     error_handlers = {
         **ErrorHandlersMixin.error_handlers,

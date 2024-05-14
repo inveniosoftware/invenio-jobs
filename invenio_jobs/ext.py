@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2024 CERN.
+# Copyright (C) 2024 University of Münster.
 #
 # Invenio-Jobs is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -13,10 +14,19 @@ from . import config
 from .resources import (
     JobsResource,
     JobsResourceConfig,
+    RunsResource,
+    RunsResourceConfig,
     TasksResource,
     TasksResourceConfig,
 )
-from .services import JobsService, JobsServiceConfig, TasksService, TasksServiceConfig
+from .services import (
+    JobsService,
+    JobsServiceConfig,
+    RunsService,
+    RunsServiceConfig,
+    TasksService,
+    TasksServiceConfig,
+)
 
 
 class InvenioJobs:
@@ -43,11 +53,15 @@ class InvenioJobs:
     def init_services(self, app):
         """Initialize services."""
         self.service = JobsService(JobsServiceConfig.build(app))
+        self.runs_service = RunsService(RunsServiceConfig.build(app))
         self.tasks_service = TasksService(TasksServiceConfig.build(app))
 
     def init_resource(self, app):
         """Initialize resources."""
         self.jobs_resource = JobsResource(JobsResourceConfig.build(app), self.service)
+        self.runs_resource = RunsResource(
+            RunsResourceConfig.build(app), self.runs_service
+        )
         self.tasks_resource = TasksResource(
             TasksResourceConfig.build(app), self.tasks_service
         )
@@ -60,4 +74,5 @@ def finalize_app(app):
 
     # services
     rr_ext.registry.register(ext.service, service_id="jobs")
+    rr_ext.registry.register(ext.runs_service, service_id="runs")
     rr_ext.registry.register(ext.tasks_service, service_id="tasks")
