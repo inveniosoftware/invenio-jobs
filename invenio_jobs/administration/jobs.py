@@ -31,7 +31,7 @@ class JobsListView(AdminResourceListView):
     category = "System"
     pid_path = "id"
     icon = "settings"
-    template = "invenio_administration/search.html"
+    template = "invenio_jobs/system/jobs/jobs-search.html"
 
     display_search = False
     display_delete = False

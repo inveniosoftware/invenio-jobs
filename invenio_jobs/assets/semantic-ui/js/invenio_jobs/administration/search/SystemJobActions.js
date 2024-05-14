@@ -52,7 +52,6 @@ export class SystemJobActions extends Component {
         </>
       );
     };
-
     return (
       <div>
         <Button.Group basic widths={5} compact className="margined">
