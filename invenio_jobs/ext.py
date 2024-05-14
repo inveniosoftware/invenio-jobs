@@ -59,7 +59,9 @@ class InvenioJobs:
     def init_resource(self, app):
         """Initialize resources."""
         self.jobs_resource = JobsResource(JobsResourceConfig.build(app), self.service)
-        self.runs_resource = RunsResource(RunsResourceConfig.build(app), self.runs_service)
+        self.runs_resource = RunsResource(
+            RunsResourceConfig.build(app), self.runs_service
+        )
         self.tasks_resource = TasksResource(
             TasksResourceConfig.build(app), self.tasks_service
         )
