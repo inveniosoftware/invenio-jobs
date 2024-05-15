@@ -1,10 +1,29 @@
-/*
- * This file is part of Invenio.
- * Copyright (C) 2024 CERN.
- *
- * Invenio is free software; you can redistribute it and/or modify it
- * under the terms of the MIT License; see LICENSE file for more details.
- */
+// This file is part of Invenio
+// Copyright (C) 2024 CERN.
+//
+// Invenio RDM is free software; you can redistribute it and/or modify it
+// under the terms of the MIT License; see LICENSE file for more details.
 
-export { SearchResultItemLayout } from "./SearchResultItemLayout";
-export { JobSearchLayout } from "./JobSearchLayout.js";
+import { initDefaultSearchComponents } from "@js/invenio_administration";
+import { createSearchAppInit } from "@js/invenio_search_ui";
+import { NotificationController } from "@js/invenio_administration";
+import { SearchResultItemLayout } from "./SearchResultItemLayout";
+import { JobSearchLayout } from "./JobSearchLayout";
+
+const domContainer = document.getElementById("invenio-search-config");
+
+const defaultComponents = initDefaultSearchComponents(domContainer);
+
+const overridenComponents = {
+  ...defaultComponents,
+  "InvenioAdministration.SearchResultItem.layout": SearchResultItemLayout,
+  "SearchApp.layout": JobSearchLayout,
+};
+
+createSearchAppInit(
+  overridenComponents,
+  true,
+  "invenio-search-config",
+  false,
+  NotificationController
+);

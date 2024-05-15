@@ -1,4 +1,4 @@
-// This file is part of InvenioCommunities
+// This file is part of Invenio
 // Copyright (C) 2024 CERN.
 //
 // Invenio RDM is free software; you can redistribute it and/or modify it
