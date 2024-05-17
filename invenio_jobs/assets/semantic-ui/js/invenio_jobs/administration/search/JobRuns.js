@@ -7,7 +7,7 @@
 import { initDefaultSearchComponents } from "@js/invenio_administration";
 import { createSearchAppInit } from "@js/invenio_search_ui";
 import { NotificationController } from "@js/invenio_administration";
-import { SearchResultItemLayout } from "./JobSearchResultItemLayout";
+import { SearchResultItemLayout } from "./RunsSearchResultItemLayout";
 import { JobSearchLayout } from "./JobSearchLayout";
 
 const domContainer = document.getElementById("invenio-search-config");

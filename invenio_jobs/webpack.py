@@ -17,7 +17,7 @@ administration = WebpackThemeBundle(
         "semantic-ui": dict(
             entry={
                 "invenio-jobs-search": "./js/invenio_jobs/administration/search/index.js",
-                "invenio-jobs-details": "./js/invenio_jobs/administration/details/index.js",
+                "invenio-jobs-details": "./js/invenio_jobs/administration/search/JobRuns.js",
             },
             dependencies={
                 "react-invenio-forms": "^3.0.0",
