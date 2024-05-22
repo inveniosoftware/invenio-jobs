@@ -11,12 +11,21 @@ from invenio_records_resources.services.base import Link
 
 
 class JobLink(Link):
-    """Short cut for writing record links."""
+    """Shortcut for writing Job links."""
 
     @staticmethod
     def vars(record, vars):
         """Variables for the URI template."""
         vars.update({"id": str(record.id)})
+
+
+class RunLink(Link):
+    """Shortcut for writing Run links."""
+
+    @staticmethod
+    def vars(record, vars):
+        """Variables for the URI template."""
+        vars.update({"id": str(record.id), "job_id": str(record.job_id)})
 
 
 def pagination_links(tpl):
