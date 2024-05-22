@@ -35,14 +35,6 @@ class SearchResultItemComponent extends Component {
           collapsing
           className=""
         >
-          {toRelativeTime(result.last_run_start_time, i18next.language)}
-        </Table.Cell>
-        <Table.Cell
-          collapsing
-          key={`job-status${result.status}`}
-          data-label={i18next.t("Next run")}
-          className="word-break-all"
-        >
           <BoolFormatter
             tooltip={i18next.t("Status")}
             icon="check"
@@ -55,6 +47,7 @@ class SearchResultItemComponent extends Component {
             color="red"
             value={result.last_run_status === "Failed"}
           />
+          {toRelativeTime(result.last_run_start_time, i18next.language)}
         </Table.Cell>
         <Table.Cell
           key={`job-user-${result.user.id}`}

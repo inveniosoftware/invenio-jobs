@@ -89,6 +89,7 @@ class JobsDetailsView(AdminResourceListView):
 
     list_view_name = "jobs"
     pid_path = "id"
+    pid_value = "<pid_value>"
 
     item_field_list = {
         "run": {"text": _("Run"), "order": 1, "width": 2},
