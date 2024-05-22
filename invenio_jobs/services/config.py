@@ -8,33 +8,61 @@
 
 """Services config."""
 
+from functools import partial
+
 from invenio_i18n import gettext as _
 from invenio_records_resources.services.base import ServiceConfig
-from invenio_records_resources.services.base.config import ConfiguratorMixin
+from invenio_records_resources.services.base.config import ConfiguratorMixin, FromConfig
 from invenio_records_resources.services.records.config import (
     SearchOptions as SearchOptionsBase,
 )
 from invenio_records_resources.services.records.links import pagination_links
-from invenio_records_resources.services.records.results import RecordItem, RecordList
 
-from ..models import Job, Run
+from ..models import Job, Run, Task
+from . import results
 from .links import JobLink
 from .permissions import JobPermissionPolicy, RunPermissionPolicy, TasksPermissionPolicy
-from .schema import JobSchema
+from .schema import JobSchema, TaskSchema
+
+
+class TasksSearchOptions(SearchOptionsBase):
+    """Tasks search options."""
+
+    sort_default = "name"
+    sort_direction_default = "asc"
+    sort_direction_options = {
+        "asc": dict(
+            title=_("Ascending"),
+            fn=partial(sorted, key=lambda t: t.name),
+        ),
+        "desc": dict(
+            title=_("Descending"),
+            fn=partial(sorted, key=lambda t: t.name, reverse=True),
+        ),
+    }
+    sort_options = {"name": dict(title=_("Name"), fields=["name"])}
+
+    pagination_options = {"default_results_per_page": 25}
 
 
 class TasksServiceConfig(ServiceConfig, ConfiguratorMixin):
     """TaskService factory configuration."""
 
-    # Common configuration
     service_id = "tasks"
-    permission_policy_cls = TasksPermissionPolicy
 
-    result_list_cls = RecordList
+    record_cls = Task
+    search = TasksSearchOptions
+    schema = TaskSchema
 
-    links_item = {
-        "self": JobLink("{+api}/tasks"),
-    }
+    permission_policy_cls = FromConfig(
+        "JOBS_TASKS_PERMISSION_POLICY",
+        default=TasksPermissionPolicy,
+    )
+
+    result_list_cls = results.List
+
+    links_item = None
+    links_search = pagination_links("{+api}/tasks{?args*}")
 
 
 class JobSearchOptions(SearchOptionsBase):
@@ -46,27 +74,19 @@ class JobSearchOptions(SearchOptionsBase):
 class JobsServiceConfig(ServiceConfig, ConfiguratorMixin):
     """Service factory configuration."""
 
-    # Common configuration
     service_id = "jobs"
-    permission_policy_cls = JobPermissionPolicy
 
-    # TODO: See if we need to define custom Job result item and list classes
-    result_item_cls = RecordItem
-    result_list_cls = RecordList
-
-    # Record specific configuration
     record_cls = Job
-
-    # TODO: See if these are needed since we don't index jobs
-    # indexer_cls = None
-    # indexer_queue_name = None
-    # index_dumper = None
-
-    # Search configuration
     search = JobSearchOptions
-
-    # Service schema
     schema = JobSchema
+
+    permission_policy_cls = FromConfig(
+        "JOBS_PERMISSION_POLICY",
+        default=JobPermissionPolicy,
+    )
+
+    result_item_cls = results.Item
+    result_list_cls = results.List
 
     links_item = {
         "self": JobLink("{+api}/jobs/{id}"),
@@ -76,33 +96,33 @@ class JobsServiceConfig(ServiceConfig, ConfiguratorMixin):
     links_search = pagination_links("{+api}/jobs{?args*}")
 
 
+class RunSearchOptions(SearchOptionsBase):
+    """Run search options."""
+
+    # TODO: See what we need to override
+
+
 class RunsServiceConfig(ServiceConfig, ConfiguratorMixin):
     """Service factory configuration."""
 
-    # Common configuration
     service_id = "runs"
-    permission_policy_cls = RunPermissionPolicy
 
-    # TODO: See if we need to define custom Job result item and list classes
-    result_item_cls = RecordItem
-    result_list_cls = RecordList
-
-    # Record specific configuration
     record_cls = Run
-
-    # TODO: See if these are needed since we don't index jobs
-    # indexer_cls = None
-    # indexer_queue_name = None
-    # index_dumper = None
-
-    # Search configuration
-    search = JobSearchOptions
-
-    # Service schema
+    search = RunSearchOptions
     schema = JobSchema
+
+    permission_policy_cls = FromConfig(
+        "JOBS_RUNS_PERMISSION_POLICY",
+        default=RunPermissionPolicy,
+    )
+
+    result_item_cls = results.Item
+    result_list_cls = results.List
 
     links_item = {
         "self": JobLink("{+api}/jobs/{job_id}/runs/{run_id}"),
         "stop": JobLink("{+api}/jobs/{job_id}/runs/{run_id}/actions/stop"),
         "logs": JobLink("{+api}/jobs/{job_id}/runs/{run_id}/logs"),
     }
+
+    links_search = pagination_links("{+api}/jobs/{job_id}{?args*}")

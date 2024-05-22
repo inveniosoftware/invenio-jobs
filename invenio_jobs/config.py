@@ -7,10 +7,28 @@
 
 """Configuration."""
 
-JOBS_ADMINISTRATION_DISABLED = False
 from invenio_i18n import lazy_gettext as _
 
+from .services.permissions import (
+    JobPermissionPolicy,
+    RunPermissionPolicy,
+    TasksPermissionPolicy,
+)
+
+JOBS_TASKS_PERMISSION_POLICY = TasksPermissionPolicy
+"""Permission policy for tasks."""
+
+JOBS_PERMISSION_POLICY = JobPermissionPolicy
+"""Permission policy for jobs."""
+
+JOBS_RUNS_PERMISSION_POLICY = RunPermissionPolicy
+"""Permission policy for job runs."""
+
+JOBS_ADMINISTRATION_DISABLED = False
+"""Disable Jobs administration views if ``True``."""
+
 JOBS_FACETS = {}
+"""Facets/aggregations for Jobs results."""
 
 JOBS_SORT_OPTIONS = {
     "jobs": dict(

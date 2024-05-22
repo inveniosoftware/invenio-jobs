@@ -16,10 +16,7 @@ class TasksPermissionPolicy(BasePermissionPolicy):
     """Access control configuration for tasks."""
 
     can_search = [Administration()]
-    can_create = [Administration()]
     can_read = [Administration()]
-    can_update = [Administration()]
-    can_delete = [Administration()]
 
 
 class JobPermissionPolicy(BasePermissionPolicy):

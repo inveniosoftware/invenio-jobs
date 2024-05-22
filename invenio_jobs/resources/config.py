@@ -23,6 +23,8 @@ class TasksResourceConfig(ResourceConfig, ConfiguratorMixin):
     url_prefix = "/tasks"
     routes = {"list": ""}
 
+    request_search_args = SearchRequestArgsSchema
+
 
 class JobsSearchRequestArgsSchema(SearchRequestArgsSchema):
     """Jobs search request parameters."""

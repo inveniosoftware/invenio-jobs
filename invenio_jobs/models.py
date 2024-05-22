@@ -8,12 +8,15 @@
 """Models."""
 
 import enum
+from inspect import signature
 
+from celery import current_app
 from invenio_accounts.models import User
 from invenio_db import db
 from sqlalchemy.dialects import postgresql
 from sqlalchemy_utils import Timestamp
 from sqlalchemy_utils.types import ChoiceType, JSONType, UUIDType
+from werkzeug.utils import cached_property
 
 JSON = (
     db.JSON()
@@ -79,3 +82,44 @@ class Run(db.Model, Timestamp):
     task_id = db.Column(UUIDType, nullable=True)
     args = db.Column(JSON, default=lambda: dict(), nullable=True)
     queue = db.Column(db.String(64), nullable=True)
+
+
+class Task:
+    """Celery Task model."""
+
+    _all_tasks = None
+
+    def __init__(self, obj):
+        """Initialize model."""
+        self._obj = obj
+
+    def __getattr__(self, name):
+        """Proxy attribute access to the task object."""
+        # TODO: See if we want to limit what attributes are exposed
+        return getattr(self._obj, name)
+
+    @cached_property
+    def description(self):
+        """Return description."""
+        if not self._obj.__doc__:
+            return ""
+        return self._obj.__doc__.split("\n")[0]
+
+    @cached_property
+    def parameters(self):
+        """Return the task's parameters."""
+        # TODO: Make this result more user friendly or enhance with type information
+        return signature(self._obj).parameters
+
+    @classmethod
+    def all(cls):
+        """Return all tasks."""
+        if getattr(cls, "_all_tasks", None) is None:
+            # Cache results
+            cls._all_tasks = [
+                cls(task)
+                for task in current_app.tasks.values()
+                # Filter outer Celery internal tasks
+                if not task.name.startswith("celery.")
+            ]
+        return cls._all_tasks
