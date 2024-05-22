@@ -8,9 +8,10 @@
 """Models."""
 
 import enum
+import uuid
 from inspect import signature
 
-from celery import current_app
+from celery import current_app as current_celery_app
 from invenio_accounts.models import User
 from invenio_db import db
 from sqlalchemy.dialects import postgresql
@@ -29,15 +30,15 @@ JSON = (
 class Job(db.Model, Timestamp):
     """Job model."""
 
-    id = db.Column(UUIDType, primary_key=True)
+    id = db.Column(UUIDType, primary_key=True, default=uuid.uuid4)
     active = db.Column(db.Boolean, default=True, nullable=False)
     title = db.Column(db.String(255), nullable=False)
     description = db.Column(db.Text)
 
-    celery_tasks = db.Column(db.String(255))
+    task = db.Column(db.String(255))
     default_queue = db.Column(db.String(64))
     default_args = db.Column(JSON, default=lambda: dict(), nullable=True)
-    schedule = db.Column(JSON, default=lambda: dict(), nullable=True)
+    schedule = db.Column(JSON, nullable=True)
 
     # TODO: See if we move this to an API class
     @property
@@ -60,7 +61,7 @@ class RunStatusEnum(enum.Enum):
 class Run(db.Model, Timestamp):
     """Run model."""
 
-    id = db.Column(UUIDType, primary_key=True)
+    id = db.Column(UUIDType, primary_key=True, default=uuid.uuid4)
 
     job_id = db.Column(UUIDType, db.ForeignKey(Job.id))
     job = db.relationship(Job, backref=db.backref("runs", lazy="dynamic"))
@@ -116,10 +117,10 @@ class Task:
         """Return all tasks."""
         if getattr(cls, "_all_tasks", None) is None:
             # Cache results
-            cls._all_tasks = [
-                cls(task)
-                for task in current_app.tasks.values()
+            cls._all_tasks = {
+                k: cls(task)
+                for k, task in current_celery_app.tasks.items()
                 # Filter outer Celery internal tasks
-                if not task.name.startswith("celery.")
-            ]
+                if not k.startswith("celery.")
+            }
         return cls._all_tasks

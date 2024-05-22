@@ -11,8 +11,12 @@ import inspect
 
 from invenio_i18n import lazy_gettext as _
 from marshmallow import EXCLUDE, Schema, fields, validate
+from marshmallow_oneofschema import OneOfSchema
 from marshmallow_utils.fields import SanitizedUnicode
 from marshmallow_utils.permissions import FieldPermissionsMixin
+from marshmallow_utils.validators import LazyOneOf
+
+from ..proxies import current_jobs
 
 
 def _not_blank(**kwargs):
@@ -57,6 +61,47 @@ class TaskSchema(Schema, FieldPermissionsMixin):
     )
 
 
+class IntervalScheduleSchema(Schema):
+    """Schema for an interval schedule based on ``datetime.timedelta``."""
+
+    type = fields.Constant("interval")
+
+    days = fields.Integer()
+    seconds = fields.Integer()
+    microseconds = fields.Integer()
+    milliseconds = fields.Integer()
+    minutes = fields.Integer()
+    hours = fields.Integer()
+    weeks = fields.Integer()
+
+
+class CrontabScheduleSchema(Schema):
+    """Schema for a crontab schedule."""
+
+    type = fields.Constant("crontab")
+
+    minute = fields.String(load_default="*")
+    hour = fields.String(load_default="*")
+    day_of_week = fields.String(load_default="*")
+    day_of_month = fields.String(load_default="*")
+    month_of_year = fields.String(load_default="*")
+
+
+class ScheduleSchema(OneOfSchema):
+    """Schema for a schedule."""
+
+    def get_obj_type(self, obj):
+        """Get type from object data."""
+        if isinstance(obj, dict) and "type" in obj:
+            return obj["type"]
+
+    type_schemas = {
+        "interval": IntervalScheduleSchema,
+        "crontab": CrontabScheduleSchema,
+    }
+    type_field_remove = False
+
+
 class JobSchema(Schema, FieldPermissionsMixin):
     """Base schema for a job."""
 
@@ -67,12 +112,31 @@ class JobSchema(Schema, FieldPermissionsMixin):
 
     id = fields.UUID(dump_only=True)
 
+    created = fields.DateTime(dump_only=True)
+    updated = fields.DateTime(dump_only=True)
+
     title = SanitizedUnicode(required=True, validate=_not_blank(max=250))
     description = SanitizedUnicode()
 
+    active = fields.Boolean(load_default=True)
+
+    task = fields.String(
+        required=True,
+        validate=LazyOneOf(choices=lambda: current_jobs.tasks.keys()),
+    )
+    default_queue = fields.String(
+        validate=LazyOneOf(choices=lambda: current_jobs.queues.keys()),
+        load_default=lambda: current_jobs.default_queue,
+    )
+    default_args = fields.Dict(load_default=dict)
+
+    schedule = fields.Nested(ScheduleSchema, allow_none=True, load_default=None)
+
+    last_run = fields.Nested(lambda: RunSchema, dump_only=True)
+
 
 class RunSchema(Schema, FieldPermissionsMixin):
-    """Base schema for a job."""
+    """Base schema for a job run."""
 
     class Meta:
         """Meta attributes for the schema."""
@@ -80,6 +144,9 @@ class RunSchema(Schema, FieldPermissionsMixin):
         unknown = EXCLUDE
 
     id = fields.UUID(dump_only=True)
+
+    created = fields.DateTime(dump_only=True)
+    updated = fields.DateTime(dump_only=True)
 
     title = SanitizedUnicode(required=True, validate=_not_blank(max=250))
     description = SanitizedUnicode()

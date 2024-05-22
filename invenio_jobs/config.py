@@ -30,6 +30,27 @@ JOBS_ADMINISTRATION_DISABLED = False
 JOBS_FACETS = {}
 """Facets/aggregations for Jobs results."""
 
+JOBS_QUEUES = {
+    "celery": {
+        "name": "celery",
+        "title": _("Default"),
+        "description": _("Default queue"),
+    },
+    "low": {
+        "name": "low",
+        "title": _("Low"),
+        "description": _("Low priority queue"),
+    },
+}
+"""List of available Celery queues.
+
+This doesn't create any of the queues, but just controls to which Celery queue a job
+is pushed to. You still need to configure Celery workers to listen to these queues.
+"""
+
+JOBS_DEFAULT_QUEUE = None
+"""Default Celery queue."""
+
 JOBS_SORT_OPTIONS = {
     "jobs": dict(
         title=_("Jobs"),

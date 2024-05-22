@@ -7,6 +7,9 @@
 
 """Service results."""
 
+from collections.abc import Iterable, Sized
+
+from flask_sqlalchemy import Pagination
 from invenio_records_resources.services.records.results import RecordItem, RecordList
 
 
@@ -16,18 +19,29 @@ class Item(RecordItem):
     @property
     def id(self):
         """Get the result id."""
-        return self._record.id
+        return str(self._record.id)
 
 
 class List(RecordList):
     """List result."""
 
     @property
+    def items(self):
+        """Iterator over the items."""
+        if isinstance(self._results, Pagination):
+            return self._results.items
+        elif isinstance(self._results, Iterable):
+            return self._results
+        return self._results
+
+    @property
     def total(self):
         """Get total number of hits."""
         if hasattr(self._results, "hits"):
             return self._results.hits.total["value"]
-        elif isinstance(self._results, (tuple, list)):
+        if isinstance(self._results, Pagination):
+            return self._results.total
+        elif isinstance(self._results, Sized):
             return len(self._results)
         else:
             return None
@@ -44,7 +58,7 @@ class List(RecordList):
     @property
     def hits(self):
         """Iterator over the hits."""
-        for hit in self._results:
+        for hit in self.items:
             # Project the hit
             projection = self._schema.dump(
                 hit,

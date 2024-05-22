@@ -8,9 +8,12 @@
 
 """Jobs extension."""
 
+from celery import current_app as current_celery_app
+from flask import current_app
 from invenio_i18n import gettext as _
 
 from . import config
+from .models import Task
 from .resources import (
     JobsResource,
     JobsResourceConfig,
@@ -65,6 +68,24 @@ class InvenioJobs:
         self.tasks_resource = TasksResource(
             TasksResourceConfig.build(app), self.tasks_service
         )
+
+    @property
+    def queues(self):
+        """Return the queues."""
+        return current_app.config["JOBS_QUEUES"]
+
+    @property
+    def default_queue(self):
+        """Return the default queue."""
+        return (
+            current_app.config.get("JOBS_DEFAULT_QUEUE")
+            or current_celery_app.conf.task_default_queue
+        )
+
+    @property
+    def tasks(self):
+        """Return the tasks."""
+        return Task.all()
 
 
 def finalize_app(app):

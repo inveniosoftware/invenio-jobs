@@ -17,6 +17,7 @@ from invenio_records_resources.services.records.config import (
     SearchOptions as SearchOptionsBase,
 )
 from invenio_records_resources.services.records.links import pagination_links
+from sqlalchemy import asc, desc
 
 from ..models import Job, Run, Task
 from . import results
@@ -68,7 +69,15 @@ class TasksServiceConfig(ServiceConfig, ConfiguratorMixin):
 class JobSearchOptions(SearchOptionsBase):
     """Job search options."""
 
-    # TODO: See what we need to override
+    sort_default = "title"
+    sort_direction_default = "asc"
+    sort_direction_options = {
+        "asc": dict(title=_("Ascending"), fn=asc),
+        "desc": dict(title=_("Descending"), fn=desc),
+    }
+    sort_options = {"title": dict(title=_("Title"), fields=["title"])}
+
+    pagination_options = {"default_results_per_page": 25}
 
 
 class JobsServiceConfig(ServiceConfig, ConfiguratorMixin):

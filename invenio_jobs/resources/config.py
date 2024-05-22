@@ -14,6 +14,8 @@ from invenio_records_resources.resources.errors import ErrorHandlersMixin
 from invenio_records_resources.resources.records.args import SearchRequestArgsSchema
 from invenio_records_resources.services.base.config import ConfiguratorMixin
 
+from ..services.errors import JobNotFoundError
+
 
 class TasksResourceConfig(ResourceConfig, ConfiguratorMixin):
     """Celery tasks resource config."""
@@ -50,7 +52,9 @@ class JobsResourceConfig(ResourceConfig, ConfiguratorMixin):
 
     error_handlers = {
         **ErrorHandlersMixin.error_handlers,
-        # TODO: Add custom error handlers here
+        JobNotFoundError: create_error_handler(
+            lambda e: HTTPJSONException(code=404, description=e.description)
+        ),
     }
 
 

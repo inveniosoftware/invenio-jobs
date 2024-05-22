@@ -11,10 +11,17 @@ See https://pytest-invenio.readthedocs.io/ for documentation on which test
 fixtures are available.
 """
 
+from types import SimpleNamespace
+
 import pytest
+from flask_principal import AnonymousIdentity
+from invenio_access.permissions import any_user as any_user_need
+from invenio_access.permissions import system_identity
 from invenio_app.factory import create_api as _create_app
 from invenio_records_permissions.generators import AnyUser
 from invenio_records_permissions.policies import BasePermissionPolicy
+
+from invenio_jobs.proxies import current_jobs_service
 
 
 @pytest.fixture(scope="module")
@@ -48,3 +55,63 @@ def extra_entry_points():
             "mock_module = mock_module.tasks",
         ],
     }
+
+
+#
+# Users
+#
+@pytest.fixture(scope="module")
+def anon_identity():
+    """Anonymous user."""
+    identity = AnonymousIdentity()
+    identity.provides.add(any_user_need)
+    return identity
+
+
+@pytest.fixture()
+def jobs(db, anon_identity):
+    """Job fixtures."""
+    common_data = {
+        "task": "tasks.mock_task",
+        "default_queue": "low",
+        "default_args": {
+            "arg1": "value1",
+            "arg2": "value2",
+            "kwarg1": "value3",
+        },
+    }
+    interval_job = current_jobs_service.create(
+        anon_identity,
+        {
+            "title": "Test interval job",
+            "schedule": {
+                "type": "interval",
+                "hours": 4,
+            },
+            **common_data,
+        },
+    )
+    crontab_job = current_jobs_service.create(
+        anon_identity,
+        {
+            "title": "Test crontab job",
+            "schedule": {
+                "type": "crontab",
+                "minute": "0",
+                "hour": "0",
+            },
+            **common_data,
+        },
+    )
+    simple_job = current_jobs_service.create(
+        anon_identity,
+        {
+            "title": "Test unscheduled job",
+            **common_data,
+        },
+    )
+    return SimpleNamespace(
+        interval=interval_job,
+        crontab=crontab_job,
+        simple=simple_job,
+    )
