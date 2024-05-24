@@ -16,6 +16,19 @@ from invenio_records_resources.services.base.config import ConfiguratorMixin
 
 from ..services.errors import JobNotFoundError
 
+response_handlers = {
+    **ResourceConfig.response_handlers,
+    "application/vnd.inveniordm.v1+json": ResourceConfig.response_handlers[
+        "application/json"
+    ],
+}
+request_body_parsers = {
+    **ResourceConfig.request_body_parsers,
+    "application/vnd.inveniordm.v1+json": ResourceConfig.request_body_parsers[
+        "application/json"
+    ],
+}
+
 
 class TasksResourceConfig(ResourceConfig, ConfiguratorMixin):
     """Celery tasks resource config."""
@@ -25,7 +38,12 @@ class TasksResourceConfig(ResourceConfig, ConfiguratorMixin):
     url_prefix = "/tasks"
     routes = {"list": ""}
 
+    # Request handling
     request_search_args = SearchRequestArgsSchema
+    request_body_parsers = request_body_parsers
+
+    # Response handling
+    response_handlers = response_handlers
 
 
 class JobsSearchRequestArgsSchema(SearchRequestArgsSchema):
@@ -45,10 +63,14 @@ class JobsResourceConfig(ResourceConfig, ConfiguratorMixin):
         "item": "/<job_id>",
     }
 
-    # Request parsing
+    # Request handling
     request_read_args = {}
     request_view_args = {"job_id": ma.fields.UUID()}
     request_search_args = JobsSearchRequestArgsSchema
+    request_body_parsers = request_body_parsers
+
+    # Response handling
+    response_handlers = response_handlers
 
     error_handlers = {
         **ErrorHandlersMixin.error_handlers,
@@ -72,11 +94,15 @@ class RunsResourceConfig(ResourceConfig, ConfiguratorMixin):
         "actions_stop": "/jobs/<job_id>/runs/<run_id>/actions/stop",
     }
 
-    # Request parsing
+    # Request handling
     request_view_args = {
         "job_id": ma.fields.UUID(),
         "run_id": ma.fields.UUID(),
     }
+    request_body_parsers = request_body_parsers
+
+    # Response handling
+    response_handlers = response_handlers
 
     error_handlers = {
         **ErrorHandlersMixin.error_handlers,
