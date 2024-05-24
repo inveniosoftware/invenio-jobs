@@ -22,12 +22,31 @@ class SearchResultItemComponent extends Component {
     return (
       <Table.Row>
         <Table.Cell
-          key={`job-name-${result.name}`}
+          key={`job-active-${result.active}`}
+          data-label={i18next.t("Active")}
+          collapsing
+          className=""
+        >
+          <BoolFormatter
+            tooltip={i18next.t("Active")}
+            icon="check"
+            color="green"
+            value={result.active === true}
+          />
+          <BoolFormatter
+            tooltip={i18next.t("Inactive")}
+            icon="ban"
+            color="grey"
+            value={result.active === false}
+          />
+        </Table.Cell>
+        <Table.Cell
+          key={`job-name-${result.title}`}
           data-label={i18next.t("Name")}
           collapsing
           className="word-break-all"
         >
-          <a href={result.links.admin_self_html}>{result.name}</a>
+          <a href={result.links.self}>{result.title}</a>
         </Table.Cell>
         <Table.Cell
           key={`job-last-run-${result.last_run_start_time}`}
@@ -50,12 +69,12 @@ class SearchResultItemComponent extends Component {
           {toRelativeTime(result.last_run_start_time, i18next.language)}
         </Table.Cell>
         <Table.Cell
-          key={`job-user-${result.user.id}`}
+          // key={`job-user-${result.user.id}`}
           data-label={i18next.t("Started by")}
           collapsing
           className="word-break-all"
         >
-          <UserListItemCompact user={result.user} id={result.user.id} />
+          {/* <UserListItemCompact user={result.user} id={result.user.id} /> */}
         </Table.Cell>
         <Table.Cell
           collapsing
