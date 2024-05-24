@@ -16,8 +16,7 @@ from types import SimpleNamespace
 import pytest
 from flask_principal import AnonymousIdentity
 from invenio_access.permissions import any_user as any_user_need
-from invenio_access.permissions import system_identity
-from invenio_app.factory import create_api as _create_app
+from invenio_app.factory import create_api
 from invenio_records_permissions.generators import AnyUser
 from invenio_records_permissions.policies import BasePermissionPolicy
 
@@ -44,12 +43,13 @@ def app_config(app_config):
 @pytest.fixture(scope="module")
 def create_app(instance_path):
     """Application factory fixture."""
-    return _create_app
+    return create_api
 
 
 @pytest.fixture(scope="module")
 def extra_entry_points():
     """Extra entry points to load the mock_module features."""
+    __import__("ipdb").set_trace()
     return {
         "invenio_celery.tasks": [
             "mock_module = mock_module.tasks",
@@ -58,14 +58,32 @@ def extra_entry_points():
 
 
 #
-# Users
+# Users and identities
 #
-@pytest.fixture(scope="module")
+@pytest.fixture(scope="session")
 def anon_identity():
     """Anonymous user."""
     identity = AnonymousIdentity()
     identity.provides.add(any_user_need)
     return identity
+
+
+@pytest.fixture()
+def user(UserFixture, app, db):
+    """User meant to test permissions."""
+    u = UserFixture(
+        email="user@inveniosoftware.org",
+        username="user",
+        password="user",
+        user_profile={
+            "full_name": "User",
+            "affiliations": "CERN",
+        },
+        active=True,
+        confirmed=True,
+    )
+    u.create(app, db)
+    return u
 
 
 @pytest.fixture()

@@ -143,7 +143,7 @@ class RunsResource(ErrorHandlersMixin, Resource):
         routes = self.config.routes
         url_rules = [
             route("GET", routes["list"], self.search),
-            route("POST", routes["item"], self.create),
+            route("POST", routes["list"], self.create),
             route("DELETE", routes["item"], self.delete),
             route("GET", routes["logs_list"], self.logs),
         ]
@@ -154,23 +154,27 @@ class RunsResource(ErrorHandlersMixin, Resource):
     # Primary Interface
     #
     @request_search_args
+    @request_view_args
     @response_handler(many=True)
     def search(self):
         """Perform a search."""
         identity = g.identity
         hits = self.service.search(
             identity=identity,
+            job_id=resource_requestctx.view_args["job_id"],
             params=resource_requestctx.args,
         )
         return hits.to_dict(), 200
 
     @request_data
+    @request_view_args
     @response_handler()
     def create(self):
         """Create an item."""
         item = self.service.create(
             g.identity,
-            resource_requestctx.data or {},
+            job_id=resource_requestctx.view_args["job_id"],
+            data=resource_requestctx.data or {},
         )
         return item.to_dict(), 201
 
@@ -181,20 +185,23 @@ class RunsResource(ErrorHandlersMixin, Resource):
         identity = g.identity
         hits = self.service.search(
             identity=identity,
+            job_id=resource_requestctx.view_args["job_id"],
+            run_id=resource_requestctx.view_args["run_id"],
             params=resource_requestctx.args,
         )
         return hits.to_dict(), 200
 
     @request_headers
-    @request_view_args
     @request_data
+    @request_view_args
     @response_handler()
     def update(self):
         """Update an item."""
         item = self.service.update(
             g.identity,
-            resource_requestctx.view_args["id"],
-            resource_requestctx.data,
+            job_id=resource_requestctx.view_args["job_id"],
+            run_id=resource_requestctx.view_args["run_id"],
+            data=resource_requestctx.data,
         )
         return item.to_dict(), 200
 
@@ -204,6 +211,8 @@ class RunsResource(ErrorHandlersMixin, Resource):
         """Delete an item."""
         self.service.delete(
             g.identity,
-            resource_requestctx.view_args["id"],
+            job_id=resource_requestctx.view_args["job_id"],
+            run_id=resource_requestctx.view_args["run_id"],
+            data=resource_requestctx.view_args["id"],
         )
         return "", 204

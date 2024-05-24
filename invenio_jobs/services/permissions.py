@@ -40,3 +40,4 @@ class RunPermissionPolicy(BasePermissionPolicy):
     can_read = [Administration()]
     can_update = [Administration()]
     can_delete = [Administration()]
+    can_stop = [Administration()]

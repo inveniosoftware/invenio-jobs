@@ -14,6 +14,7 @@ from inspect import signature
 from celery import current_app as current_celery_app
 from invenio_accounts.models import User
 from invenio_db import db
+from invenio_users_resources.records import UserAggregate
 from sqlalchemy.dialects import postgresql
 from sqlalchemy_utils import Timestamp
 from sqlalchemy_utils.types import ChoiceType, JSONType, UUIDType
@@ -67,11 +68,18 @@ class Run(db.Model, Timestamp):
     job = db.relationship(Job, backref=db.backref("runs", lazy="dynamic"))
 
     started_by_id = db.Column(db.Integer, db.ForeignKey(User.id), nullable=True)
-    started_by = db.relationship(User)
+    _started_by = db.relationship(User)
+
+    @property
+    def started_by(self):
+        """Return UserAggregate of the user that started the run."""
+        if self._started_by:
+            return UserAggregate.from_model(self._started_by)
 
     started_at = db.Column(db.DateTime, nullable=True)
-    finished_at = db.Column(db.DateTime, nullable=False)
+    finished_at = db.Column(db.DateTime, nullable=True)
 
+    task_id = db.Column(UUIDType, nullable=True)
     status = db.Column(
         ChoiceType(RunStatusEnum, impl=db.String(1)),
         nullable=False,
@@ -80,9 +88,9 @@ class Run(db.Model, Timestamp):
 
     message = db.Column(db.Text, nullable=True)
 
-    task_id = db.Column(UUIDType, nullable=True)
+    title = db.Column(db.Text, nullable=True)
     args = db.Column(JSON, default=lambda: dict(), nullable=True)
-    queue = db.Column(db.String(64), nullable=True)
+    queue = db.Column(db.String(64), nullable=False)
 
 
 class Task:

@@ -25,7 +25,12 @@ class RunLink(Link):
     @staticmethod
     def vars(record, vars):
         """Variables for the URI template."""
-        vars.update({"id": str(record.id), "job_id": str(record.job_id)})
+        vars.update(
+            {
+                "id": str(record.id),
+                "job_id": str(record.job_id),
+            }
+        )
 
 
 def pagination_links(tpl):

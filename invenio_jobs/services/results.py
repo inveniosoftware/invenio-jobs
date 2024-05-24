@@ -10,7 +10,11 @@
 from collections.abc import Iterable, Sized
 
 from flask_sqlalchemy import Pagination
-from invenio_records_resources.services.records.results import RecordItem, RecordList
+from invenio_records_resources.services.records.results import (
+    ExpandableField,
+    RecordItem,
+    RecordList,
+)
 
 
 class Item(RecordItem):
@@ -71,3 +75,34 @@ class List(RecordList):
                     link.expand(self._identity, hit, projection)
 
             yield projection
+
+
+class ModelExpandableField(ExpandableField):
+    """Expandable entity resolver field.
+
+    It will use the Entity resolver registry to retrieve the service to
+    use to fetch records and the fields to return when serializing
+    the referenced record.
+    """
+
+    entity_proxy = None
+
+    def ghost_record(self, value):
+        """Return ghost representation of not resolved value."""
+        return self.entity_proxy.ghost_record(value)
+
+    def system_record(self):
+        """Return the representation of a system user."""
+        return self.entity_proxy.system_record()
+
+    def get_value_service(self, value):
+        """Return the value and the service via entity resolvers."""
+        self.entity_proxy = ResolverRegistry.resolve_entity_proxy(value)
+        v = self.entity_proxy._parse_ref_dict_id()
+        _resolver = self.entity_proxy.get_resolver()
+        service = _resolver.get_service()
+        return v, service
+
+    def pick(self, identity, resolved_rec):
+        """Pick fields defined in the entity resolver."""
+        return self.entity_proxy.pick_resolved_fields(identity, resolved_rec)

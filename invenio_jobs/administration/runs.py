@@ -7,6 +7,7 @@
 # details.
 
 """Invenio administration Runs view module."""
+
 from invenio_administration.views.base import AdminResourceListView
 from invenio_i18n import lazy_gettext as _
 

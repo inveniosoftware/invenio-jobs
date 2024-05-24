@@ -18,9 +18,9 @@ from invenio_records_resources.services.uow import (
     unit_of_work,
 )
 
-from ..models import Job
+from ..models import Job, Run, RunStatusEnum
 from ..proxies import current_jobs
-from .errors import JobNotFoundError
+from .errors import JobNotFoundError, RunNotFoundError, RunStatusChangeError
 
 
 class TasksService(RecordService):
@@ -54,6 +54,22 @@ class TasksService(RecordService):
             links_tpl=LinksTemplate(self.config.links_search, context={"args": params}),
             links_item_tpl=self.links_item_tpl,
         )
+
+
+def get_job(job_id):
+    """Get a job by id."""
+    job = Job.query.get(job_id)
+    if job is None:
+        raise JobNotFoundError(job_id)
+    return job
+
+
+def get_run(run_id, job_id=None):
+    """Get a job by id."""
+    run = Run.query.get(job_id)
+    if run is None or run.job_id != job_id:
+        raise RunNotFoundError(run_id, job_id=job_id)
+    return run
 
 
 class JobsService(RecordService):
@@ -116,7 +132,7 @@ class JobsService(RecordService):
     def read(self, identity, id_):
         """Retrieve a job."""
         self.require_permission(identity, "read")
-        job = self._get_job(id_)
+        job = get_job(id_)
 
         return self.result_item(self, identity, job, links_tpl=self.links_item_tpl)
 
@@ -125,7 +141,7 @@ class JobsService(RecordService):
         """Update a job."""
         self.require_permission(identity, "update")
 
-        job = self._get_job(id_)
+        job = get_job(id_)
 
         valid_data, errors = self.schema.load(
             data,
@@ -142,39 +158,132 @@ class JobsService(RecordService):
     def delete(self, identity, id_, uow=None):
         """Delete a job."""
         self.require_permission(identity, "delete")
-        job = self._get_job(id_)
+        job = get_job(id_)
 
-        # TODO: Check if we can delete the job (e.g. if there are still active Runs)
+        # TODO: Check if we can delete the job (e.g. if there are still active Runs).
+        # That also depends on the FK constraints in the DB.
         uow.register(ModelDeleteOp(job))
 
         return True
-
-    @classmethod
-    def _get_job(cls, id):
-        """Get a job by id."""
-        job = Job.query.get(id)
-        if job is None:
-            raise JobNotFoundError(id)
-        return job
 
 
 class RunsService(RecordService):
     """Runs service."""
 
-    def search(self, identity, **kwargs):
-        """Search for jobs."""
-        raise NotImplementedError()
+    def search(self, identity, job_id, params):
+        """Search for runs."""
+        self.require_permission(identity, "search")
 
-    def read(self, identity, id_):
-        """Retrieve a job."""
-        raise NotImplementedError()
+        search_params = map_search_params(self.config.search, params)
+        query_param = search_params["q"]
+        base_query = Run.query.filter(Run.job_id == job_id)
+        filters = []
+        if query_param:
+            filters.extend(
+                [
+                    Run.title.ilike(f"%{query_param}%"),
+                    Run.message.ilike(f"%{query_param}%"),
+                ]
+            )
+
+        runs = (
+            base_query.filter(sa.or_(*filters))
+            .order_by(
+                search_params["sort_direction"](
+                    sa.text(",".join(search_params["sort"]))
+                )
+            )
+            .paginate(
+                page=search_params["page"],
+                per_page=search_params["size"],
+                error_out=False,
+            )
+        )
+
+        return self.result_list(
+            self,
+            identity,
+            runs,
+            params=search_params,
+            links_tpl=LinksTemplate(self.config.links_search, context={"args": params}),
+            links_item_tpl=self.links_item_tpl,
+        )
+
+    def read(self, identity, job_id, run_id):
+        """Retrieve a run."""
+        self.require_permission(identity, "read")
+        run = get_run(job_id=job_id, run_id=run_id)
+
+        return self.result_item(self, identity, run, links_tpl=self.links_item_tpl)
 
     @unit_of_work()
-    def update(self, identity, id_, data, uow=None):
-        """Update a job."""
-        raise NotImplementedError()
+    def create(self, identity, job_id, data, uow=None):
+        """Create a run."""
+        self.require_permission(identity, "create")
+
+        job = get_job(job_id)
+
+        # TODO: See if we need extra validation (e.g. tasks, args, etc.)
+        valid_data, errors = self.schema.load(
+            data,
+            context={"identity": identity, "job": job},
+            raise_errors=True,
+        )
+
+        valid_data.setdefault("queue", job.default_queue)
+        run = Run(
+            job=job,
+            started_by_id=identity.id,
+            status=RunStatusEnum.PENDING,
+            **valid_data,
+        )
+        uow.register(ModelCommitOp(run))
+        # TODO: Actually start the Celery task here
+
+        return self.result_item(self, identity, run, links_tpl=self.links_item_tpl)
 
     @unit_of_work()
-    def delete(self, identity, id_, uow=None):
-        """Delete a job."""
-        raise NotImplementedError()
+    def update(self, identity, job_id, run_id, data, uow=None):
+        """Update a run."""
+        self.require_permission(identity, "update")
+
+        run = get_run(job_id=job_id, run_id=run_id)
+
+        valid_data, errors = self.schema.load(
+            data,
+            context={"identity": identity, "run": run, "job": run.job},
+            raise_errors=True,
+        )
+
+        for key, value in valid_data.items():
+            setattr(run, key, value)
+
+        uow.register(ModelCommitOp(run))
+        return self.result_item(self, identity, run, links_tpl=self.links_item_tpl)
+
+    @unit_of_work()
+    def delete(self, identity, job_id, run_id, uow=None):
+        """Delete a run."""
+        self.require_permission(identity, "delete")
+        run = get_run(job_id=job_id, run_id=run_id)
+
+        # TODO: Check if we can delete the run (e.g. if it's still running).
+        uow.register(ModelDeleteOp(run))
+
+        return True
+
+    @unit_of_work()
+    def stop(self, identity, job_id, run_id, uow=None):
+        """Stop a run."""
+        self.require_permission(identity, "stop")
+        run = get_run(job_id=job_id, run_id=run_id)
+
+        if run.status not in (RunStatusEnum.PENDING, RunStatusEnum.RUNNING):
+            raise RunStatusChangeError(run, RunStatusEnum.CANCELLED)
+
+        run.status = RunStatusEnum.CANCELLED
+        # TODO: Handle here actually stopping the Celery task
+
+        uow.register(ModelCommitOp(run))
+
+        return self.result_item(self, identity, run, links_tpl=self.links_item_tpl)

@@ -14,7 +14,9 @@ from invenio_records_resources.resources.errors import ErrorHandlersMixin
 from invenio_records_resources.resources.records.args import SearchRequestArgsSchema
 from invenio_records_resources.services.base.config import ConfiguratorMixin
 
-from ..services.errors import JobNotFoundError
+from invenio_jobs.models import RunStatusEnum
+
+from ..services import errors
 
 response_handlers = {
     **ResourceConfig.response_handlers,
@@ -27,6 +29,18 @@ request_body_parsers = {
     "application/vnd.inveniordm.v1+json": ResourceConfig.request_body_parsers[
         "application/json"
     ],
+}
+error_handlers = {
+    **ErrorHandlersMixin.error_handlers,
+    errors.JobNotFoundError: create_error_handler(
+        lambda e: HTTPJSONException(code=404, description=e.description)
+    ),
+    errors.RunNotFoundError: create_error_handler(
+        lambda e: HTTPJSONException(code=404, description=e.description)
+    ),
+    errors.RunStatusChangeError: create_error_handler(
+        lambda e: HTTPJSONException(code=400, description=e.description)
+    ),
 }
 
 
@@ -71,13 +85,13 @@ class JobsResourceConfig(ResourceConfig, ConfiguratorMixin):
 
     # Response handling
     response_handlers = response_handlers
+    error_handlers = error_handlers
 
-    error_handlers = {
-        **ErrorHandlersMixin.error_handlers,
-        JobNotFoundError: create_error_handler(
-            lambda e: HTTPJSONException(code=404, description=e.description)
-        ),
-    }
+
+class RunsSearchRequestArgsSchema(SearchRequestArgsSchema):
+    """Runs search request parameters."""
+
+    status = ma.fields.Enum(RunStatusEnum)
 
 
 class RunsResourceConfig(ResourceConfig, ConfiguratorMixin):
@@ -95,16 +109,14 @@ class RunsResourceConfig(ResourceConfig, ConfiguratorMixin):
     }
 
     # Request handling
+    request_read_args = {}
     request_view_args = {
         "job_id": ma.fields.UUID(),
         "run_id": ma.fields.UUID(),
     }
+    request_search_args = RunsSearchRequestArgsSchema
     request_body_parsers = request_body_parsers
 
     # Response handling
     response_handlers = response_handlers
-
-    error_handlers = {
-        **ErrorHandlersMixin.error_handlers,
-        # TODO: Add custom error handlers here
-    }
+    error_handlers = error_handlers

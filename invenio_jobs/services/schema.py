@@ -10,12 +10,14 @@
 import inspect
 
 from invenio_i18n import lazy_gettext as _
+from invenio_users_resources.services import schemas as user_schemas
 from marshmallow import EXCLUDE, Schema, fields, validate
 from marshmallow_oneofschema import OneOfSchema
 from marshmallow_utils.fields import SanitizedUnicode
 from marshmallow_utils.permissions import FieldPermissionsMixin
 from marshmallow_utils.validators import LazyOneOf
 
+from ..models import RunStatusEnum
 from ..proxies import current_jobs
 
 
@@ -135,6 +137,19 @@ class JobSchema(Schema, FieldPermissionsMixin):
     last_run = fields.Nested(lambda: RunSchema, dump_only=True)
 
 
+class UserSchema(OneOfSchema):
+    """User schema."""
+
+    def get_obj_type(self, obj):
+        """Get type from object data."""
+        return "system" if obj is None else "user"
+
+    type_schemas = {
+        "user": user_schemas.UserSchema,
+        "system": user_schemas.SystemUserSchema,
+    }
+
+
 class RunSchema(Schema, FieldPermissionsMixin):
     """Base schema for a job run."""
 
@@ -144,9 +159,25 @@ class RunSchema(Schema, FieldPermissionsMixin):
         unknown = EXCLUDE
 
     id = fields.UUID(dump_only=True)
+    job_id = fields.UUID(dump_only=True)
 
     created = fields.DateTime(dump_only=True)
     updated = fields.DateTime(dump_only=True)
 
-    title = SanitizedUnicode(required=True, validate=_not_blank(max=250))
-    description = SanitizedUnicode()
+    started_by_id = fields.Integer(dump_only=True)
+    started_by = fields.Nested(UserSchema, dump_only=True)
+
+    started_at = fields.DateTime(dump_only=True)
+    finished_at = fields.DateTime(dump_only=True)
+
+    status = fields.Enum(RunStatusEnum, dump_only=True)
+    message = SanitizedUnicode(dump_only=True)
+
+    task_id = fields.UUID(dump_only=True)
+
+    # Input fields
+    title = SanitizedUnicode(validate=_not_blank(max=250))
+    args = fields.Dict()
+    queue = fields.String(
+        validate=LazyOneOf(choices=lambda: current_jobs.queues.keys()),
+    )

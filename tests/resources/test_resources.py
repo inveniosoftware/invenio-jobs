@@ -8,6 +8,124 @@
 """Resource tests."""
 
 
+def test_simple_flow(app, db, client, user):
+    """Test simple flow."""
+    client = user.login(client)
+    job_paylod = {
+        "title": "Test job",
+        "task": "tasks.mock_task",
+        "description": "Test description",
+        "active": False,
+        "default_queue": "low",
+        "default_args": {
+            "arg1": "value1",
+            "arg2": "value2",
+            "kwarg1": "value3",
+        },
+        "schedule": {"type": "interval", "hours": 4},
+    }
+
+    # Create a job
+    res = client.post("/jobs", json=job_paylod)
+    assert res.status_code == 201
+    job_id = res.json["id"]
+    expected_job = {
+        "id": res.json["id"],
+        "title": "Test job",
+        "description": "Test description",
+        "active": False,
+        "task": "tasks.mock_task",
+        "default_queue": "low",
+        "default_args": {
+            "arg1": "value1",
+            "arg2": "value2",
+            "kwarg1": "value3",
+        },
+        "schedule": {"type": "interval", "hours": 4},
+        "last_run": None,
+        "created": res.json["created"],
+        "updated": res.json["updated"],
+        "links": {
+            "self": f"https://127.0.0.1:5000/api/jobs/{job_id}",
+            "runs": f"https://127.0.0.1:5000/api/jobs/{job_id}/runs",
+        },
+    }
+
+    assert res.json == expected_job
+
+    # Activate the job (i.e. update)
+    res = client.put(f"/jobs/{job_id}", json={**job_paylod, "active": True})
+    assert res.status_code == 200
+    expected_job["active"] = True
+    expected_job["updated"] = res.json["updated"]
+    assert res.json == expected_job
+
+    # List jobs
+    res = client.get("/jobs")
+    assert res.status_code == 200
+    assert res.json["hits"]["total"] == 1
+    assert res.json["hits"]["hits"][0] == expected_job
+
+    # Create/trigger a run
+    res = client.post(
+        f"/jobs/{job_id}/runs",
+        json={
+            "title": "Manually triggered run",
+            "args": {
+                "arg1": "manual_value1",
+                "arg2": "manual_value2",
+                "kwarg2": "manual_value3",
+            },
+            "queue": "celery",
+        },
+    )
+    assert res.status_code == 201
+    run_id = res.json["id"]
+    expected_run = {
+        "id": run_id,
+        "job_id": job_id,
+        "started_by_id": int(user.id),
+        "started_by": {
+            "id": str(user.id),
+            "username": user.username,
+            "profile": user._user_profile,
+            "links": {
+                # "self": f"https://127.0.0.1:5000/api/users/{user.id}",
+            },
+            "identities": {},
+            "is_current_user": True,
+            "type": "user",
+        },
+        "started_at": res.json["started_at"],
+        "finished_at": res.json["finished_at"],
+        "status": "PENDING",
+        "message": None,
+        "task_id": None,
+        "title": "Manually triggered run",
+        "args": {
+            "arg1": "manual_value1",
+            "arg2": "manual_value2",
+            "kwarg2": "manual_value3",
+        },
+        "queue": "celery",
+        "created": res.json["created"],
+        "updated": res.json["updated"],
+        "links": {
+            "self": f"https://127.0.0.1:5000/api/jobs/{job_id}/runs/{run_id}",
+            "logs": f"https://127.0.0.1:5000/api/jobs/{job_id}/runs/{run_id}/logs",
+            "stop": f"https://127.0.0.1:5000/api/jobs/{job_id}/runs/{run_id}/actions/stop",
+        },
+    }
+
+    assert res.json == expected_run
+
+    # List runs
+    res = client.get(f"/jobs/{job_id}/runs")
+    assert res.status_code == 200
+    assert res.json["hits"]["total"] == 1
+    assert res.json["hits"]["hits"][0] == expected_run
+
+
 def test_tasks_search(client):
     """Test tasks search."""
     mock_task_res = {
@@ -56,7 +174,7 @@ def test_tasks_search(client):
     assert mock_task_res == res.json["hits"]["hits"][0]
 
 
-def test_jobs_create(db, client, anon_identity):
+def test_jobs_create(db, client):
     """Test job creation."""
     # Test minimal job payload
     res = client.post(

@@ -21,9 +21,9 @@ from sqlalchemy import asc, desc
 
 from ..models import Job, Run, Task
 from . import results
-from .links import JobLink
+from .links import JobLink, RunLink
 from .permissions import JobPermissionPolicy, RunPermissionPolicy, TasksPermissionPolicy
-from .schema import JobSchema, TaskSchema
+from .schema import JobSchema, RunSchema, TaskSchema
 
 
 class TasksSearchOptions(SearchOptionsBase):
@@ -108,7 +108,15 @@ class JobsServiceConfig(ServiceConfig, ConfiguratorMixin):
 class RunSearchOptions(SearchOptionsBase):
     """Run search options."""
 
-    # TODO: See what we need to override
+    sort_default = "created"
+    sort_direction_default = "desc"
+    sort_direction_options = {
+        "asc": dict(title=_("Ascending"), fn=asc),
+        "desc": dict(title=_("Descending"), fn=desc),
+    }
+    sort_options = {"created": dict(title=_("Created"), fields=["created"])}
+
+    pagination_options = {"default_results_per_page": 25}
 
 
 class RunsServiceConfig(ServiceConfig, ConfiguratorMixin):
@@ -118,7 +126,7 @@ class RunsServiceConfig(ServiceConfig, ConfiguratorMixin):
 
     record_cls = Run
     search = RunSearchOptions
-    schema = JobSchema
+    schema = RunSchema
 
     permission_policy_cls = FromConfig(
         "JOBS_RUNS_PERMISSION_POLICY",
@@ -129,9 +137,9 @@ class RunsServiceConfig(ServiceConfig, ConfiguratorMixin):
     result_list_cls = results.List
 
     links_item = {
-        "self": JobLink("{+api}/jobs/{job_id}/runs/{run_id}"),
-        "stop": JobLink("{+api}/jobs/{job_id}/runs/{run_id}/actions/stop"),
-        "logs": JobLink("{+api}/jobs/{job_id}/runs/{run_id}/logs"),
+        "self": RunLink("{+api}/jobs/{job_id}/runs/{id}"),
+        "stop": RunLink("{+api}/jobs/{job_id}/runs/{id}/actions/stop"),
+        "logs": RunLink("{+api}/jobs/{job_id}/runs/{id}/logs"),
     }
 
     links_search = pagination_links("{+api}/jobs/{job_id}{?args*}")
