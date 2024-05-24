@@ -12,6 +12,7 @@ import uuid
 from inspect import signature
 
 from celery import current_app as current_celery_app
+from celery.schedules import crontab
 from invenio_accounts.models import User
 from invenio_db import db
 from invenio_users_resources.records import UserAggregate
@@ -41,11 +42,19 @@ class Job(db.Model, Timestamp):
     default_args = db.Column(JSON, default=lambda: dict(), nullable=True)
     schedule = db.Column(JSON, nullable=True)
 
+    last_run_at = db.Column(db.DateTime, nullable=True)
+
     # TODO: See if we move this to an API class
     @property
     def last_run(self):
         """Last run of the job."""
         return self.runs.order_by(Run.created.desc()).first()
+
+    @property
+    def parsed_schedule(self):
+        # TODO For testing purpose, will be updated
+        if "crontab" in self.schedule:
+            return crontab(**self.schedule["crontab"])
 
 
 class RunStatusEnum(enum.Enum):
