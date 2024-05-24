@@ -6,7 +6,6 @@
  * under the terms of the MIT License; see LICENSE file for more details.
  */
 
-import { BoolFormatter } from "@js/invenio_administration";
 import { SystemRunActions } from "./SystemRunActions";
 import PropTypes from "prop-types";
 import React, { Component } from "react";

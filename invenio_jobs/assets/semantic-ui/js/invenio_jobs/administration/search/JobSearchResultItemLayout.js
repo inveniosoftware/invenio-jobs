@@ -46,7 +46,7 @@ class SearchResultItemComponent extends Component {
           collapsing
           className="word-break-all"
         >
-          <a href={result.links.self}>{result.title}</a>
+          <a href={`/administration/jobs/${result.id}`}>{result.title}</a>
         </Table.Cell>
         <Table.Cell
           key={`job-last-run-${result.last_run_start_time}`}
@@ -54,38 +54,58 @@ class SearchResultItemComponent extends Component {
           collapsing
           className=""
         >
-          <BoolFormatter
-            tooltip={i18next.t("Status")}
-            icon="check"
-            color="green"
-            value={result.last_run_status === "Success"}
-          />
-          <BoolFormatter
-            tooltip={i18next.t("Status")}
-            icon="ban"
-            color="red"
-            value={result.last_run_status === "Failed"}
-          />
-          {toRelativeTime(result.last_run_start_time, i18next.language)}
+          {result.last_run && (
+            <BoolFormatter
+              tooltip={i18next.t("Status")}
+              icon="check"
+              color="green"
+              value={result.last_run.status === "Success"}
+            />
+          )}
+          {result.last_run && (
+            <BoolFormatter
+              tooltip={i18next.t("Status")}
+              icon="ban"
+              color="red"
+              value={result.last_run.status === "Failed"}
+            />
+          )}
+          {result.last_run
+            ? toRelativeTime(result.last_run.start_time, i18next.language)
+            : "−"}
         </Table.Cell>
-        <Table.Cell
-          // key={`job-user-${result.user.id}`}
-          data-label={i18next.t("Started by")}
-          collapsing
-          className="word-break-all"
-        >
-          {/* <UserListItemCompact user={result.user} id={result.user.id} /> */}
-        </Table.Cell>
+        {result.last_run ? (
+          <Table.Cell
+            key={`job-user-${result.last_run.user.id}`}
+            data-label={i18next.t("Started by")}
+            collapsing
+            className="word-break-all"
+          >
+            <UserListItemCompact
+              user={result.last_run.user}
+              id={result.last_run.user.id}
+            />
+          </Table.Cell>
+        ) : (
+          <Table.Cell
+            key="job-user"
+            data-label={i18next.t("Started by")}
+            collapsing
+            className="word-break-all"
+          >
+            System
+          </Table.Cell>
+        )}
         <Table.Cell
           collapsing
           key={`job-next-run${result.next_run}`}
           data-label={i18next.t("Next run")}
           className="word-break-all"
         >
-          {toRelativeTime(result.next_run, i18next.language)}
+          {toRelativeTime(result.next_run, i18next.language) ?? "−"}
         </Table.Cell>
         <Table.Cell collapsing>
-          <SystemJobActions />
+          <SystemJobActions runArgs={result.default_args} />
         </Table.Cell>
       </Table.Row>
     );

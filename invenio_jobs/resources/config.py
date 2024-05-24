@@ -9,13 +9,7 @@
 """Resources config."""
 
 import marshmallow as ma
-from flask_resources import (
-    HTTPJSONException,
-    JSONSerializer,
-    ResourceConfig,
-    ResponseHandler,
-    create_error_handler,
-)
+from flask_resources import HTTPJSONException, ResourceConfig, create_error_handler
 from invenio_records_resources.resources.errors import ErrorHandlersMixin
 from invenio_records_resources.resources.records.args import SearchRequestArgsSchema
 from invenio_records_resources.services.base.config import ConfiguratorMixin
@@ -65,10 +59,6 @@ class TasksResourceConfig(ResourceConfig, ConfiguratorMixin):
     # Response handling
     response_handlers = response_handlers
 
-    response_handlers = {
-        "application/json": ResponseHandler(JSONSerializer()),
-        "application/vnd.inveniordm.v1+json": ResponseHandler(JSONSerializer()),
-    }
 
 class JobsSearchRequestArgsSchema(SearchRequestArgsSchema):
     """Jobs search request parameters."""
@@ -102,11 +92,6 @@ class RunsSearchRequestArgsSchema(SearchRequestArgsSchema):
     """Runs search request parameters."""
 
     status = ma.fields.Enum(RunStatusEnum)
-
-    response_handlers = {
-        "application/json": ResponseHandler(JSONSerializer()),
-        "application/vnd.inveniordm.v1+json": ResponseHandler(JSONSerializer()),
-    }
 
 
 class JobsSearchRequestArgsSchema(SearchRequestArgsSchema):
