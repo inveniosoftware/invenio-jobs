@@ -33,9 +33,7 @@ class JobEntry(ScheduleEntry):
             task=job.task,
             kwargs={},
             options={},
-            last_run_at=(
-                job.last_run and job.last_run.created
-            ),  # TODO Could be a separate property in model
+            last_run_at=job.last_run_at,
         )
 
 
@@ -83,11 +81,6 @@ class RunScheduler(Scheduler):
     def sync(self):
         # TODO Should we also have a cleaup task for runs? "stale" run (status running, starttime > hour, Run pending for > 1 hr)
         with self.app.flask_app.app_context():
-            for job_id, entry in self.schedule.items():
-                # TODO Add filter that schedule is not None
-                job = Job.query.filter_by(id=job_id).one()
-                job.last_run_at = (entry.last_run_at,)
-            db.session.commit()
             jobs = Job.query.filter(Job.active == True).all()
             self.entries = {}  # because some jobs might be deactivated
             for job in jobs:
