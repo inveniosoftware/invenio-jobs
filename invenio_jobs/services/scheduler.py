@@ -9,14 +9,9 @@ import traceback
 from typing import Any
 
 from celery.beat import ScheduleEntry, Scheduler, debug, error, info
-from celery.schedules import crontab
-from invenio_access.permissions import system_identity
-from invenio_app.factory import create_api
 from invenio_db import db
 
 from invenio_jobs.models import Job, Run
-
-app = create_api()
 
 
 class JobEntry(ScheduleEntry):
@@ -24,6 +19,7 @@ class JobEntry(ScheduleEntry):
     #: Job ID
     job_id = None
 
+    # TODO Remove args that aren't needed
     def __init__(
         self,
         job_id=None,
@@ -62,7 +58,7 @@ class JobEntry(ScheduleEntry):
             task=job.task,
             kwargs={},
             options={},
-            last_run_at=job.last_run_at,
+            last_run_at=job.last_run.created,  # TODO Could be a separate property in model
         )
 
 
@@ -79,6 +75,7 @@ class RunScheduler(Scheduler):
         return self.entries
 
     def setup_schedule(self):
+        # TODO Check whether we need the celery backend task?
         self.sync()
 
     def reserve(self, entry):
@@ -86,35 +83,45 @@ class RunScheduler(Scheduler):
         return new_entry
 
     def apply_entry(self, entry, producer=None):
-        info("Scheduler: Sending due task %s (%s)", entry.name, entry.task)
-        try:
-            self.create_run(entry)
-            result = self.apply_async(entry, producer=producer, advance=False)
-        except Exception as exc:  # pylint: disable=broad-except
-            error("Message Error: %s\n%s", exc, traceback.format_stack(), exc_info=True)
-        else:
-            if result and hasattr(result, "id"):
-                debug("%s sent. id->%s", entry.task, result.id)
+        with self.app.flask_app.app_context():
+            info("Scheduler: Sending due task %s (%s)", entry.name, entry.task)
+            try:
+                # TODO Only create and send task if there is no "stale" run (status running, starttime > hour, Run pending for > 1 hr)
+                run = self.create_run(entry)
+                result = self.apply_async(entry, producer=producer, advance=False)
+                run.task_id = result.id
+                db.session.commit()
+            except Exception as exc:
+                error(
+                    "Message Error: %s\n%s",
+                    exc,
+                    traceback.format_stack(),
+                    exc_info=True,
+                )
             else:
-                debug("%s sent.", entry.task)
+                if result and hasattr(result, "id"):
+                    debug("%s sent. id->%s", entry.task, result.id)
+                else:
+                    debug("%s sent.", entry.task)
 
     def sync(self):
-        with app.app_context():
+        # TODO Should we also have a cleaup task for runs? "stale" run (status running, starttime > hour, Run pending for > 1 hr)
+        with self.app.flask_app.app_context():
             for job_id, entry in self.schedule.items():
+                # TODO Add filter that schedule is not None
                 job = Job.query.filter_by(id=job_id).one()
                 job.last_run_at = (entry.last_run_at,)
             db.session.commit()
             jobs = Job.query.filter(Job.active == True).all()
+            self.entries = {}  # because some jobs might be deactivated
             for job in jobs:
                 self.entries[job.id] = JobEntry.from_job(job)
 
     def create_run(self, entry):
-        with app.app_context():
-            run = Run()
-            job = Job.query.filter_by(id=entry.job_id).one()
-            run.job = job
-            # run.started_by = started_by or "system"
-            run.args = entry.args
-            # run.queue = entry.default_queue # TODO Not working/considered for now
-            # run.commit()
-            db.session.commit()
+        run = Run()
+        job = Job.query.filter_by(id=entry.job_id).one()
+        run.job = job
+        run.args = job.default_args  # NOTE Args template resolution goes here
+        # run.queue = entry.default_queue # TODO Not working/considered for now -> move it to options
+        db.session.commit()
+        return run

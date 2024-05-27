@@ -9,6 +9,7 @@
 
 import enum
 import uuid
+from copy import deepcopy
 from inspect import signature
 
 from celery import current_app as current_celery_app
@@ -50,11 +51,20 @@ class Job(db.Model, Timestamp):
         """Last run of the job."""
         return self.runs.order_by(Run.created.desc()).first()
 
+    # TODO Maybe rename?
     @property
     def parsed_schedule(self):
-        # TODO For testing purpose, will be updated
-        if "crontab" in self.schedule:
-            return crontab(**self.schedule["crontab"])
+        if not self.schedule:
+            return None
+
+        # TODO Maybe a better way to do this? kwargs expansion?
+        schedule = deepcopy(self.schedule)
+        stype = schedule.pop("type")
+        if stype == "crontab":
+            return crontab(**schedule)
+        elif stype == "interval":
+            # TODO Implement
+            pass
 
 
 class RunStatusEnum(enum.Enum):
