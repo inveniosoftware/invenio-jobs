@@ -27,9 +27,13 @@ def is_a_job(func):
             message = func(self, *args, **kwargs)
         except Exception:
             # TODO should we log the error in message?
+            # TODO Update finished at here?
             update_run(run, status=RunStatusEnum.FAILURE)
             return
-
+        except SystemExit:
+            # TODO Update finished at here?
+            update_run(run, status=RunStatusEnum.TERMINATED)
+            return
         # TODO Don't update message like this, use signals from the task
         update_run(
             run,
