@@ -43,13 +43,17 @@ class Job(db.Model, Timestamp):
     default_args = db.Column(JSON, default=lambda: dict(), nullable=True)
     schedule = db.Column(JSON, nullable=True)
 
-    last_run_at = db.Column(db.DateTime, nullable=True)
+    last_run_at = db.Column(db.DateTime, nullable=True)  # TODO Remove
 
     # TODO: See if we move this to an API class
     @property
     def last_run(self):
         """Last run of the job."""
         return self.runs.order_by(Run.created.desc()).first()
+
+    # @property
+    # def last_run_at(self):
+    #     return (self.last_run and self.last_run.created)
 
     # TODO Maybe rename?
     @property
@@ -75,8 +79,8 @@ class RunStatusEnum(enum.Enum):
     SUCCESS = "S"
     FAILED = "F"
     WARNING = "W"
-    CANCELLING = "P"
-    CANCELLED = "C"
+    CANCELLING = "C"
+    CANCELLED = "X"
 
 
 class Run(db.Model, Timestamp):
