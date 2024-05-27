@@ -51,12 +51,12 @@ class JobsListView(AdminResourceListView):
     search_facets_config_name = "JOBS_FACETS"
 
     actions = {
-        "settings": {
-            "text": "Settings",
-            "payload_schema": None,
-            "order": 1,
-            "icon": "star",
-        },
+        # "settings": {
+        #     "text": "Settings",
+        #     "payload_schema": None,
+        #     "order": 1,
+        #     "icon": "star",
+        # },
         "schedule": {
             "text": "Schedule",
             "payload_schema": None,
@@ -103,11 +103,11 @@ class JobsDetailsView(AdminResourceListView):
     search_facets_config_name = "JOBS_FACETS"
 
     actions = {
-        "settings": {
-            "text": "Settings",
-            "payload_schema": None,
-            "order": 1,
-        },
+        # "settings": {
+        #     "text": "Settings",
+        #     "payload_schema": None,
+        #     "order": 1,
+        # },
         "schedule": {
             "text": "Schedule",
             "payload_schema": None,

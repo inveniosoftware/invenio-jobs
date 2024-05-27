@@ -15,12 +15,12 @@ import { RunButton } from "./RunButton";
 export class SystemJobActions extends Component {
   handleAction = async (action) => {
     const actionConfig = {
-      restore: {
-        label: i18next.t("Settings"),
-        icon: "cogwheel",
-        notificationTitle: i18next.t("Settings"),
-      },
-      block: {
+      // restore: {
+      //   label: i18next.t("Settings"),
+      //   icon: "cogwheel",
+      //   notificationTitle: i18next.t("Settings"),
+      // },
+      schedule: {
         label: i18next.t("Schedule"),
         icon: "calendar",
         notificationTitle: i18next.t("Schedule"),
@@ -32,11 +32,11 @@ export class SystemJobActions extends Component {
 
   render() {
     const actionItems = [
-      { key: "settings", label: "Settings", icon: "cog" },
+      // { key: "settings", label: "Settings", icon: "cog" },
       { key: "schedule", label: "Schedule", icon: "calendar" },
     ];
 
-    const { runArgs } = this.props.runArgs;
+    const { runArgs } = this.props;
 
     const generateActions = () => {
       return (
