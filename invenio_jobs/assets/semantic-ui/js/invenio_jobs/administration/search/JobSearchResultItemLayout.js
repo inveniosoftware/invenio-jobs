@@ -10,7 +10,7 @@ import { BoolFormatter } from "@js/invenio_administration";
 import { SystemJobActions } from "./SystemJobActions";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
-import { Table } from "semantic-ui-react";
+import { Table, Popup } from "semantic-ui-react";
 import { withState } from "react-searchkit";
 import { i18next } from "@translations/invenio_app_rdm/i18next";
 import { UserListItemCompact, toRelativeTime } from "react-invenio-forms";
@@ -49,7 +49,7 @@ class SearchResultItemComponent extends Component {
           <a href={`/administration/jobs/${result.id}`}>{result.title}</a>
         </Table.Cell>
         <Table.Cell
-          key={`job-last-run-${result.last_run.created}`}
+          key={`job-last-run-${result.created}`}
           data-label={i18next.t("Last run")}
           collapsing
           className=""
@@ -70,9 +70,17 @@ class SearchResultItemComponent extends Component {
               value={result.last_run.status === "Failed"}
             />
           )}
-          {result.last_run
-            ? toRelativeTime(result.last_run.created, i18next.language)
-            : "−"}
+          {result.last_run ? (
+            <Popup
+              content={result.last_run.created}
+              trigger={<div>{toRelativeTime(
+                result.last_run.created,
+                i18next.language
+              )}</div>}
+            />
+          ) : (
+          "−"
+          )}
         </Table.Cell>
         {result.last_run && result.last_run.started_by ? (
           <Table.Cell
