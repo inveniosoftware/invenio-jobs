@@ -30,7 +30,7 @@ def test_simple_flow(app, db, client, user):
     assert res.status_code == 201
     job_id = res.json["id"]
     expected_job = {
-        "id": res.json["id"],
+        "id": job_id,
         "title": "Test job",
         "description": "Test description",
         "active": False,
@@ -65,6 +65,11 @@ def test_simple_flow(app, db, client, user):
     assert res.status_code == 200
     assert res.json["hits"]["total"] == 1
     assert res.json["hits"]["hits"][0] == expected_job
+
+    # Get job
+    res = client.get(f"/jobs/{job_id}")
+    assert res.status_code == 200
+    assert res.json == expected_job
 
     # Create/trigger a run
     res = client.post(
@@ -124,6 +129,11 @@ def test_simple_flow(app, db, client, user):
     assert res.status_code == 200
     assert res.json["hits"]["total"] == 1
     assert res.json["hits"]["hits"][0] == expected_run
+
+    # Get run
+    res = client.get(f"/jobs/{job_id}/runs/{run_id}")
+    assert res.status_code == 200
+    assert res.json == expected_run
 
 
 def test_tasks_search(client):

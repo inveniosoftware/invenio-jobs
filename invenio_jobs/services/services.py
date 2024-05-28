@@ -66,7 +66,7 @@ def get_job(job_id):
 
 def get_run(run_id, job_id=None):
     """Get a job by id."""
-    run = Run.query.get(job_id)
+    run = Run.query.get(run_id)
     if run is None or run.job_id != job_id:
         raise RunNotFoundError(run_id, job_id=job_id)
     return run
