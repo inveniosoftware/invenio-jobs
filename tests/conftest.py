@@ -33,6 +33,9 @@ def app_config(app_config):
         can_read = [AnyUser()]
         can_update = [AnyUser()]
         can_delete = [AnyUser()]
+        can_stop = [AnyUser()]
+
+    app_config["REST_CSRF_ENABLED"] = False
 
     app_config["JOBS_TASKS_PERMISSION_POLICY"] = MockPermissionPolicy
     app_config["JOBS_PERMISSION_POLICY"] = MockPermissionPolicy

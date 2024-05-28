@@ -135,6 +135,11 @@ def test_simple_flow(app, db, client, user):
     assert res.status_code == 200
     assert res.json == expected_run
 
+    # Stop run
+    res = client.post(f"/jobs/{job_id}/runs/{run_id}/actions/stop")
+    assert res.status_code == 202
+    assert res.json["status"] == "CANCELLED"
+
 
 def test_tasks_search(client):
     """Test tasks search."""
