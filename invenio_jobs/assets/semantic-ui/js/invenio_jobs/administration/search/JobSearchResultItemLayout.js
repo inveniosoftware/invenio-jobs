@@ -76,14 +76,14 @@ class SearchResultItemComponent extends Component {
         </Table.Cell>
         {result.last_run ? (
           <Table.Cell
-            key={`job-user-${result.last_run.user.id}`}
+            key={`job-user-${result.last_run.started_by.id}`}
             data-label={i18next.t("Started by")}
             collapsing
             className="word-break-all"
           >
             <UserListItemCompact
-              user={result.last_run.user}
-              id={result.last_run.user.id}
+              user={result.last_run.started_by}
+              id={result.last_run.started_by.id}
             />
           </Table.Cell>
         ) : (

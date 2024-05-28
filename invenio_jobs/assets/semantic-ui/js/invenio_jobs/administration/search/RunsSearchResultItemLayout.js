@@ -46,18 +46,18 @@ class SearchResultItemComponent extends Component {
           {result.message}
         </Table.Cell>
         <Table.Cell
-          key={`run-user-${result.started_by.user.id}`}
+          key={`run-user-${result.started_by.id}`}
           data-label={i18next.t("Started by")}
           collapsing
           className="word-break-all"
         >
           <UserListItemCompact
-            user={result.started_by.user}
-            id={result.started_by.user.id}
+            user={result.started_by}
+            id={result.started_by.id}
           />
         </Table.Cell>
         <Table.Cell collapsing>
-          <SystemRunActions />
+          <SystemRunActions result={result} />
         </Table.Cell>
       </Table.Row>
     );

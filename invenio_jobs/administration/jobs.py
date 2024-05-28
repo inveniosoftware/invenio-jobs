@@ -8,15 +8,8 @@
 
 """Invenio administration view module."""
 
-from functools import partial
-
-from flask import current_app
-from invenio_administration.views.base import (
-    AdminResourceDetailView,
-    AdminResourceListView,
-)
+from invenio_administration.views.base import AdminResourceListView
 from invenio_i18n import lazy_gettext as _
-from invenio_search_ui.searchconfig import search_app_config
 
 
 class JobsListView(AdminResourceListView):
@@ -73,7 +66,11 @@ class JobsListView(AdminResourceListView):
 class JobsDetailsView(AdminResourceListView):
     """Configuration for Jobs detail view which shows runs."""
 
-    api_endpoint = "/jobs/<pid_value>/runs"
+    def get_api_endpoint(self, pid_value=None):
+        """overwrite get_api_endpoint to a ccept pid_value"""
+
+        return f"/api/jobs/{pid_value}/runs"
+
     url = "/jobs/<pid_value>"
     search_request_headers = {"Accept": "application/json"}
     name = "job-details"
