@@ -4,7 +4,7 @@ export async function JobRunsTitle(pidValue) {
     .then((data) => {
       const titleElem = document.getElementsByTagName("h1")[0];
       if (titleElem && data) {
-        titleElem.innerHTML = data.name;
+        titleElem.innerHTML = data.title;
       }
     });
 }

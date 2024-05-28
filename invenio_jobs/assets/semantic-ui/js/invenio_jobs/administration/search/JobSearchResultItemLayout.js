@@ -49,7 +49,7 @@ class SearchResultItemComponent extends Component {
           <a href={`/administration/jobs/${result.id}`}>{result.title}</a>
         </Table.Cell>
         <Table.Cell
-          key={`job-last-run-${result.last_run_start_time}`}
+          key={`job-last-run-${result.last_run.created}`}
           data-label={i18next.t("Last run")}
           collapsing
           className=""
@@ -71,10 +71,10 @@ class SearchResultItemComponent extends Component {
             />
           )}
           {result.last_run
-            ? toRelativeTime(result.last_run.start_time, i18next.language)
+            ? toRelativeTime(result.last_run.created, i18next.language)
             : "−"}
         </Table.Cell>
-        {result.last_run ? (
+        {result.last_run && result.last_run.started_by ? (
           <Table.Cell
             key={`job-user-${result.last_run.started_by.id}`}
             data-label={i18next.t("Started by")}
@@ -105,7 +105,7 @@ class SearchResultItemComponent extends Component {
           {toRelativeTime(result.next_run, i18next.language) ?? "−"}
         </Table.Cell>
         <Table.Cell collapsing>
-          <SystemJobActions runArgs={result.default_args} />
+          <SystemJobActions runArgs={result.default_args ?? {}} />
         </Table.Cell>
       </Table.Row>
     );
