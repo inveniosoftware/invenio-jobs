@@ -144,6 +144,7 @@ class RunsResource(ErrorHandlersMixin, Resource):
         url_rules = [
             route("GET", routes["list"], self.search),
             route("POST", routes["list"], self.create),
+            route("GET", routes["item"], self.read),
             route("DELETE", routes["item"], self.delete),
             route("GET", routes["logs_list"], self.logs),
         ]
@@ -177,6 +178,17 @@ class RunsResource(ErrorHandlersMixin, Resource):
             data=resource_requestctx.data or {},
         )
         return item.to_dict(), 201
+
+    @request_view_args
+    @response_handler()
+    def read(self):
+        """Read an item."""
+        item = self.service.read(
+            g.identity,
+            job_id=resource_requestctx.view_args["job_id"],
+            run_id=resource_requestctx.view_args["run_id"],
+        )
+        return item.to_dict(), 200
 
     @request_view_args
     @response_handler()
