@@ -73,13 +73,14 @@ class SearchResultItemComponent extends Component {
           {result.last_run ? (
             <Popup
               content={result.last_run.created}
-              trigger={<div>{toRelativeTime(
-                result.last_run.created,
-                i18next.language
-              )}</div>}
+              trigger={
+                <div>
+                  {toRelativeTime(result.last_run.created, i18next.language)}
+                </div>
+              }
             />
           ) : (
-          "−"
+            "−"
           )}
         </Table.Cell>
         {result.last_run && result.last_run.started_by ? (
