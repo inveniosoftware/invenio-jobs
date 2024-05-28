@@ -147,6 +147,7 @@ class RunsResource(ErrorHandlersMixin, Resource):
             route("GET", routes["item"], self.read),
             route("DELETE", routes["item"], self.delete),
             route("GET", routes["logs_list"], self.logs),
+            route("POST", routes["actions_stop"], self.stop),
         ]
 
         return url_rules
@@ -202,6 +203,18 @@ class RunsResource(ErrorHandlersMixin, Resource):
             params=resource_requestctx.args,
         )
         return hits.to_dict(), 200
+
+    @request_view_args
+    @response_handler()
+    def stop(self):
+        """Stop an item."""
+        identity = g.identity
+        hits = self.service.stop(
+            identity=identity,
+            job_id=resource_requestctx.view_args["job_id"],
+            run_id=resource_requestctx.view_args["run_id"],
+        )
+        return hits.to_dict(), 202
 
     @request_headers
     @request_data
