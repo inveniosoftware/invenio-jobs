@@ -7,14 +7,14 @@ export const StatusFormatter = ({ status }) => {
   return (
     <span>
       <BoolFormatter
-        tooltip={i18next.t("Pending")}
-        icon="spinner"
+        tooltip={i18next.t("Queued")}
+        icon="wait"
         color="grey"
-        value={status === "PENDING"}
+        value={status === "QUEUED"}
       />
       <BoolFormatter
         tooltip={i18next.t("Running")}
-        icon="wait"
+        icon="spinner"
         color="grey"
         value={status === "RUNNING"}
       />
@@ -25,10 +25,10 @@ export const StatusFormatter = ({ status }) => {
         value={status === "SUCCESS"}
       />
       <BoolFormatter
-        tooltip={i18next.t("Failure")}
-        icon="close"
+        tooltip={i18next.t("Failed")}
+        icon="cancel"
         color="red"
-        value={status === "FAILURE"}
+        value={status === "FAILED"}
       />
       <BoolFormatter
         tooltip={i18next.t("Warning")}
@@ -37,7 +37,13 @@ export const StatusFormatter = ({ status }) => {
         value={status === "WARNING"}
       />
       <BoolFormatter
-        tooltip={i18next.t("Cancelled")}
+        tooltip={i18next.t("Cancelling")}
+        icon="arrow down"
+        color="yellow"
+        value={status === "CANCELLING"}
+      />
+      <BoolFormatter
+        tooltip={i18next.t("Cancelling")}
         icon="ban"
         color="yellow"
         value={status === "CANCELLED"}
@@ -47,5 +53,5 @@ export const StatusFormatter = ({ status }) => {
 };
 
 StatusFormatter.propTypes = {
-  status: PropTypes.object.isRequired,
+  status: PropTypes.string.isRequired,
 };
