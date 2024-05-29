@@ -55,7 +55,6 @@ class Job(db.Model, Timestamp):
         if not self.schedule:
             return None
 
-        # TODO Maybe a better way to do this? kwargs expansion?
         schedule = deepcopy(self.schedule)
         stype = schedule.pop("type")
         if stype == "crontab":
