@@ -26,6 +26,7 @@ export const RunButton = ({ config }) => {
       className="icon"
       basic
       closeOnBlur={false}
+      direction='left'
     >
       <DropdownMenu>
         <Form className="p-10">

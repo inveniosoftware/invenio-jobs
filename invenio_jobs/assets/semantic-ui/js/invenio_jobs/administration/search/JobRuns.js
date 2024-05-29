@@ -9,7 +9,7 @@ import { createSearchAppInit } from "@js/invenio_search_ui";
 import { NotificationController } from "@js/invenio_administration";
 import { SearchResultItemLayout } from "./RunsSearchResultItemLayout";
 import { JobSearchLayout } from "./JobSearchLayout";
-import { JobRunsTitle } from "./JobRunsTitle";
+import { JobRunsHeader } from "./JobRunsHeader";
 
 const domContainer = document.getElementById("invenio-search-config");
 
@@ -31,4 +31,6 @@ createSearchAppInit(
 
 const pidValue = domContainer.dataset.pidValue;
 
-JobRunsTitle(pidValue);
+JobRunsHeader(pidValue);
+
+
