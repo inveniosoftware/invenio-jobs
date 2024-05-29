@@ -9,25 +9,25 @@
 """Service permissions."""
 
 from invenio_administration.generators import Administration
-from invenio_records_permissions.policies import BasePermissionPolicy
 from invenio_records_permissions.generators import SystemProcess
+from invenio_records_permissions.policies import BasePermissionPolicy
 
 
 class TasksPermissionPolicy(BasePermissionPolicy):
     """Access control configuration for tasks."""
 
-    can_search = [Administration()]
-    can_read = [Administration()]
+    can_search = [Administration(), SystemProcess()]
+    can_read = [Administration(), SystemProcess()]
 
 
 class JobPermissionPolicy(BasePermissionPolicy):
     """Access control configuration for jobs."""
 
-    can_search = [Administration()]
-    can_create = [Administration()]
+    can_search = [Administration(), SystemProcess()]
+    can_create = [Administration(), SystemProcess()]
     can_read = [Administration(), SystemProcess()]
-    can_update = [Administration()]
-    can_delete = [Administration()]
+    can_update = [Administration(), SystemProcess()]
+    can_delete = [Administration(), SystemProcess()]
 
 
 class RunPermissionPolicy(BasePermissionPolicy):
@@ -36,9 +36,9 @@ class RunPermissionPolicy(BasePermissionPolicy):
     Later the runs may be done by librarians.
     """
 
-    can_search = [Administration()]
-    can_create = [Administration()]
-    can_read = [Administration()]
-    can_update = [Administration()]
-    can_delete = [Administration()]
-    can_stop = [Administration()]
+    can_search = [Administration(), SystemProcess()]
+    can_create = [Administration(), SystemProcess()]
+    can_read = [Administration(), SystemProcess()]
+    can_update = [Administration(), SystemProcess()]
+    can_delete = [Administration(), SystemProcess()]
+    can_stop = [Administration(), SystemProcess()]
