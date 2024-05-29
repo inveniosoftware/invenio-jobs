@@ -49,10 +49,6 @@ class Job(db.Model, Timestamp):
         """Last run of the job."""
         return self.runs.order_by(Run.created.desc()).first()
 
-    @property
-    def last_run_at(self):
-        return (self.last_run and self.last_run.created)
-
     # TODO Maybe rename?
     @property
     def parsed_schedule(self):

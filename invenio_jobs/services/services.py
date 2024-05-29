@@ -9,6 +9,7 @@
 """Service definitions."""
 
 import sqlalchemy as sa
+from celery import current_app
 from invenio_records_resources.services.base import LinksTemplate
 from invenio_records_resources.services.base.utils import map_search_params
 from invenio_records_resources.services.records import RecordService
@@ -238,7 +239,11 @@ class RunsService(RecordService):
             **valid_data,
         )
         uow.register(ModelCommitOp(run))
-        # TODO: Actually start the Celery task here
+
+        task = current_app.tasks.get(job.task)
+        # TODO how to pass data?
+        # if task:
+        #     task.apply_async
 
         return self.result_item(self, identity, run, links_tpl=self.links_item_tpl)
 
@@ -282,7 +287,8 @@ class RunsService(RecordService):
             raise RunStatusChangeError(run, RunStatusEnum.CANCELLED)
 
         run.status = RunStatusEnum.CANCELLED
-        # TODO: Handle here actually stopping the Celery task
+
+        current_app.control.revoke(run.task_id)
 
         uow.register(ModelCommitOp(run))
 

@@ -10,6 +10,7 @@
 
 from invenio_administration.generators import Administration
 from invenio_records_permissions.policies import BasePermissionPolicy
+from invenio_records_permissions.generators import SystemProcess
 
 
 class TasksPermissionPolicy(BasePermissionPolicy):
@@ -24,7 +25,7 @@ class JobPermissionPolicy(BasePermissionPolicy):
 
     can_search = [Administration()]
     can_create = [Administration()]
-    can_read = [Administration()]
+    can_read = [Administration(), SystemProcess()]
     can_update = [Administration()]
     can_delete = [Administration()]
 
