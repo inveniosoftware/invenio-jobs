@@ -23,26 +23,15 @@ class JobEntry(ScheduleEntry):
         self.job = job
         super().__init__(*args, **kwargs)
 
-    @staticmethod
-    def parse_args(job_args, task):
-        # NOTE In future if we use positional only args with celery tasks, this will need an update
-        # Since we are only returning kwargs for now
-        # TODO add check for self?
-        return tuple(), job_args or {}
-
     @classmethod
     def from_job(cls, job):
-        args, kwargs = cls.parse_args(job.default_args or {}, job.task)
         return cls(
             job=job,
             name=job.title,
             schedule=job.parsed_schedule,
-            args=args,
-            kwargs=kwargs,
-            task=job.task,
-            options={
-                "queue": job.default_queue
-            },
+            kwargs={"kwargs": job.default_args},
+            task="invenio_jobs.tasks.execute_run", # TODO Make a constant/import
+            options={"queue": job.default_queue},
             last_run_at=(job.last_run and job.last_run.created),
         )
 
@@ -74,8 +63,7 @@ class RunScheduler(Scheduler):
                 # TODO Only create and send task if there is no "stale" run (status running, starttime > hour, Run pending for > 1 hr)
                 run = self.create_run(entry)
                 entry.options["task_id"] = str(run.task_id)
-                if not entry.task:
-                    return
+                entry.args = (str(run.id),)
                 result = self.apply_async(entry, producer=producer, advance=False)
             except Exception as exc:
                 logger.error(
@@ -103,8 +91,7 @@ class RunScheduler(Scheduler):
         job = Job.query.filter_by(id=entry.job.id).one()
         run.job = job
         run.args = job.default_args  # NOTE Args template resolution goes here
-        run.queue = job.default_queue # TODO Not working/considered for now -> move it to options
+        run.queue = job.default_queue
         run.task_id = uuid.uuid4()
-        print("creating run")
         db.session.commit()
         return run
