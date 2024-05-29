@@ -28,7 +28,7 @@ class SearchResultItemComponent extends Component {
           className="word-break-all"
         >
           <BoolFormatter
-            tooltip={i18next.t("Active")}
+            tooltip={i18next.t("Inactive")}
             icon="spinner"
             color="grey"
             value={result.started_at === null}
@@ -45,7 +45,7 @@ class SearchResultItemComponent extends Component {
             color="grey"
             value={result.active === false}
           />
-          <a href={result.links.admin_self_html}>
+          <a href={result.links.self}>
             {result.created.slice(0, 16)}
           </a>
         </Table.Cell>
