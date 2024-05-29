@@ -18,6 +18,9 @@ export async function JobRunsHeader(pidValue) {
       }
 
       const actions = document.getElementById("actions");
-      ReactDOM.render(<RunButton config={data.default_args} />, actions);
+      ReactDOM.render(
+        <RunButton jobId={data.id} config={data.default_args ?? {}} />,
+        actions
+      );
     });
 }

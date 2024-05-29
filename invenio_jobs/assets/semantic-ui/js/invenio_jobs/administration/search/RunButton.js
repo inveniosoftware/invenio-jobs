@@ -14,8 +14,9 @@ import {
   Form,
   FormInput,
 } from "semantic-ui-react";
+import { http } from "react-invenio-forms";
 
-export const RunButton = ({ config }) => {
+export const RunButton = ({ jobId, config }) => {
   return (
     <Dropdown
       text={i18next.t("Run")}
@@ -38,7 +39,13 @@ export const RunButton = ({ config }) => {
               onClick={(e) => e.stopPropagation()}
             />
           ))}
-          <Button type="submit" content="Run" />
+          <Button
+            type="submit"
+            content="Run"
+            onClick={() => {
+              http.post("/api/jobs/" + jobId + "/runs");
+            }}
+          />
         </Form>
       </DropdownMenu>
     </Dropdown>
@@ -46,5 +53,10 @@ export const RunButton = ({ config }) => {
 };
 
 RunButton.propTypes = {
-  config: PropTypes.object.isRequired,
+  jobId: PropTypes.string.isRequired,
+  config: PropTypes.object,
+};
+
+RunButton.defaultProps = {
+  config: {},
 };

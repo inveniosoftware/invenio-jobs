@@ -12,9 +12,10 @@ import PropTypes from "prop-types";
 import React, { Component } from "react";
 import { UserListItemCompact, toRelativeTime } from "react-invenio-forms";
 import { withState } from "react-searchkit";
-import { Popup, Table } from "semantic-ui-react";
-import { RunButton } from "./RunButton";
+import { Popup, Table, Button, Icon } from "semantic-ui-react";
+// import { RunButton } from "./RunButton";
 import { StatusFormatter } from "./StatusFormatter";
+import { http } from "react-invenio-forms";
 
 class SearchResultItemComponent extends Component {
   render() {
@@ -92,7 +93,19 @@ class SearchResultItemComponent extends Component {
             : toRelativeTime(result.next_run, i18next.language) ?? "−"}
         </Table.Cell>
         <Table.Cell collapsing>
-          <RunButton config={result.default_args} />
+          <Button
+            icon
+            fluid
+            basic
+            labelPosition="left"
+            onClick={() => {
+              http.post("/api/jobs/" + result.id + "/runs");
+            }}
+          >
+            <Icon name="play" />
+            Run
+          </Button>
+          {/* <RunButton jobId={result.id} config={result.default_args ?? {}} /> */}
         </Table.Cell>
       </Table.Row>
     );
