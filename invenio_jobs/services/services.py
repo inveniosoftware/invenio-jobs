@@ -8,6 +8,8 @@
 
 """Service definitions."""
 
+import uuid
+
 import sqlalchemy as sa
 from celery import current_app
 from invenio_records_resources.services.base import LinksTemplate
@@ -16,8 +18,11 @@ from invenio_records_resources.services.records import RecordService
 from invenio_records_resources.services.uow import (
     ModelCommitOp,
     ModelDeleteOp,
+    TaskOp,
     unit_of_work,
 )
+
+from invenio_jobs.tasks import execute_run
 
 from ..models import Job, Run, RunStatusEnum
 from ..proxies import current_jobs
@@ -233,17 +238,21 @@ class RunsService(RecordService):
 
         valid_data.setdefault("queue", job.default_queue)
         run = Run(
+            id=str(uuid.uuid4()),
             job=job,
+            task_id=uuid.uuid4(),
             started_by_id=identity.id,
             status=RunStatusEnum.QUEUED,
             **valid_data,
         )
         uow.register(ModelCommitOp(run))
-
-        task = current_app.tasks.get(job.task)
-        # TODO how to pass data?
-        # if task:
-        #     task.apply_async
+        uow.register(
+            TaskOp.for_async_apply(
+                execute_run,
+                kwargs={"run_id": run.id, "kwargs": run.args},
+                task_id=str(run.task_id),
+            )
+        )
 
         return self.result_item(self, identity, run, links_tpl=self.links_item_tpl)
 
