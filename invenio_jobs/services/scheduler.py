@@ -30,7 +30,7 @@ class JobEntry(ScheduleEntry):
             name=job.title,
             schedule=job.parsed_schedule,
             kwargs={"kwargs": job.default_args},
-            task="invenio_jobs.tasks.execute_run", # TODO Make a constant/import
+            task="invenio_jobs.tasks.execute_run",  # TODO Make a constant/import
             options={"queue": job.default_queue},
             last_run_at=(job.last_run and job.last_run.created),
         )

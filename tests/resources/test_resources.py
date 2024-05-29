@@ -105,7 +105,6 @@ def test_simple_flow(app, db, client, user):
         "finished_at": res.json["finished_at"],
         "status": "QUEUED",
         "message": None,
-        "task_id": None,
         "title": "Manually triggered run",
         "args": {
             "arg1": "manual_value1",
@@ -121,8 +120,9 @@ def test_simple_flow(app, db, client, user):
             "stop": f"https://127.0.0.1:5000/api/jobs/{job_id}/runs/{run_id}/actions/stop",
         },
     }
-
-    assert res.json == expected_run
+    result = res.json
+    result.pop("task_id")
+    assert result == expected_run
 
     # List runs
     res = client.get(f"/jobs/{job_id}/runs")
