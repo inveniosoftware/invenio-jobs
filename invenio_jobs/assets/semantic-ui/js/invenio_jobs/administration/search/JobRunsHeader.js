@@ -1,7 +1,6 @@
-
 import { RunButton } from "./RunButton";
 import React from "react";
-import ReactDOM from "react-dom"
+import ReactDOM from "react-dom";
 
 export async function JobRunsHeader(pidValue) {
   fetch("/api/jobs/" + pidValue)

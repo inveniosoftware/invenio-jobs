@@ -32,5 +32,3 @@ createSearchAppInit(
 const pidValue = domContainer.dataset.pidValue;
 
 JobRunsHeader(pidValue);
-
-

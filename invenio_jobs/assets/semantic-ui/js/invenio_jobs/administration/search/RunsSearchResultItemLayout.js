@@ -6,14 +6,14 @@
  * under the terms of the MIT License; see LICENSE file for more details.
  */
 
-import { BoolFormatter } from "@js/invenio_administration";
-import { SystemRunActions } from "./SystemRunActions";
+import { i18next } from "@translations/invenio_app_rdm/i18next";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
-import { Table } from "semantic-ui-react";
-import { withState } from "react-searchkit";
-import { i18next } from "@translations/invenio_app_rdm/i18next";
 import { UserListItemCompact, toRelativeTime } from "react-invenio-forms";
+import { withState } from "react-searchkit";
+import { Table } from "semantic-ui-react";
+import { StatusFormatter } from "./StatusFormatter";
+import { SystemRunActions } from "./SystemRunActions";
 
 class SearchResultItemComponent extends Component {
   render() {
@@ -27,27 +27,8 @@ class SearchResultItemComponent extends Component {
           collapsing
           className="word-break-all"
         >
-          <BoolFormatter
-            tooltip={i18next.t("Inactive")}
-            icon="spinner"
-            color="grey"
-            value={result.started_at === null}
-          />
-          <BoolFormatter
-            tooltip={i18next.t("Active")}
-            icon="wait"
-            color="grey"
-            value={result.started_at !== null && result.finished_at === null}
-          />
-          <BoolFormatter
-            tooltip={i18next.t("Inactive")}
-            icon="ban"
-            color="grey"
-            value={result.active === false}
-          />
-          <a href={result.links.self}>
-            {result.created.slice(0, 16)}
-          </a>
+          <StatusFormatter status={result.status} />
+          <a href={result.links.self}>{result.created.slice(0, 16)}</a>
         </Table.Cell>
         <Table.Cell
           key={`run-last-run-${result.status}`}
