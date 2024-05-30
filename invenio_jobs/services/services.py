@@ -11,7 +11,6 @@
 import uuid
 
 import sqlalchemy as sa
-from celery import current_app
 from invenio_records_resources.services.base import LinksTemplate
 from invenio_records_resources.services.base.utils import map_search_params
 from invenio_records_resources.services.records import RecordService
@@ -19,6 +18,7 @@ from invenio_records_resources.services.uow import (
     ModelCommitOp,
     ModelDeleteOp,
     TaskOp,
+    TaskRevokeOp,
     unit_of_work,
 )
 
@@ -293,12 +293,10 @@ class RunsService(RecordService):
         run = get_run(job_id=job_id, run_id=run_id)
 
         if run.status not in (RunStatusEnum.QUEUED, RunStatusEnum.RUNNING):
-            raise RunStatusChangeError(run, RunStatusEnum.CANCELLED)
+            raise RunStatusChangeError(run, RunStatusEnum.CANCELLING)
 
-        run.status = RunStatusEnum.CANCELLED
-
-        current_app.control.revoke(run.task_id)
-
+        run.status = RunStatusEnum.CANCELLING
         uow.register(ModelCommitOp(run))
+        uow.register(TaskRevokeOp(str(run.task_id)))
 
         return self.result_item(self, identity, run, links_tpl=self.links_item_tpl)
