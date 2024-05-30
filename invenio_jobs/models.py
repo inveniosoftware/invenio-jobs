@@ -50,9 +50,9 @@ class Job(db.Model, Timestamp):
         """Last run of the job."""
         return self.runs.order_by(Run.created.desc()).first()
 
-    # TODO Maybe rename?
     @property
     def parsed_schedule(self):
+        """Return schedule parsed as crontab or timedelta."""
         if not self.schedule:
             return None
 
