@@ -10,6 +10,7 @@
 import enum
 import uuid
 from copy import deepcopy
+from datetime import timedelta
 from inspect import signature
 
 from celery import current_app as current_celery_app
@@ -60,8 +61,7 @@ class Job(db.Model, Timestamp):
         if stype == "crontab":
             return crontab(**schedule)
         elif stype == "interval":
-            # TODO Implement
-            pass
+            return timedelta(**schedule)
 
 
 class RunStatusEnum(enum.Enum):
