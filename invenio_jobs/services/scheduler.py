@@ -13,6 +13,7 @@ from celery.beat import ScheduleEntry, Scheduler, logger
 from invenio_db import db
 
 from invenio_jobs.models import Job, Run, Task
+from invenio_jobs.tasks import execute_run
 
 
 class JobEntry(ScheduleEntry):
@@ -30,7 +31,7 @@ class JobEntry(ScheduleEntry):
             name=job.title,
             schedule=job.parsed_schedule,
             kwargs={"kwargs": job.default_args},
-            task="invenio_jobs.tasks.execute_run",  # TODO Make a constant/import
+            task=execute_run.name,
             options={"queue": job.default_queue},
             last_run_at=(job.last_run and job.last_run.created),
         )
@@ -87,11 +88,12 @@ class RunScheduler(Scheduler):
                 self.entries[job.id] = JobEntry.from_job(job)
 
     def create_run(self, entry):
-        run = Run()
         job = Job.query.filter_by(id=entry.job.id).one()
-        run.job = job
-        run.args = job.default_args  # NOTE Args template resolution goes here
-        run.queue = job.default_queue
-        run.task_id = uuid.uuid4()
+        run = Run(
+            job=job,
+            args=job.default_args,
+            queue=job.default_queue,
+            task_id=uuid.uuid4(),
+        )
         db.session.commit()
         return run
