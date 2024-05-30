@@ -13,11 +13,23 @@ import { UserListItemCompact, toRelativeTime } from "react-invenio-forms";
 import { withState } from "react-searchkit";
 import { Table } from "semantic-ui-react";
 import { StatusFormatter } from "./StatusFormatter";
-import { SystemRunActions } from "./SystemRunActions";
+import { StopButton } from "./StopButton";
 
 class SearchResultItemComponent extends Component {
+  // constructor(props) {
+  //   super(props);
+  //   this.state = {
+  //     error: "",
+  //   };
+  // }
+
   render() {
     const { result } = this.props;
+
+    // const handleError = (errorMessage) => {
+    //   console.error(errorMessage);
+    //   this.setState({ error: errorMessage });
+    // };
 
     return (
       <Table.Row>
@@ -72,7 +84,7 @@ class SearchResultItemComponent extends Component {
         )}
         <Table.Cell collapsing>
           {result.status === "RUNNING" || result.status === "QUEUED" ? (
-            <SystemRunActions result={result} />
+            <StopButton stopURL={result.links.stop} />
           ) : (
             ""
           )}

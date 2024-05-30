@@ -12,10 +12,10 @@ import PropTypes from "prop-types";
 import React, { Component } from "react";
 import { UserListItemCompact, toRelativeTime } from "react-invenio-forms";
 import { withState } from "react-searchkit";
-import { Popup, Table, Button, Icon } from "semantic-ui-react";
+import { Button, Icon, Popup, Table } from "semantic-ui-react";
 // import { RunButton } from "./RunButton";
-import { StatusFormatter } from "./StatusFormatter";
 import { http } from "react-invenio-forms";
+import { StatusFormatter } from "./StatusFormatter";
 
 class SearchResultItemComponent extends Component {
   render() {
@@ -103,7 +103,7 @@ class SearchResultItemComponent extends Component {
             }}
           >
             <Icon name="play" />
-            Run
+            Run now
           </Button>
           {/* <RunButton jobId={result.id} config={result.default_args ?? {}} /> */}
         </Table.Cell>

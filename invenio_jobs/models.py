@@ -48,7 +48,6 @@ class Job(db.Model, Timestamp):
         return self.runs.order_by(Run.created.desc()).first()
 
 
-
 class RunStatusEnum(enum.Enum):
     """Enumeration of a run's possible states."""
 
