@@ -8,7 +8,7 @@
 """Tasks."""
 from datetime import datetime, timezone
 
-from celery import current_app, shared_task
+from celery import shared_task
 from invenio_db import db
 
 from invenio_jobs.models import Run, RunStatusEnum
@@ -26,7 +26,6 @@ def update_run(run, **kwargs):
 @shared_task(bind=True, ignore_result=True)
 def execute_run(self, run_id, kwargs=None):
     """Execute and manage a run state and task."""
-
     run = Run.query.filter_by(id=run_id).one_or_none()
     task = self.app.tasks.get(run.job.task)
     update_run(run, status=RunStatusEnum.RUNNING, started_at=datetime.now(timezone.utc))
@@ -41,13 +40,13 @@ def execute_run(self, run_id, kwargs=None):
             finished_at=datetime.now(timezone.utc),
         )
         return
-    except SystemExit:
+    except SystemExit as e:
         update_run(
             run,
             status=RunStatusEnum.CANCELLED,
             finished_at=datetime.now(timezone.utc),
         )
-        return
+        raise e
 
     update_run(
         run,
