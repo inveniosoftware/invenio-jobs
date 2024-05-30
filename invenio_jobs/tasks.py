@@ -16,6 +16,7 @@ from invenio_jobs.models import Run, RunStatusEnum
 
 # TODO 1. Move to service? 2. Don't use kwargs?
 def update_run(run, **kwargs):
+    """Method to update and commit run updates."""
     if not run:
         return
     for kw, value in kwargs.items():
@@ -33,7 +34,6 @@ def execute_run(self, run_id, kwargs=None):
     try:
         result = task.apply(kwargs=kwargs)
     except Exception as e:
-        # TODO should we log the error in message?
         update_run(
             run,
             status=RunStatusEnum.FAILED,
