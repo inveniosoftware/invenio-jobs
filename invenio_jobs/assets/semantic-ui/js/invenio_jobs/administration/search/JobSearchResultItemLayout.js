@@ -6,6 +6,7 @@
  * under the terms of the MIT License; see LICENSE file for more details.
  */
 
+import { NotificationContext } from "@js/invenio_administration";
 import { BoolFormatter } from "@js/invenio_administration";
 import { i18next } from "@translations/invenio_app_rdm/i18next";
 import PropTypes from "prop-types";
@@ -18,6 +19,18 @@ import { http } from "react-invenio-forms";
 import { StatusFormatter } from "./StatusFormatter";
 
 class SearchResultItemComponent extends Component {
+  static contextType = NotificationContext;
+
+  onError = (e) => {
+    const { addNotification } = this.context;
+    addNotification({
+      title: i18next.t("Error"),
+      content: e.message,
+      type: "error",
+    });
+    console.error(e);
+  };
+
   render() {
     const { result } = this.props;
 
@@ -105,7 +118,7 @@ class SearchResultItemComponent extends Component {
             <Icon name="play" />
             Run now
           </Button>
-          {/* <RunButton jobId={result.id} config={result.default_args ?? {}} /> */}
+          {/* <RunButton jobId={result.id} config={result.default_args ?? {}} onError={this.onError} /> */}
         </Table.Cell>
       </Table.Row>
     );

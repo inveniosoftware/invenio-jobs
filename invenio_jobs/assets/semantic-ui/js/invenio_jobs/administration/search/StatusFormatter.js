@@ -45,7 +45,7 @@ export const StatusFormatter = ({ status }) => {
       <BoolFormatter
         tooltip={i18next.t("Cancelling")}
         icon="ban"
-        color="yellow"
+        color="red"
         value={status === "CANCELLED"}
       />
     </span>

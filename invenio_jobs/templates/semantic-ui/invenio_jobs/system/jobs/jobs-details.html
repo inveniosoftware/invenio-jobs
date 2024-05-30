@@ -15,12 +15,12 @@
 
     <div class="ui container fluid pl-10 pr-10 pt-10 pb-10">
       {{ go_back() }}
-    <div class="ui grid">
+    <div id='header' class="ui grid">
       <div class="column six wide">
-        <h1 id='title' class="ui header m-0">{{ title or name }}</h1>
-        <p id="description" class="ui grey header"></p>
+        <h1 class="ui header m-0">{{ title or name }}</h1>
+        <p class="ui grey header"></p>
       </div>
-      <div id="actions" class="column ten wide right aligned"></div>
+      <div class="column ten wide right aligned"></div>
     </div>
       {% block admin_page_content %}
         <div class="ui divider" aria-hidden="true"></div>

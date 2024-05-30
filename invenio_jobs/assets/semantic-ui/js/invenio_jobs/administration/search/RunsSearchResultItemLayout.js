@@ -6,6 +6,7 @@
  * under the terms of the MIT License; see LICENSE file for more details.
  */
 
+import { NotificationContext } from "@js/invenio_administration";
 import { i18next } from "@translations/invenio_app_rdm/i18next";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
@@ -16,20 +17,20 @@ import { StatusFormatter } from "./StatusFormatter";
 import { StopButton } from "./StopButton";
 
 class SearchResultItemComponent extends Component {
-  // constructor(props) {
-  //   super(props);
-  //   this.state = {
-  //     error: "",
-  //   };
-  // }
+  static contextType = NotificationContext;
+
+  onError = (e) => {
+    const { addNotification } = this.context;
+    addNotification({
+      title: i18next.t("Status ") + e.status,
+      content: `${e.message}`,
+      type: "error",
+    });
+    console.error(e);
+  };
 
   render() {
     const { result } = this.props;
-
-    // const handleError = (errorMessage) => {
-    //   console.error(errorMessage);
-    //   this.setState({ error: errorMessage });
-    // };
 
     return (
       <Table.Row>
@@ -58,7 +59,7 @@ class SearchResultItemComponent extends Component {
           collapsing
           className=""
         >
-          {result.title}
+          {result.message}
         </Table.Cell>
         {result.started_by ? (
           <Table.Cell
@@ -84,7 +85,7 @@ class SearchResultItemComponent extends Component {
         )}
         <Table.Cell collapsing>
           {result.status === "RUNNING" || result.status === "QUEUED" ? (
-            <StopButton stopURL={result.links.stop} />
+            <StopButton stopURL={result.links.stop} onError={this.onError} />
           ) : (
             ""
           )}
