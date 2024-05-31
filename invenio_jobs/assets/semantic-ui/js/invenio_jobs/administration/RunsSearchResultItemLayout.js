@@ -17,6 +17,14 @@ import { StatusFormatter } from "./StatusFormatter";
 import { StopButton } from "./StopButton";
 
 class SearchResultItemComponent extends Component {
+  constructor(props) {
+    super();
+
+    this.state = {
+      status: props.result.status,
+    };
+  }
+
   static contextType = NotificationContext;
 
   onError = (e) => {
@@ -31,6 +39,7 @@ class SearchResultItemComponent extends Component {
 
   render() {
     const { result } = this.props;
+    const { status } = this.state;
 
     return (
       <Table.Row>
@@ -40,11 +49,11 @@ class SearchResultItemComponent extends Component {
           collapsing
           className="word-break-all"
         >
-          <StatusFormatter status={result.status} />
+          <StatusFormatter status={status} />
           <a href={result.links.self}>{result.created.slice(0, 16)}</a>
         </Table.Cell>
         <Table.Cell
-          key={`run-last-run-${result.status}`}
+          key={`run-last-run-${status}`}
           data-label={i18next.t("Duration")}
           collapsing
           className=""
@@ -84,8 +93,14 @@ class SearchResultItemComponent extends Component {
           </Table.Cell>
         )}
         <Table.Cell collapsing>
-          {result.status === "RUNNING" || result.status === "QUEUED" ? (
-            <StopButton stopURL={result.links.stop} onError={this.onError} />
+          {status === "RUNNING" || status === "QUEUED" ? (
+            <StopButton
+              stopURL={result.links.stop}
+              setStatus={(status) => {
+                this.setState({ status: status });
+              }}
+              onError={this.onError}
+            />
           ) : (
             ""
           )}

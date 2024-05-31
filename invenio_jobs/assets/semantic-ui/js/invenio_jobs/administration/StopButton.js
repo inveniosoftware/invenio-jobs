@@ -10,18 +10,20 @@ import React, { useState } from "react";
 import { http } from "react-invenio-forms";
 import { Button, Icon } from "semantic-ui-react";
 
-export const StopButton = ({ stopURL, onError }) => {
+export const StopButton = ({ stopURL, setStatus, onError }) => {
   const [loading, setLoading] = useState(false);
 
   const handleClick = async () => {
     setLoading(true);
-    await http.post(stopURL).catch((error) => {
+    const response = await http.post(stopURL).catch((error) => {
       if (error.response) {
         onError(error.response.data);
+        setLoading(false);
       } else {
         onError(error);
       }
     });
+    setStatus(response.data.status);
     setLoading(false);
   };
 
@@ -43,5 +45,6 @@ export const StopButton = ({ stopURL, onError }) => {
 
 StopButton.propTypes = {
   stopURL: PropTypes.string.isRequired,
+  setStatus: PropTypes.func.isRequired,
   onError: PropTypes.func.isRequired,
 };
