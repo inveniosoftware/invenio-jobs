@@ -51,11 +51,12 @@ class Job(db.Model, Timestamp):
 class RunStatusEnum(enum.Enum):
     """Enumeration of a run's possible states."""
 
-    PENDING = "P"
+    QUEUED = "Q"
     RUNNING = "R"
     SUCCESS = "S"
-    FAILURE = "F"
+    FAILED = "F"
     WARNING = "W"
+    CANCELLING = "P"
     CANCELLED = "C"
 
 
@@ -83,7 +84,7 @@ class Run(db.Model, Timestamp):
     status = db.Column(
         ChoiceType(RunStatusEnum, impl=db.String(1)),
         nullable=False,
-        default=RunStatusEnum.PENDING.value,
+        default=RunStatusEnum.QUEUED.value,
     )
 
     message = db.Column(db.Text, nullable=True)

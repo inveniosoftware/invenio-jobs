@@ -234,7 +234,7 @@ class RunsService(RecordService):
         run = Run(
             job=job,
             started_by_id=identity.id,
-            status=RunStatusEnum.PENDING,
+            status=RunStatusEnum.QUEUED,
             **valid_data,
         )
         uow.register(ModelCommitOp(run))
@@ -278,7 +278,7 @@ class RunsService(RecordService):
         self.require_permission(identity, "stop")
         run = get_run(job_id=job_id, run_id=run_id)
 
-        if run.status not in (RunStatusEnum.PENDING, RunStatusEnum.RUNNING):
+        if run.status not in (RunStatusEnum.QUEUED, RunStatusEnum.RUNNING):
             raise RunStatusChangeError(run, RunStatusEnum.CANCELLED)
 
         run.status = RunStatusEnum.CANCELLED

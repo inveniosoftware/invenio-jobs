@@ -103,7 +103,7 @@ def test_simple_flow(app, db, client, user):
         },
         "started_at": res.json["started_at"],
         "finished_at": res.json["finished_at"],
-        "status": "PENDING",
+        "status": "QUEUED",
         "message": None,
         "task_id": None,
         "title": "Manually triggered run",
