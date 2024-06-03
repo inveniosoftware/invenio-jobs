@@ -8,12 +8,13 @@
 """Service schemas."""
 
 import inspect
+from datetime import timezone
 
 from invenio_i18n import lazy_gettext as _
 from invenio_users_resources.services import schemas as user_schemas
 from marshmallow import EXCLUDE, Schema, fields, validate
 from marshmallow_oneofschema import OneOfSchema
-from marshmallow_utils.fields import SanitizedUnicode
+from marshmallow_utils.fields import SanitizedUnicode, TZDateTime
 from marshmallow_utils.permissions import FieldPermissionsMixin
 from marshmallow_utils.validators import LazyOneOf
 
@@ -114,8 +115,8 @@ class JobSchema(Schema, FieldPermissionsMixin):
 
     id = fields.UUID(dump_only=True)
 
-    created = fields.DateTime(dump_only=True)
-    updated = fields.DateTime(dump_only=True)
+    created = TZDateTime(timezone=timezone.utc, format="iso", dump_only=True)
+    updated = TZDateTime(timezone=timezone.utc, format="iso", dump_only=True)
 
     title = SanitizedUnicode(required=True, validate=_not_blank(max=250))
     description = SanitizedUnicode()
@@ -130,7 +131,7 @@ class JobSchema(Schema, FieldPermissionsMixin):
         validate=LazyOneOf(choices=lambda: current_jobs.queues.keys()),
         load_default=lambda: current_jobs.default_queue,
     )
-    default_args = fields.Dict(load_default=dict)
+    default_args = fields.Dict(load_default=dict, allow_none=True)
 
     schedule = fields.Nested(ScheduleSchema, allow_none=True, load_default=None)
 
@@ -161,14 +162,14 @@ class RunSchema(Schema, FieldPermissionsMixin):
     id = fields.UUID(dump_only=True)
     job_id = fields.UUID(dump_only=True)
 
-    created = fields.DateTime(dump_only=True)
-    updated = fields.DateTime(dump_only=True)
+    created = TZDateTime(timezone=timezone.utc, format="iso", dump_only=True)
+    updated = TZDateTime(timezone=timezone.utc, format="iso", dump_only=True)
 
     started_by_id = fields.Integer(dump_only=True)
     started_by = fields.Nested(UserSchema, dump_only=True)
 
-    started_at = fields.DateTime(dump_only=True)
-    finished_at = fields.DateTime(dump_only=True)
+    started_at = TZDateTime(timezone=timezone.utc, format="iso", dump_only=True)
+    finished_at = TZDateTime(timezone=timezone.utc, format="iso", dump_only=True)
 
     status = fields.Enum(RunStatusEnum, dump_only=True)
     message = SanitizedUnicode(dump_only=True)
