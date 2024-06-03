@@ -9,19 +9,23 @@ import PropTypes from "prop-types";
 import React, { useState } from "react";
 import { http } from "react-invenio-forms";
 import { Button, Icon } from "semantic-ui-react";
+import { withCancel } from "react-invenio-forms";
 
 export const StopButton = ({ stopURL, setStatus, onError }) => {
   const [loading, setLoading] = useState(false);
 
   const handleClick = async () => {
     setLoading(true);
-    const response = await http.post(stopURL).catch((error) => {
-      if (error.response) {
-        onError(error.response.data);
-      } else {
-        onError(error);
-      }
-    });
+    const cancellableAction = await withCancel(
+      http.post(stopURL).catch((error) => {
+        if (error.response) {
+          onError(error.response.data);
+        } else {
+          onError(error);
+        }
+      })
+    );
+    const response = await cancellableAction.promise;
     setStatus(response.data.status);
     setLoading(false);
   };

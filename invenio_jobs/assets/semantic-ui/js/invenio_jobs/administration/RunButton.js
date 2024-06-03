@@ -7,7 +7,7 @@
 import { i18next } from "@translations/invenio_app_rdm/i18next";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
-import { http } from "react-invenio-forms";
+import { http, withCancel } from "react-invenio-forms";
 import {
   Button,
   Dropdown,
@@ -28,6 +28,10 @@ export class RunButton extends Component {
       queue: "low",
       loading: false,
     };
+  }
+
+  componentWillUnmount() {
+    this.cancellableAction && this.cancellableAction.cancel();
   }
 
   handleTitleChange = (e, { name, value }) => this.setState({ title: value });
@@ -53,7 +57,9 @@ export class RunButton extends Component {
     };
 
     try {
-      var response = await http.post("/api/jobs/" + jobId + "/runs", runData);
+      this.cancellableAction = await withCancel(
+        http.post("/api/jobs/" + jobId + "/runs", runData)
+      );
     } catch (error) {
       if (error.response) {
         onError(error.response.data);
@@ -61,7 +67,8 @@ export class RunButton extends Component {
         onError(error);
       }
     }
-    setRun(response.data.status, response.data.created);
+    const response = await this.cancellableAction.promise;
+    setRun(response.data?.status, response.data?.created);
     this.setState({ loading: false });
   };
 

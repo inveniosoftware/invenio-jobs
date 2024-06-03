@@ -10,6 +10,7 @@ import PropTypes from "prop-types";
 import React, { Component } from "react";
 import { http } from "react-invenio-forms";
 import { RunButton } from "./RunButton";
+import { withCancel } from "react-invenio-forms";
 
 export class JobRunsHeaderComponent extends Component {
   constructor(props) {
@@ -25,23 +26,25 @@ export class JobRunsHeaderComponent extends Component {
 
   componentDidMount() {
     const { jobId } = this.props;
-    http
-      .get("/api/jobs/" + jobId)
-      .then((response) => response.data)
-      .then((data) => {
-        this.setState({
-          loading: false,
-          ...(data.title && { title: data.title }),
-          ...(data.description && { description: data.description }),
-          ...(data.default_args && { config: data.default_args }),
-        });
-      })
-      .catch((error) => {
-        this.onError(error);
-        this.setState({
-          loading: false,
-        });
-      });
+    withCancel(
+      http
+        .get("/api/jobs/" + jobId)
+        .then((response) => response.data)
+        .then((data) => {
+          this.setState({
+            loading: false,
+            ...(data.title && { title: data.title }),
+            ...(data.description && { description: data.description }),
+            ...(data.default_args && { config: data.default_args }),
+          });
+        })
+        .catch((error) => {
+          this.onError(error);
+          this.setState({
+            loading: false,
+          });
+        })
+    );
   }
 
   static contextType = NotificationContext;
