@@ -37,7 +37,7 @@ export class RunButton extends Component {
   handleSubmit = async () => {
     this.setState({ loading: true });
 
-    const { jobId, onError } = this.props;
+    const { jobId, onError, setRun } = this.props;
     const { title, config, queue } = this.state;
 
     try {
@@ -53,7 +53,7 @@ export class RunButton extends Component {
     };
 
     try {
-      await http.post("/api/jobs/" + jobId + "/runs", runData);
+      var response = await http.post("/api/jobs/" + jobId + "/runs", runData);
     } catch (error) {
       if (error.response) {
         onError(error.response.data);
@@ -61,6 +61,7 @@ export class RunButton extends Component {
         onError(error);
       }
     }
+    setRun(response.data.status, response.data.created);
     this.setState({ loading: false });
   };
 
@@ -122,4 +123,12 @@ RunButton.propTypes = {
   jobId: PropTypes.string.isRequired,
   config: PropTypes.object.isRequired,
   onError: PropTypes.func.isRequired,
+  setRun: PropTypes.func,
+};
+
+RunButton.defaultProps = {
+  setRun: (status, created) => {
+    // purposeful console.log if setRun function not passed
+    console.log(status, created);
+  },
 };

@@ -17,6 +17,14 @@ import { RunButton } from "./RunButton";
 import { StatusFormatter } from "./StatusFormatter";
 
 class SearchResultItemComponent extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      lastRunStatus: props.result?.last_run?.status,
+      lastRunCreatedTime: props.result?.last_run?.created,
+    };
+  }
   static contextType = NotificationContext;
 
   onError = (e) => {
@@ -31,6 +39,7 @@ class SearchResultItemComponent extends Component {
 
   render() {
     const { result } = this.props;
+    const { lastRunStatus, lastRunCreatedTime } = this.state;
 
     return (
       <Table.Row>
@@ -55,14 +64,14 @@ class SearchResultItemComponent extends Component {
           collapsing
           className=""
         >
-          {result.last_run ? (
+          {lastRunStatus ? (
             <>
-              <StatusFormatter status={result.last_run.status} />
+              <StatusFormatter status={lastRunStatus} />
               <Popup
-                content={result.last_run.created}
+                content={lastRunCreatedTime}
                 trigger={
                   <span>
-                    {toRelativeTime(result.last_run.created, i18next.language)}
+                    {toRelativeTime(lastRunCreatedTime, i18next.language)}
                   </span>
                 }
               />
@@ -108,6 +117,12 @@ class SearchResultItemComponent extends Component {
             jobId={result.id}
             config={result.default_args ?? {}}
             onError={this.onError}
+            setRun={(status, created) => {
+              this.setState({
+                lastRunStatus: status,
+                lastRunCreatedTime: created,
+              });
+            }}
           />
         </Table.Cell>
       </Table.Row>
