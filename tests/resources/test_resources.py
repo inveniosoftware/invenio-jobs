@@ -7,8 +7,14 @@
 
 """Resource tests."""
 
+import pdb
+from unittest.mock import patch
 
-def test_simple_flow(app, db, client, user):
+from invenio_jobs.tasks import execute_run
+
+
+@patch.object(execute_run, "apply_async")
+def test_simple_flow(mock_apply_async, app, db, client, user):
     """Test simple flow."""
     client = user.login(client)
     job_paylod = {
@@ -120,9 +126,10 @@ def test_simple_flow(app, db, client, user):
             "stop": f"https://127.0.0.1:5000/api/jobs/{job_id}/runs/{run_id}/actions/stop",
         },
     }
-    result = res.json
-    result.pop("task_id")
-    assert result == expected_run
+    assert "task_id" in res.json
+    assert res.json["task_id"] != None
+    expected_run["task_id"] = res.json["task_id"]
+    assert res.json == expected_run
 
     # List runs
     res = client.get(f"/jobs/{job_id}/runs")
@@ -138,7 +145,7 @@ def test_simple_flow(app, db, client, user):
     # Stop run
     res = client.post(f"/jobs/{job_id}/runs/{run_id}/actions/stop")
     assert res.status_code == 202
-    assert res.json["status"] == "CANCELLED"
+    assert res.json["status"] == "CANCELLING"
 
 
 def test_tasks_search(client):
