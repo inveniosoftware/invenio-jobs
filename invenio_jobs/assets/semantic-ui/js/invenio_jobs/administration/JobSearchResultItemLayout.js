@@ -6,16 +6,14 @@
  * under the terms of the MIT License; see LICENSE file for more details.
  */
 
-import { NotificationContext } from "@js/invenio_administration";
-import { BoolFormatter } from "@js/invenio_administration";
+import { BoolFormatter, NotificationContext } from "@js/invenio_administration";
 import { i18next } from "@translations/invenio_app_rdm/i18next";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
 import { UserListItemCompact, toRelativeTime } from "react-invenio-forms";
 import { withState } from "react-searchkit";
-import { Button, Icon, Popup, Table } from "semantic-ui-react";
-// import { RunButton } from "./RunButton";
-import { http } from "react-invenio-forms";
+import { Popup, Table } from "semantic-ui-react";
+import { RunButton } from "./RunButton";
 import { StatusFormatter } from "./StatusFormatter";
 
 class SearchResultItemComponent extends Component {
@@ -24,8 +22,8 @@ class SearchResultItemComponent extends Component {
   onError = (e) => {
     const { addNotification } = this.context;
     addNotification({
-      title: i18next.t("Error"),
-      content: e.message,
+      title: i18next.t("Status ") + e.status,
+      content: `${e.message}`,
       type: "error",
     });
     console.error(e);
@@ -57,23 +55,23 @@ class SearchResultItemComponent extends Component {
           collapsing
           className=""
         >
-          {result.last_run && (
-            <StatusFormatter status={result.last_run.status} />
-          )}
           {result.last_run ? (
-            <Popup
-              content={result.last_run.created}
-              trigger={
-                <span>
-                  {toRelativeTime(result.last_run.created, i18next.language)}
-                </span>
-              }
-            />
+            <>
+              <StatusFormatter status={result.last_run.status} />
+              <Popup
+                content={result.last_run.created}
+                trigger={
+                  <span>
+                    {toRelativeTime(result.last_run.created, i18next.language)}
+                  </span>
+                }
+              />
+            </>
           ) : (
             "−"
           )}
         </Table.Cell>
-        {result.last_run && result.last_run.started_by ? (
+        {result?.last_run?.started_by ? (
           <Table.Cell
             key={`job-user-${result.last_run.started_by.id}`}
             data-label={i18next.t("Started by")}
@@ -106,19 +104,11 @@ class SearchResultItemComponent extends Component {
             : toRelativeTime(result.next_run, i18next.language) ?? "−"}
         </Table.Cell>
         <Table.Cell collapsing>
-          <Button
-            icon
-            fluid
-            basic
-            labelPosition="left"
-            onClick={() => {
-              http.post("/api/jobs/" + result.id + "/runs");
-            }}
-          >
-            <Icon name="play" />
-            Run now
-          </Button>
-          {/* <RunButton jobId={result.id} config={result.default_args ?? {}} onError={this.onError} /> */}
+          <RunButton
+            jobId={result.id}
+            config={result.default_args ?? {}}
+            onError={this.onError}
+          />
         </Table.Cell>
       </Table.Row>
     );

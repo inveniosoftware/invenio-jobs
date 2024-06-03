@@ -6,70 +6,120 @@
 
 import { i18next } from "@translations/invenio_app_rdm/i18next";
 import PropTypes from "prop-types";
-import React, { useState } from "react";
+import React, { Component } from "react";
 import { http } from "react-invenio-forms";
 import {
   Button,
   Dropdown,
   DropdownMenu,
   Form,
+  FormField,
   FormInput,
+  TextArea,
 } from "semantic-ui-react";
 
-export const RunButton = ({ jobId, config, onError }) => {
-  const [loading, setLoading] = useState(false);
+export class RunButton extends Component {
+  constructor(props) {
+    super(props);
 
-  const handleClick = async () => {
-    setLoading(true);
+    this.state = {
+      title: "Manual run",
+      config: JSON.stringify(props.config, null, "\t"),
+      queue: "low",
+      loading: false,
+    };
+  }
+
+  handleTitleChange = (e, { name, value }) => this.setState({ title: value });
+  handleConfigChange = (e, { name, value }) => this.setState({ config: value });
+  handleQueueChange = (e, { name, value }) => this.setState({ queue: value });
+
+  handleSubmit = async () => {
+    this.setState({ loading: true });
+
+    const { jobId, onError } = this.props;
+    const { title, config, queue } = this.state;
+
     try {
-      await http.post("/api/jobs/" + jobId + "/runs");
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
-      onError(error);
+      var userConfigJSON = JSON.parse(config);
+    } catch (e) {
+      onError(e);
     }
+
+    const runData = {
+      title: title,
+      args: userConfigJSON,
+      queue: queue,
+    };
+
+    try {
+      await http.post("/api/jobs/" + jobId + "/runs", runData);
+    } catch (error) {
+      if (error.response) {
+        onError(error.response.data);
+      } else {
+        onError(error);
+      }
+    }
+    this.setState({ loading: false });
   };
 
-  return (
-    <Dropdown
-      text={i18next.t("Run now")}
-      icon="play"
-      floating
-      labeled
-      button
-      className="icon"
-      basic
-      closeOnBlur={false}
-      direction="left"
-    >
-      <DropdownMenu>
-        <Form className="p-10">
-          {Object.keys(config).map((key) => (
+  render() {
+    const { title, config, queue, loading } = this.state;
+    const lines = config.split(/\r?\n/).length;
+
+    return (
+      <Dropdown
+        text={i18next.t("Run now")}
+        icon="play"
+        floating
+        labeled
+        button
+        className="icon"
+        basic
+        direction="left"
+      >
+        <DropdownMenu>
+          <Form className="p-10" onSubmit={this.handleSubmit}>
             <FormInput
-              key={key}
-              label={key}
-              defaultValue={config[key]}
+              name="title"
+              label="Title"
+              value={title}
               onClick={(e) => e.stopPropagation()}
+              onChange={this.handleTitleChange}
             />
-          ))}
-          <Button
-            type="submit"
-            content="Run"
-            onClick={handleClick}
-            loading={loading}
-          />
-        </Form>
-      </DropdownMenu>
-    </Dropdown>
-  );
-};
+            <FormField
+              control={TextArea}
+              label="Arguments"
+              name="config"
+              rows={lines}
+              className="block min-width-max"
+              value={config}
+              onClick={(e) => e.stopPropagation()}
+              onChange={this.handleConfigChange}
+            />
+            <FormField
+              control={Dropdown}
+              name="queue"
+              label="Queue"
+              selection
+              value={queue}
+              options={[
+                { key: "celery", text: "celery", value: "celery" },
+                { key: "low", text: "low", value: "low" },
+              ]}
+              onChange={this.handleQueueChange}
+            />
+            <Button type="submit" content="Run" loading={loading} />
+          </Form>
+        </DropdownMenu>
+      </Dropdown>
+    );
+  }
+}
 
 RunButton.propTypes = {
   jobId: PropTypes.string.isRequired,
-  config: PropTypes.object,
+  config: PropTypes.object.isRequired,
   onError: PropTypes.func.isRequired,
-};
-
-RunButton.defaultProps = {
-  config: {},
 };

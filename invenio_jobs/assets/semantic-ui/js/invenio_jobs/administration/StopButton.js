@@ -18,7 +18,6 @@ export const StopButton = ({ stopURL, setStatus, onError }) => {
     const response = await http.post(stopURL).catch((error) => {
       if (error.response) {
         onError(error.response.data);
-        setLoading(false);
       } else {
         onError(error);
       }

@@ -4,35 +4,42 @@
 // Invenio RDM is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
 
-import { RunButton } from "./RunButton";
-import React, { Component } from "react";
 import { NotificationContext } from "@js/invenio_administration";
 import { i18next } from "@translations/invenio_app_rdm/i18next";
 import PropTypes from "prop-types";
+import React, { Component } from "react";
 import { http } from "react-invenio-forms";
+import { RunButton } from "./RunButton";
 
 export class JobRunsHeaderComponent extends Component {
   constructor(props) {
-    super();
+    super(props);
 
     this.state = {
-      jobId: props.jobId,
-      title: "Job Details",
+      title: i18next.t("Job Details"),
       description: "",
       config: {},
+      loading: true,
     };
   }
 
   componentDidMount() {
-    const { jobId } = this.state;
+    const { jobId } = this.props;
     http
       .get("/api/jobs/" + jobId)
       .then((response) => response.data)
       .then((data) => {
         this.setState({
+          loading: false,
           ...(data.title && { title: data.title }),
           ...(data.description && { description: data.description }),
           ...(data.default_args && { config: data.default_args }),
+        });
+      })
+      .catch((error) => {
+        this.onError(error);
+        this.setState({
+          loading: false,
         });
       });
   }
@@ -42,16 +49,16 @@ export class JobRunsHeaderComponent extends Component {
   onError = (e) => {
     const { addNotification } = this.context;
     addNotification({
-      title: i18next.t("Error"),
-      content: e.message,
+      title: i18next.t("Status ") + e.status,
+      content: `${e.message}`,
       type: "error",
     });
     console.error(e);
   };
 
   render() {
+    const { title, description, config, loading } = this.state;
     const { jobId } = this.props;
-    const { title, description, config } = this.state;
     return (
       <>
         <div className="column six wide">
@@ -59,11 +66,9 @@ export class JobRunsHeaderComponent extends Component {
           <p className="ui grey header">{description}</p>
         </div>
         <div className="column ten wide right aligned">
-          <RunButton
-            jobId={jobId}
-            config={config ?? {}}
-            onError={this.onError}
-          />
+          {loading ? null : (
+            <RunButton jobId={jobId} config={config} onError={this.onError} />
+          )}
         </div>
       </>
     );

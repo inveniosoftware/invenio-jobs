@@ -18,7 +18,7 @@ import { StopButton } from "./StopButton";
 
 class SearchResultItemComponent extends Component {
   constructor(props) {
-    super();
+    super(props);
 
     this.state = {
       status: props.result.status,
@@ -59,7 +59,7 @@ class SearchResultItemComponent extends Component {
           className=""
         >
           {result.started_at === null
-            ? "Waiting..."
+            ? `${i18next.t("Waiting")}...`
             : toRelativeTime(result.started_at, i18next.language)}
         </Table.Cell>
         <Table.Cell
