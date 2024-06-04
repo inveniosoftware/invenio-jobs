@@ -4,11 +4,16 @@
 // Invenio RDM is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
 
-import { initDefaultSearchComponents } from "@js/invenio_administration";
+import {
+  NotificationController,
+  initDefaultSearchComponents,
+} from "@js/invenio_administration";
 import { createSearchAppInit } from "@js/invenio_search_ui";
-import { NotificationController } from "@js/invenio_administration";
-import { SearchResultItemLayout } from "./JobSearchResultItemLayout";
+import React from "react";
+import ReactDOM from "react-dom";
+import { JobRunsHeaderComponent } from "./JobRunsHeader";
 import { JobSearchLayout } from "./JobSearchLayout";
+import { SearchResultItemLayout } from "./RunsSearchResultItemLayout";
 
 const domContainer = document.getElementById("invenio-search-config");
 
@@ -27,3 +32,8 @@ createSearchAppInit(
   false,
   NotificationController
 );
+
+const pidValue = domContainer.dataset.pidValue;
+const header = document.getElementById("header");
+
+header && ReactDOM.render(<JobRunsHeaderComponent jobId={pidValue} />, header);

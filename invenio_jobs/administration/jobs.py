@@ -8,15 +8,8 @@
 
 """Invenio administration view module."""
 
-from functools import partial
-
-from flask import current_app
-from invenio_administration.views.base import (
-    AdminResourceDetailView,
-    AdminResourceListView,
-)
+from invenio_administration.views.base import AdminResourceListView
 from invenio_i18n import lazy_gettext as _
-from invenio_search_ui.searchconfig import search_app_config
 
 
 class JobsListView(AdminResourceListView):
@@ -41,56 +34,48 @@ class JobsListView(AdminResourceListView):
     item_field_list = {
         "job": {"text": _("Jobs"), "order": 1, "width": 3},
         "last_run_start_time": {"text": _("Last run"), "order": 2, "width": 3},
-        "last_run_status": {"text": _("Status"), "order": 3, "width": 1},
-        "user": {"text": _("Started by"), "order": 4, "width": 3},
-        "next_run": {"text": _("Next run"), "order": 5, "width": 3},
+        "user": {"text": _("Started by"), "order": 3, "width": 3},
+        "next_run": {"text": _("Next run"), "order": 4, "width": 3},
+        "action": {"text": _("Action"), "order": 5, "width": 2},
     }
 
     search_config_name = "JOBS_SEARCH"
     search_sort_config_name = "JOBS_SORT_OPTIONS"
     search_facets_config_name = "JOBS_FACETS"
 
-    actions = {
-        "settings": {
-            "text": "Settings",
-            "payload_schema": None,
-            "order": 1,
-            "icon": "star",
-        },
-        "schedule": {
-            "text": "Schedule",
-            "payload_schema": None,
-            "order": 2,
-        },
-        "run": {
-            "text": "Run Now",
-            "payload_schema": None,
-            "order": 2,
-        },
-    }
 
+class JobsDetailsView(AdminResourceListView):
+    """Configuration for Jobs detail view which shows runs."""
 
-class JobsDetailView(AdminResourceDetailView):
-    """Configuration for Jobs detail view."""
+    def get_api_endpoint(self, pid_value=None):
+        """overwrite get_api_endpoint to accept pid_value."""
+        return f"/api/jobs/{pid_value}/runs"
 
     url = "/jobs/<pid_value>"
-    api_endpoint = "/jobs"
     search_request_headers = {"Accept": "application/json"}
-    name = "Job Details"
-    resource_config = "jobs_resource"
+    name = "job-details"
+    resource_config = "runs_resource"
     title = "Job Details"
+    disabled = lambda _: True
 
-    template = "invenio_administration/details.html"
+    template = "invenio_jobs/system/jobs/jobs-details.html"
     display_delete = False
     display_edit = False
     display_search = False
+    display_create = False
 
     list_view_name = "jobs"
     pid_path = "id"
+    pid_value = "<pid_value>"
 
     item_field_list = {
-        "run": {"text": _("Runs"), "order": 1},
-        "duration": {"text": _("Duration"), "order": 2},
-        "message": {"text": _("Message"), "order": 3},
-        "user": {"text": _("Started by"), "order": 4},
+        "run": {"text": _("Run"), "order": 1, "width": 2},
+        "duration": {"text": _("Duration"), "order": 2, "width": 2},
+        "message": {"text": _("Message"), "order": 3, "width": 10},
+        "user": {"text": _("Started by"), "order": 4, "width": 2},
+        "action": {"text": _("Action"), "order": 5, "width": 2},
     }
+
+    search_config_name = "JOBS_SEARCH"
+    search_sort_config_name = "JOBS_SORT_OPTIONS"
+    search_facets_config_name = "JOBS_FACETS"

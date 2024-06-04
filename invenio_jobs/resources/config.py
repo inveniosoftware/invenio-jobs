@@ -94,6 +94,12 @@ class RunsSearchRequestArgsSchema(SearchRequestArgsSchema):
     status = ma.fields.Enum(RunStatusEnum)
 
 
+class JobsSearchRequestArgsSchema(SearchRequestArgsSchema):
+    """Jobs search request parameters."""
+
+    status = ma.fields.Boolean()
+
+
 class RunsResourceConfig(ResourceConfig, ConfiguratorMixin):
     """Runs resource config."""
 
