@@ -32,14 +32,7 @@ def execute_run(self, run_id, kwargs=None):
     update_run(run, status=RunStatusEnum.RUNNING, started_at=datetime.now(timezone.utc))
 
     try:
-        result = task.apply(kwargs=kwargs)
-    except Exception as e:
-        update_run(
-            run,
-            status=RunStatusEnum.FAILED,
-            finished_at=datetime.now(timezone.utc),
-        )
-        return
+        result = task.apply(kwargs=kwargs, throw=True)
     except SystemExit as e:
         update_run(
             run,
@@ -47,6 +40,13 @@ def execute_run(self, run_id, kwargs=None):
             finished_at=datetime.now(timezone.utc),
         )
         raise e
+    except Exception as e:
+        update_run(
+            run,
+            status=RunStatusEnum.FAILED,
+            finished_at=datetime.now(timezone.utc),
+        )
+        return
 
     update_run(
         run,
