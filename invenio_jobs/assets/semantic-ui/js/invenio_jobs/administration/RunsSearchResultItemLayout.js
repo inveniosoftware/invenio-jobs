@@ -10,7 +10,11 @@ import { NotificationContext } from "@js/invenio_administration";
 import { i18next } from "@translations/invenio_app_rdm/i18next";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
-import { UserListItemCompact, toRelativeTime } from "react-invenio-forms";
+import {
+  UserListItemCompact,
+  diffTimestamps,
+  toRelativeTime,
+} from "react-invenio-forms";
 import { withState } from "react-searchkit";
 import { Table } from "semantic-ui-react";
 import { StatusFormatter } from "./StatusFormatter";
@@ -60,7 +64,15 @@ class SearchResultItemComponent extends Component {
         >
           {result.started_at === null
             ? `${i18next.t("Waiting")}...`
-            : toRelativeTime(result.started_at, i18next.language)}
+            : [
+                result.finished_at === null
+                  ? toRelativeTime(result.started_at, i18next.language)
+                  : diffTimestamps(
+                      result.finished_at,
+                      result.started_at,
+                      i18next.language
+                    ),
+              ]}
         </Table.Cell>
         <Table.Cell
           key={`run-last-run-${result.message}`}
