@@ -251,6 +251,7 @@ class RunsService(RecordService):
                 execute_run,
                 kwargs={"run_id": run.id, "kwargs": run.args},
                 task_id=str(run.task_id),
+                queue=run.queue,
             )
         )
 
