@@ -13,6 +13,7 @@ from typing import Any
 
 from celery.beat import ScheduleEntry, Scheduler, logger
 from invenio_db import db
+from sqlalchemy import and_
 
 from invenio_jobs.models import Job, Run, Task
 from invenio_jobs.tasks import execute_run
@@ -97,7 +98,9 @@ class RunScheduler(Scheduler):
         """Sync Jobs from db to the scheduler."""
         # TODO Should we also have a cleaup task for runs? "stale" run (status running, starttime > hour, Run pending for > 1 hr)
         with self.app.flask_app.app_context():
-            jobs = Job.query.filter(Job.active == True).all()
+            jobs = Job.query.filter(
+                and_(Job.active == True, Job.schedule != None)
+            ).all()
             self.entries = {}  # because some jobs might be deactivated
             for job in jobs:
                 self.entries[job.id] = JobEntry.from_job(job)
