@@ -105,7 +105,7 @@ class SearchResultItemComponent extends Component {
           </Table.Cell>
         )}
         <Table.Cell collapsing>
-          {status === "RUNNING" || status === "QUEUED" ? (
+          {status === "RUNNING" ? (
             <StopButton
               stopURL={result.links.stop}
               setStatus={(status) => {
