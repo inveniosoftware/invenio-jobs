@@ -10,15 +10,12 @@ import { NotificationContext } from "@js/invenio_administration";
 import { i18next } from "@translations/invenio_app_rdm/i18next";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
-import {
-  UserListItemCompact,
-  diffTimestamps,
-  toRelativeTime,
-} from "react-invenio-forms";
+import { UserListItemCompact } from "react-invenio-forms";
 import { withState } from "react-searchkit";
 import { Table } from "semantic-ui-react";
 import { StatusFormatter } from "./StatusFormatter";
 import { StopButton } from "./StopButton";
+import { diffTimestamps } from "./utils/diffTimestamps";
 
 class SearchResultItemComponent extends Component {
   constructor(props) {
@@ -66,7 +63,11 @@ class SearchResultItemComponent extends Component {
             ? `${i18next.t("Waiting")}...`
             : [
                 result.finished_at === null
-                  ? toRelativeTime(result.started_at, i18next.language)
+                  ? `${diffTimestamps(
+                      new Date().toISOString(),
+                      result.started_at,
+                      i18next.language
+                    )}...`
                   : diffTimestamps(
                       result.finished_at,
                       result.started_at,
