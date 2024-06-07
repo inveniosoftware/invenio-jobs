@@ -8,6 +8,7 @@
 
 """Invenio administration view module."""
 
+from flask import current_app
 from invenio_administration.views.base import AdminResourceListView
 from invenio_i18n import lazy_gettext as _
 
@@ -42,6 +43,11 @@ class JobsListView(AdminResourceListView):
     search_config_name = "JOBS_SEARCH"
     search_sort_config_name = "JOBS_SORT_OPTIONS"
     search_facets_config_name = "JOBS_FACETS"
+
+    @staticmethod
+    def disabled():
+        """Disable the view on demand."""
+        return current_app.config["JOBS_ADMINISTRATION_DISABLED"]
 
 
 class JobsDetailsView(AdminResourceListView):
