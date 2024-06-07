@@ -22,5 +22,26 @@
 
 InvenioRDM module for jobs management
 
+Usage
+=====
+
+This module adds a custom scheduler to schedule jobs that exist in the local database.
+
+To use this scheduler, the following command can be ran locally:
+
+.. code-block:: console
+
+    $ celery -A invenio_app.celery beat -l ERROR --scheduler invenio_jobs.services.scheduler:RunScheduler -s /var/run/celery-schedule --pidfile /var/run/celerybeat.pid
+
+Jobs can be managed through the administration view in the Invenio instance. By default, this view is disabled and can be enabled by adding the following configuration to the Invenio instance:
+
+.. code-block:: python
+
+    JOBS_ADMINISTRATION_DISABLED = False
+
+
+More Help
+---------
+
 Further documentation is available on
 https://invenio-jobs.readthedocs.io/
