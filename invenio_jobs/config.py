@@ -24,7 +24,7 @@ JOBS_PERMISSION_POLICY = JobPermissionPolicy
 JOBS_RUNS_PERMISSION_POLICY = RunPermissionPolicy
 """Permission policy for job runs."""
 
-JOBS_ADMINISTRATION_DISABLED = True
+JOBS_ADMINISTRATION_ENABLED = False
 """Disable Jobs administration views if ``True``."""
 
 JOBS_FACETS = {}

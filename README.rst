@@ -37,7 +37,7 @@ Jobs can be managed through the administration view in the Invenio instance. By 
 
 .. code-block:: python
 
-    JOBS_ADMINISTRATION_DISABLED = False
+    JOBS_ADMINISTRATION_ENABLED = True
 
 
 More Help
