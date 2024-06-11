@@ -47,7 +47,7 @@ class JobsListView(AdminResourceListView):
     @staticmethod
     def disabled():
         """Disable the view on demand."""
-        return current_app.config["JOBS_ADMINISTRATION_DISABLED"]
+        return not current_app.config["JOBS_ADMINISTRATION_ENABLED"]
 
 
 class JobsDetailsView(AdminResourceListView):
