@@ -236,11 +236,10 @@ class RunsService(RecordService):
             raise_errors=True,
         )
 
-        valid_data.setdefault("queue", job.default_queue)
-        run = Run(
-            id=str(uuid.uuid4()),
+        run = Run.create(
             job=job,
-            task_id=uuid.uuid4(),
+            id=str(uuid.uuid4()),
+            task_id=str(uuid.uuid4()),
             started_by_id=identity.id,
             status=RunStatusEnum.QUEUED,
             **valid_data,

@@ -9,13 +9,11 @@
 
 import traceback
 import uuid
-from typing import Any
 
 from celery.beat import ScheduleEntry, Scheduler, logger
 from invenio_db import db
-from sqlalchemy import and_
 
-from invenio_jobs.models import Job, Run, Task
+from invenio_jobs.models import Job, Run
 from invenio_jobs.tasks import execute_run
 
 
@@ -49,27 +47,23 @@ class RunScheduler(Scheduler):
     Entry = JobEntry
     entries = {}
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        """Initialize the database scheduler."""
-        super().__init__(*args, **kwargs)
-
     @property
     def schedule(self):
         """Get currently scheduled entries."""
         return self.entries
 
-    # Celery internal override
+    #
+    # Celery overrides
+    #
     def setup_schedule(self):
         """Setup schedule."""
         self.sync()
 
-    # Celery internal override
     def reserve(self, entry):
         """Update entry to next run execution time."""
         new_entry = self.schedule[entry.job.id] = next(entry)
         return new_entry
 
-    # Celery internal override
     def apply_entry(self, entry, producer=None):
         """Create and apply a JobEntry."""
         with self.app.flask_app.app_context():
@@ -93,26 +87,24 @@ class RunScheduler(Scheduler):
                 else:
                     logger.debug("%s sent.", entry.task)
 
-    # Celery internal override
     def sync(self):
         """Sync Jobs from db to the scheduler."""
         # TODO Should we also have a cleaup task for runs? "stale" run (status running, starttime > hour, Run pending for > 1 hr)
         with self.app.flask_app.app_context():
             jobs = Job.query.filter(
-                and_(Job.active == True, Job.schedule != None)
-            ).all()
+                Job.active.is_(True),
+                Job.schedule.isnot(None),
+            )
             self.entries = {}  # because some jobs might be deactivated
             for job in jobs:
                 self.entries[job.id] = JobEntry.from_job(job)
 
+    #
+    # Helpers
+    #
     def create_run(self, entry):
         """Create run from a JobEntry."""
-        job = Job.query.filter_by(id=entry.job.id).one()
-        run = Run(
-            job=job,
-            args=job.default_args,
-            queue=job.default_queue,
-            task_id=uuid.uuid4(),
-        )
+        job = Job.query.get(entry.job.id)
+        run = Run.create(job=job, task_id=uuid.uuid4())
         db.session.commit()
         return run
