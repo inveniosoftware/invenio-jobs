@@ -7,7 +7,6 @@
 
 """Resource tests."""
 
-import pdb
 from unittest.mock import patch
 
 from invenio_jobs.tasks import execute_run
@@ -429,3 +428,127 @@ def test_jobs_delete(db, client, jobs):
     assert res.json["hits"]["total"] == 2
     hits = res.json["hits"]["hits"]
     assert all(j["id"] != jobs.simple.id for j in hits)
+
+
+@patch.object(execute_run, "apply_async")
+def test_job_template_args(mock_apply_async, app, db, client, user):
+    client = user.login(client)
+    job_payload = {
+        "title": "Job with template args",
+        "task": "tasks.mock_task",
+        "default_args": {
+            "arg1": "{{ 1 + 1 }}",
+            "arg2": "{{ job.title | upper }}",
+            "kwarg1": "{{ last_run.created.isoformat() if last_run else None }}",
+        },
+    }
+
+    # Create a job
+    res = client.post("/jobs", json=job_payload)
+    assert res.status_code == 201
+    job_id = res.json["id"]
+    expected_job = {
+        "id": job_id,
+        "title": "Job with template args",
+        "description": None,
+        "active": True,
+        "task": "tasks.mock_task",
+        "default_queue": "celery",
+        "default_args": {
+            "arg1": "{{ 1 + 1 }}",
+            "arg2": "{{ job.title | upper }}",
+            "kwarg1": "{{ last_run.created.isoformat() if last_run else None }}",
+        },
+        "schedule": None,
+        "last_run": None,
+        "created": res.json["created"],
+        "updated": res.json["updated"],
+        "links": {
+            "self": f"https://127.0.0.1:5000/api/jobs/{job_id}",
+            "runs": f"https://127.0.0.1:5000/api/jobs/{job_id}/runs",
+        },
+    }
+    assert res.json == expected_job
+
+    # Create/trigger a run
+    res = client.post(f"/jobs/{job_id}/runs")
+    assert res.status_code == 201
+    run_id = res.json["id"]
+    expected_run = {
+        "id": run_id,
+        "job_id": job_id,
+        "task_id": res.json["task_id"],
+        "started_by_id": int(user.id),
+        "started_by": {
+            "id": str(user.id),
+            "username": user.username,
+            "profile": user._user_profile,
+            "links": {
+                # "self": f"https://127.0.0.1:5000/api/users/{user.id}",
+            },
+            "identities": {},
+            "is_current_user": True,
+            "type": "user",
+        },
+        "started_at": res.json["started_at"],
+        "finished_at": res.json["finished_at"],
+        "status": "QUEUED",
+        "message": None,
+        "title": None,
+        "args": {
+            "arg1": 2,
+            "arg2": "JOB WITH TEMPLATE ARGS",
+            "kwarg1": None,
+        },
+        "queue": "celery",
+        "created": res.json["created"],
+        "updated": res.json["updated"],
+        "links": {
+            "self": f"https://127.0.0.1:5000/api/jobs/{job_id}/runs/{run_id}",
+            "logs": f"https://127.0.0.1:5000/api/jobs/{job_id}/runs/{run_id}/logs",
+            "stop": f"https://127.0.0.1:5000/api/jobs/{job_id}/runs/{run_id}/actions/stop",
+        },
+    }
+    assert res.json == expected_run
+    last_run_created = res.json["created"].replace("+00:00", "")
+
+    # Trigger another run to test the kwarg1 template depending on the last run
+    res = client.post(f"/jobs/{job_id}/runs")
+    assert res.status_code == 201
+    run_id = res.json["id"]
+    expected_run = {
+        "id": run_id,
+        "job_id": job_id,
+        "task_id": res.json["task_id"],
+        "started_by_id": int(user.id),
+        "started_by": {
+            "id": str(user.id),
+            "username": user.username,
+            "profile": user._user_profile,
+            "links": {
+                # "self": f"https://127.0.0.1:5000/api/users/{user.id}",
+            },
+            "identities": {},
+            "is_current_user": True,
+            "type": "user",
+        },
+        "started_at": res.json["started_at"],
+        "finished_at": res.json["finished_at"],
+        "status": "QUEUED",
+        "message": None,
+        "title": None,
+        "args": {
+            "arg1": 2,
+            "arg2": "JOB WITH TEMPLATE ARGS",
+            "kwarg1": last_run_created,
+        },
+        "queue": "celery",
+        "created": res.json["created"],
+        "updated": res.json["updated"],
+        "links": {
+            "self": f"https://127.0.0.1:5000/api/jobs/{job_id}/runs/{run_id}",
+            "logs": f"https://127.0.0.1:5000/api/jobs/{job_id}/runs/{run_id}/logs",
+            "stop": f"https://127.0.0.1:5000/api/jobs/{job_id}/runs/{run_id}/actions/stop",
+        },
+    }
+    assert res.json == expected_run
