@@ -12,9 +12,11 @@ import PropTypes from "prop-types";
 import React, { Component } from "react";
 import { UserListItemCompact, toRelativeTime } from "react-invenio-forms";
 import { withState } from "react-searchkit";
-import { Popup, Table } from "semantic-ui-react";
+import { Popup, Table, Button } from "semantic-ui-react";
+import { Actions } from "@js/invenio_administration";
 import { RunButton } from "./RunButton";
 import { StatusFormatter } from "./StatusFormatter";
+import { AdminUIRoutes } from "@js/invenio_administration/src/routes";
 
 class SearchResultItemComponent extends Component {
   constructor(props) {
@@ -38,7 +40,18 @@ class SearchResultItemComponent extends Component {
   };
 
   render() {
-    const { result } = this.props;
+    const {
+      title,
+      actions,
+      apiEndpoint,
+      idKeyPath,
+      listUIEndpoint,
+      resourceName,
+      displayDelete,
+      displayEdit,
+      result,
+    } = this.props;
+
     const { lastRunStatus, lastRunCreatedTime } = this.state;
 
     return (
@@ -50,12 +63,24 @@ class SearchResultItemComponent extends Component {
           className="word-break-all"
         >
           <a href={`/administration/jobs/${result.id}`}>{result.title}</a>
-          &nbsp;
+        </Table.Cell>
+        <Table.Cell
+          key={`job-status-${result.active}`}
+          data-label={i18next.t("Active")}
+          collapsing
+          className="word-break-all"
+        >
           <BoolFormatter
             tooltip={i18next.t("Inactive")}
             icon="ban"
             color="grey"
             value={result.active === false}
+          />
+          <BoolFormatter
+            tooltip={i18next.t("Active")}
+            icon="check"
+            color="green"
+            value={result.active === true}
           />
         </Table.Cell>
         <Table.Cell
@@ -113,17 +138,35 @@ class SearchResultItemComponent extends Component {
             : toRelativeTime(result.next_run, i18next.language) ?? "−"}
         </Table.Cell>
         <Table.Cell collapsing>
-          <RunButton
-            jobId={result.id}
-            config={result.default_args ?? {}}
-            onError={this.onError}
-            setRun={(status, created) => {
-              this.setState({
-                lastRunStatus: status,
-                lastRunCreatedTime: created,
-              });
-            }}
-          />
+          <Button.Group size="tiny" className="relaxed">
+            <RunButton
+              jobId={result.id}
+              config={result.default_args ?? {}}
+              onError={this.onError}
+              setRun={(status, created) => {
+                this.setState({
+                  lastRunStatus: status,
+                  lastRunCreatedTime: created,
+                });
+              }}
+            />
+            <Actions
+              title={title}
+              resourceName={resourceName}
+              apiEndpoint={apiEndpoint}
+              editUrl={AdminUIRoutes.editView(
+                listUIEndpoint,
+                result,
+                idKeyPath
+              )}
+              actions={actions}
+              displayEdit={displayEdit}
+              displayDelete={displayDelete}
+              resource={result}
+              idKeyPath={idKeyPath}
+              listUIEndpoint={listUIEndpoint}
+            />
+          </Button.Group>
         </Table.Cell>
       </Table.Row>
     );
@@ -132,6 +175,14 @@ class SearchResultItemComponent extends Component {
 
 SearchResultItemComponent.propTypes = {
   result: PropTypes.object.isRequired,
+  idKeyPath: PropTypes.string.isRequired,
+  listUIEndpoint: PropTypes.string.isRequired,
+  title: PropTypes.string.isRequired,
+  resourceName: PropTypes.string.isRequired,
+  displayEdit: PropTypes.bool,
+  displayDelete: PropTypes.bool,
+  actions: PropTypes.object.isRequired,
+  apiEndpoint: PropTypes.string.isRequired,
 };
 
 SearchResultItemComponent.defaultProps = {};
