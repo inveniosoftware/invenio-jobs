@@ -131,7 +131,10 @@ class JobSchema(Schema, FieldPermissionsMixin):
         validate=LazyOneOf(choices=lambda: current_jobs.queues.keys()),
         load_default=lambda: current_jobs.default_queue,
     )
-    default_args = fields.Dict(load_default=dict, allow_none=True)
+
+    default_args = fields.Dict(
+        load_default=dict, allow_none=True, metadata={"type": "json"}
+    )
 
     schedule = fields.Nested(ScheduleSchema, allow_none=True, load_default=None)
 
