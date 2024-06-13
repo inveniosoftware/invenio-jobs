@@ -104,6 +104,7 @@ class JobsFormMixin:
 
     @property
     def form_fields(self):
+        """Initializing form fields."""
         jobs_queues = [
             {"title_l10n": str(queue["title"]), "id": queue["name"]}
             for queue in JOBS_QUEUES.values()
