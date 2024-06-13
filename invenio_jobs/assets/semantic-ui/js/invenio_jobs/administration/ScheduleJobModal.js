@@ -52,6 +52,7 @@ export class ScheduleJobModal extends React.Component {
 
     this.cancellableAction = withCancel(http.put(apiUrl, payload));
     try {
+      await this.cancellableAction.promise;
       this.setState({ loading: false });
       addNotification({
         title: i18next.t("Success"),
@@ -119,30 +120,38 @@ export class ScheduleJobModal extends React.Component {
                   <>
                     {Object.keys(
                       payloadSchema[values.selectedOption].properties
-                    ).map((property) => (
-                      <Field
-                        key={property}
-                        name={property}
-                        render={({ field }) => (
-                          <Input
-                            {...field}
-                            label={
-                              payloadSchema[values.selectedOption].properties[
-                                property
-                              ].metadata?.title
-                            }
-                            className="m-5"
-                            type={
-                              payloadSchema[values.selectedOption].properties[
-                                property
-                              ].type === "string"
-                                ? "text"
-                                : "number"
-                            }
-                          />
-                        )}
-                      />
-                    ))}
+                    )
+                      .sort(
+                        (a, b) =>
+                          payloadSchema[values.selectedOption].properties[a]
+                            .metadata.order -
+                          payloadSchema[values.selectedOption].properties[b]
+                            .metadata.order
+                      )
+                      .map((property) => (
+                        <Field
+                          key={property}
+                          name={property}
+                          render={({ field }) => (
+                            <Input
+                              {...field}
+                              label={
+                                payloadSchema[values.selectedOption].properties[
+                                  property
+                                ].metadata?.title
+                              }
+                              className="m-5"
+                              type={
+                                payloadSchema[values.selectedOption].properties[
+                                  property
+                                ].type === "string"
+                                  ? "text"
+                                  : "number"
+                              }
+                            />
+                          )}
+                        />
+                      ))}
                   </>
                 )}
             </Modal.Content>
