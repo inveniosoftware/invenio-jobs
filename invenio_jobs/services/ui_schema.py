@@ -32,9 +32,15 @@ class CrontabScheduleUISchema(Schema):
 
     minute = fields.String(load_default="*", metadata={"title": "Minute", "order": 1})
     hour = fields.String(load_default="*", metadata={"title": "Hour", "order": 2})
-    day_of_week = fields.String(load_default="*", metadata={"title": "Day of Week", "order": 3})
-    day_of_month = fields.String(load_default="*", metadata={"title": "Day of Month", "order": 4})
-    month_of_year = fields.String(load_default="*", metadata={"title": "Month of Year", "order": 5})
+    day_of_week = fields.String(
+        load_default="*", metadata={"title": "Day of Week", "order": 3}
+    )
+    day_of_month = fields.String(
+        load_default="*", metadata={"title": "Day of Month", "order": 4}
+    )
+    month_of_year = fields.String(
+        load_default="*", metadata={"title": "Month of Year", "order": 5}
+    )
 
 
 class ScheduleUISchema(OneOfSchema):

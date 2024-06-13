@@ -18,6 +18,7 @@ export class JobActions extends Component {
 
   onModalTriggerClick = (e, { payloadSchema, dataName, dataActionKey }) => {
     const { resource } = this.props;
+    const { modalOpen } = this.state;
 
     if (dataActionKey === "schedule") {
       this.setState({
@@ -27,7 +28,7 @@ export class JobActions extends Component {
           <ScheduleJobModal
             actionSuccessCallback={this.handleSuccess}
             actionCancelCallback={this.closeModal}
-            modalOpen={this.state.modalOpen}
+            modalOpen={modalOpen}
             data={resource}
             payloadSchema={payloadSchema}
             apiUrl={`/api/jobs/${resource.id}`}

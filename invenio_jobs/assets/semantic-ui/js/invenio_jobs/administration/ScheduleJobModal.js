@@ -24,11 +24,11 @@ export class ScheduleJobModal extends React.Component {
   handleSubmit = async (values) => {
     const { addNotification } = this.context;
     this.setState({ loading: true });
-    const { apiUrl, data, actionSuccessCallback } = this.props;
+    const { apiUrl, data, actionSuccessCallback, payloadSchema } = this.props;
     const { selectedOption } = values;
 
     // Filter out the values based on the schema for the selected option
-    const selectedOptionSchema = this.props.payloadSchema[selectedOption];
+    const { selectedOptionSchema } = payloadSchema[selectedOption];
     const filteredValues = Object.keys(values).reduce((acc, key) => {
       if (
         key !== "selectedOption" && // Exclude the selectedOption itself
