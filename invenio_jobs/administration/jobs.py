@@ -47,7 +47,6 @@ class JobsListView(JobsAdminMixin, AdminResourceListView):
     category = "System"
     icon = "settings"
     template = "invenio_jobs/system/jobs/jobs-search.html"
-    display_edit = True
     create_view_name = "jobs-create"
 
     item_field_list = {
