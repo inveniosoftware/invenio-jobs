@@ -185,6 +185,9 @@ SearchResultItemComponent.propTypes = {
   apiEndpoint: PropTypes.string.isRequired,
 };
 
-SearchResultItemComponent.defaultProps = {};
+SearchResultItemComponent.defaultProps = {
+  displayEdit: false,
+  displayDelete: false,
+};
 
 export const SearchResultItemLayout = withState(SearchResultItemComponent);
