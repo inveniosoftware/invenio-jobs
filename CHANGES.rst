@@ -7,6 +7,15 @@
 Changes
 =======
 
+Version 0.3.0 (released 2024-06-20)
+
+- UI: Added create, edit and schedule options
+- fix: only show stop button when task is running
+- bug: fix display of durations
+- global: support Jinja templating for job args
+- config: rename enabled flag
+- config: disable jobs view by default
+
 Version 0.2.0 (released 2024-06-05)
 
 - translations: added translations folder
