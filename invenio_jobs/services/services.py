@@ -29,7 +29,71 @@ from ..proxies import current_jobs
 from .errors import JobNotFoundError, RunNotFoundError, RunStatusChangeError
 
 
-class TasksService(RecordService):
+class OnlySearchRecordService(RecordService):
+    """Base service class that allows only searching.
+
+    Needed because this module does not have records, but re-implements the search
+    method from the record's service and uses the permissions mechanism.
+    """
+
+    def check_revision_id(self):
+        """Not implemented."""
+        raise NotImplementedError()
+
+    def create_search(self):
+        """Not implemented."""
+        raise NotImplementedError()
+
+    def search_request(self):
+        """Not implemented."""
+        raise NotImplementedError()
+
+    def scan(self):
+        """Not implemented."""
+        raise NotImplementedError()
+
+    def reindex(self):
+        """Not implemented."""
+        raise NotImplementedError()
+
+    def create(self):
+        """Not implemented."""
+        raise NotImplementedError()
+
+    def read(self):
+        """Not implemented."""
+        raise NotImplementedError()
+
+    def exists(self):
+        """Not implemented."""
+        raise NotImplementedError()
+
+    def read_many(self):
+        """Not implemented."""
+        raise NotImplementedError()
+
+    def read_all(self):
+        """Not implemented."""
+        raise NotImplementedError()
+
+    def update(self):
+        """Not implemented."""
+        raise NotImplementedError()
+
+    def delete(self):
+        """Not implemented."""
+        raise NotImplementedError()
+
+    def rebuild_index(self):
+        """Not implemented."""
+        raise NotImplementedError()
+
+    def on_relation_update(self):
+        """Not implemented."""
+        raise NotImplementedError()
+
+
+class TasksService(OnlySearchRecordService):
     """Tasks service."""
 
     def search(self, identity, params):
@@ -78,7 +142,7 @@ def get_run(run_id, job_id=None):
     return run
 
 
-class JobsService(RecordService):
+class JobsService(OnlySearchRecordService):
     """Jobs service."""
 
     @unit_of_work()
@@ -173,7 +237,7 @@ class JobsService(RecordService):
         return True
 
 
-class RunsService(RecordService):
+class RunsService(OnlySearchRecordService):
     """Runs service."""
 
     def search(self, identity, job_id, params):
