@@ -29,7 +29,19 @@ from ..proxies import current_jobs
 from .errors import JobNotFoundError, RunNotFoundError, RunStatusChangeError
 
 
-class TasksService(RecordService):
+class BaseService(RecordService):
+    """Base service class for DB-backed services.
+
+    NOTE: See https://github.com/inveniosoftware/invenio-records-resources/issues/583
+    for future directions.
+    """
+
+    def rebuild_index(self, identity, uow=None):
+        """Raise error since services are not backed by search indices."""
+        raise NotImplementedError()
+
+
+class TasksService(BaseService):
     """Tasks service."""
 
     def search(self, identity, params):
@@ -78,7 +90,7 @@ def get_run(run_id, job_id=None):
     return run
 
 
-class JobsService(RecordService):
+class JobsService(BaseService):
     """Jobs service."""
 
     @unit_of_work()
@@ -173,7 +185,7 @@ class JobsService(RecordService):
         return True
 
 
-class RunsService(RecordService):
+class RunsService(BaseService):
     """Runs service."""
 
     def search(self, identity, job_id, params):
