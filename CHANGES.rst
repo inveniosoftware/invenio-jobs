@@ -7,6 +7,10 @@
 Changes
 =======
 
+Version 0.3.1 (released 2024-07-11)
+
+- services: skip index rebuilding
+
 Version 0.3.0 (released 2024-06-20)
 
 - UI: Added create, edit and schedule options
