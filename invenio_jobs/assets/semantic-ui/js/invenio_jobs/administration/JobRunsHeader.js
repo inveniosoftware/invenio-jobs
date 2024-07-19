@@ -36,6 +36,7 @@ export class JobRunsHeaderComponent extends Component {
             ...(data.title && { title: data.title }),
             ...(data.description && { description: data.description }),
             ...(data.default_args && { config: data.default_args }),
+            ...(data.default_queue && { queue: data.default_queue }),
           });
         })
         .catch((error) => {
@@ -60,7 +61,7 @@ export class JobRunsHeaderComponent extends Component {
   };
 
   render() {
-    const { title, description, config, loading } = this.state;
+    const { title, description, config, loading, queue } = this.state;
     const { jobId } = this.props;
     return (
       <>
@@ -70,7 +71,12 @@ export class JobRunsHeaderComponent extends Component {
         </div>
         <div className="column ten wide right aligned">
           {loading ? null : (
-            <RunButton jobId={jobId} config={config} onError={this.onError} />
+            <RunButton
+              jobId={jobId}
+              config={config}
+              onError={this.onError}
+              queue={queue}
+            />
           )}
         </div>
       </>
