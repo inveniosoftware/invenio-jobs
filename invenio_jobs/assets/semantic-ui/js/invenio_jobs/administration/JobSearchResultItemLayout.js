@@ -143,6 +143,7 @@ class SearchResultItemComponent extends Component {
               jobId={result.id}
               config={result.default_args ?? {}}
               onError={this.onError}
+              queue={result.default_queue}
               setRun={(status, created) => {
                 this.setState({
                   lastRunStatus: status,

@@ -25,7 +25,7 @@ export class RunButton extends Component {
     this.state = {
       title: "Manual run",
       config: JSON.stringify(props.config, null, "\t"),
-      queue: "low",
+      queue: props.queue || "celery",
       loading: false,
     };
   }
@@ -45,16 +45,19 @@ export class RunButton extends Component {
     const { title, config, queue } = this.state;
 
     try {
-      var userConfigJSON = JSON.parse(config);
+      var userConfigJSON = config === "" ? null : JSON.parse(config);
     } catch (e) {
       onError(e);
     }
 
     const runData = {
       title: title,
-      args: userConfigJSON,
       queue: queue,
     };
+
+    if (userConfigJSON !== null) {
+      runData.args = userConfigJSON;
+    }
 
     try {
       this.cancellableAction = await withCancel(
@@ -131,6 +134,7 @@ RunButton.propTypes = {
   config: PropTypes.object.isRequired,
   onError: PropTypes.func.isRequired,
   setRun: PropTypes.func,
+  queue: PropTypes.string.isRequired,
 };
 
 RunButton.defaultProps = {
