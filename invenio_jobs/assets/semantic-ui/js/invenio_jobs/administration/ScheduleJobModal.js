@@ -28,7 +28,7 @@ export class ScheduleJobModal extends React.Component {
     const { selectedOption } = values;
 
     // Filter out the values based on the schema for the selected option
-    const { selectedOptionSchema } = payloadSchema[selectedOption];
+    const selectedOptionSchema = payloadSchema[selectedOption];
     const filteredValues = Object.keys(values).reduce((acc, key) => {
       if (
         key !== "selectedOption" && // Exclude the selectedOption itself
