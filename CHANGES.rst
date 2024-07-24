@@ -7,6 +7,11 @@
 Changes
 =======
 
+Version 0.3.2 (released 2024-07-24)
+
+- UI: fix schedule save
+- UI: fix default queue; don't error on empty args
+
 Version 0.3.1 (released 2024-07-11)
 
 - services: skip index rebuilding
