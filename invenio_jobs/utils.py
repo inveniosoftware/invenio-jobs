@@ -16,6 +16,9 @@ jinja_env = SandboxedEnvironment()
 
 def eval_tpl_str(val, ctx):
     """Evaluate a Jinja template string."""
+    if not isinstance(val, str):
+        return val
+
     tpl = jinja_env.from_string(val)
     res = tpl.render(**ctx)
 
