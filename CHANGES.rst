@@ -7,6 +7,10 @@
 Changes
 =======
 
+Version v0.3.4 (released 2024-08-08)
+
+- fix: pass args to task via run
+
 Version v0.3.3 (released 2024-08-08)
 
 - fix: utils: only eval strings
