@@ -7,6 +7,10 @@
 Changes
 =======
 
+Version v0.3.3 (released 2024-08-08)
+
+- fix: utils: only eval strings
+
 Version 0.3.2 (released 2024-07-24)
 
 - UI: fix schedule save
