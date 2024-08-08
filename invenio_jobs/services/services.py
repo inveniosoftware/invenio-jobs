@@ -260,7 +260,7 @@ class RunsService(BaseService):
         uow.register(
             TaskOp.for_async_apply(
                 execute_run,
-                kwargs={"run_id": run.id, "kwargs": run.args},
+                kwargs={"run_id": run.id},
                 task_id=str(run.task_id),
                 queue=run.queue,
             )

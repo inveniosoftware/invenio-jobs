@@ -33,7 +33,7 @@ def execute_run(self, run_id, kwargs=None):
     update_run(run, status=RunStatusEnum.RUNNING, started_at=datetime.now(timezone.utc))
 
     try:
-        result = task.apply(kwargs=kwargs, throw=True)
+        result = task.apply(kwargs=run.args, throw=True)
     except SystemExit as e:
         update_run(
             run,
