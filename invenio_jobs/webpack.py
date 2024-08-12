@@ -20,7 +20,7 @@ administration = WebpackThemeBundle(
                 "invenio-jobs-details": "./js/invenio_jobs/administration/JobRuns.js",
             },
             dependencies={
-                "react-invenio-forms": "^3.0.0",
+                "react-invenio-forms": "^4.0.0",
                 "react-searchkit": "^2.0.0",
             },
             aliases={
