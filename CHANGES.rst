@@ -7,6 +7,10 @@
 Changes
 =======
 
+Version v0.4.0 (released 2024-08-22)
+
+- package: bump react-invenio-forms (#52)
+
 Version v0.3.4 (released 2024-08-08)
 
 - fix: pass args to task via run
