@@ -7,6 +7,10 @@
 Changes
 =======
 
+Version v0.5.0 (released 2024-08-22)
+
+- bump invenio-users-resources
+
 Version v0.4.0 (released 2024-08-22)
 
 - package: bump react-invenio-forms (#52)
