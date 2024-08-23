@@ -7,13 +7,14 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 
 """Jobs extension."""
-
+import importlib_metadata
 from celery import current_app as current_celery_app
 from flask import current_app
 from invenio_i18n import gettext as _
 
 from . import config
 from .models import Task
+from .registry import JobsRegistry
 from .resources import (
     JobsResource,
     JobsResourceConfig,
@@ -40,11 +41,13 @@ class InvenioJobs:
         if app:
             self.init_app(app)
 
-    def init_app(self, app):
+    def init_app(self, app, entry_point_group="invenio_jobs.jobs"):
         """Flask application initialization."""
         self.init_config(app)
         self.init_services(app)
         self.init_resource(app)
+        self.entry_point_group = entry_point_group
+        self.registry = JobsRegistry()
         app.extensions["invenio-jobs"] = self
 
     def init_config(self, app):
@@ -69,6 +72,13 @@ class InvenioJobs:
             TasksResourceConfig.build(app), self.tasks_service
         )
 
+    def load_entry_point_group(self):
+        """Load actions from an entry point group."""
+        entrypoints = set(importlib_metadata.entry_points(group=self.entry_point_group))
+        for ep in entrypoints:
+            entry_point = ep.load()
+            yield entry_point
+
     @property
     def queues(self):
         """Return the queues."""
@@ -85,13 +95,22 @@ class InvenioJobs:
     @property
     def tasks(self):
         """Return the tasks."""
-        return Task.all()
+        # backwards compatibility
+        return self.jobs
+
+    @property
+    def jobs(self):
+        """Return the tasks."""
+        return self.registry.all_registered_jobs()
+
 
 
 def finalize_app(app):
     """Finalize app."""
     rr_ext = app.extensions["invenio-records-resources"]
     ext = app.extensions["invenio-jobs"]
+    for ep in ext.load_entry_point_group():
+        ext.registry.register(ep)
 
     # services
     rr_ext.registry.register(ext.service, service_id="jobs")
