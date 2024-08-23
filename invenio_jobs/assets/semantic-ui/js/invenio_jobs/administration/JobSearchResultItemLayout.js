@@ -139,18 +139,6 @@ class SearchResultItemComponent extends Component {
         </Table.Cell>
         <Table.Cell collapsing>
           <Button.Group size="tiny" className="relaxed">
-            <RunButton
-              jobId={result.id}
-              config={result.default_args ?? {}}
-              onError={this.onError}
-              queue={result.default_queue}
-              setRun={(status, created) => {
-                this.setState({
-                  lastRunStatus: status,
-                  lastRunCreatedTime: created,
-                });
-              }}
-            />
             <Actions
               title={title}
               resourceName={resourceName}

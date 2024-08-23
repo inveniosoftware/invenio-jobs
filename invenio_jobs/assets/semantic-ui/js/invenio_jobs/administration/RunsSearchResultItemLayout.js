@@ -41,7 +41,7 @@ class SearchResultItemComponent extends Component {
   render() {
     const { result } = this.props;
     const { status } = this.state;
-
+    debugger; // eslint-disable-line no-debugger
     return (
       <Table.Row>
         <Table.Cell

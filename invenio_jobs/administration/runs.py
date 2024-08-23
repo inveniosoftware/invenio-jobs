@@ -27,3 +27,13 @@ class RunsListView(AdminResourceListView):
     display_delete = False
     display_edit = False
     display_create = False
+    actions = None
+
+    # item_field_list = {
+    #     "job": {"text": _("Jobs"), "order": 1, "width": 3},
+    #     "active": {"text": _("Status"), "order": 2, "width": 2},
+    #     "last_run_start_time": {"text": _("Last run"), "order": 3, "width": 3},
+    #     "user": {"text": _("Started by"), "order": 4, "width": 3},
+    #     "next_run": {"text": _("Next run"), "order": 5, "width": 3},
+    # }
+

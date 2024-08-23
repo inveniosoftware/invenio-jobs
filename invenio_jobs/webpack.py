@@ -17,11 +17,12 @@ administration = WebpackThemeBundle(
         "semantic-ui": dict(
             entry={
                 "invenio-jobs-search": "./js/invenio_jobs/administration/index.js",
-                "invenio-jobs-details": "./js/invenio_jobs/administration/JobRuns.js",
+                "invenio-jobs-details": "./js/invenio_jobs/administration/JobDetailsView.js",
             },
             dependencies={
                 "react-invenio-forms": "^4.0.0",
                 "react-searchkit": "^2.0.0",
+                "react-json-view": "^1.21.3",
             },
             aliases={
                 "@less/invenio_jobs": "less/invenio_jobs",

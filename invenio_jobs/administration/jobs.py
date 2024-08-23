@@ -17,6 +17,7 @@ from invenio_i18n import lazy_gettext as _
 
 from invenio_jobs.config import JOBS_QUEUES
 from invenio_jobs.models import Task
+from invenio_jobs.services.schema import RunSchema
 from invenio_jobs.services.ui_schema import ScheduleUISchema
 
 
@@ -35,6 +36,21 @@ class JobsAdminMixin:
     search_config_name = "JOBS_SEARCH"
     search_sort_config_name = "JOBS_SORT_OPTIONS"
     search_facets_config_name = "JOBS_FACETS"
+
+    actions = {
+        "schedule": {
+            "text": "Schedule",
+            "payload_schema": ScheduleUISchema,
+            "order": 1,
+            "icon": "calendar",
+        },
+        "runs": {
+            "text": "Run now",
+            "payload_schema": RunSchema,
+            "order": 2,
+            "icon": "play",
+        },
+    }
 
 
 class JobsListView(JobsAdminMixin, AdminResourceListView):
@@ -56,13 +72,6 @@ class JobsListView(JobsAdminMixin, AdminResourceListView):
         "user": {"text": _("Started by"), "order": 4, "width": 3},
         "next_run": {"text": _("Next run"), "order": 5, "width": 3},
     }
-    actions = {
-        "schedule": {
-            "text": "Schedule",
-            "payload_schema": ScheduleUISchema,
-            "order": 1,
-        }
-    }
 
     @staticmethod
     def disabled():
@@ -73,12 +82,9 @@ class JobsListView(JobsAdminMixin, AdminResourceListView):
 class JobsDetailsView(JobsAdminMixin, AdminResourceListView):
     """Configuration for Jobs detail view which shows runs."""
 
-    def get_api_endpoint(self, pid_value=None):
-        """overwrite get_api_endpoint to accept pid_value."""
-        return f"/api/jobs/{pid_value}/runs"
-
     url = "/jobs/<pid_value>"
     search_request_headers = {"Accept": "application/json"}
+    request_headers = {"Accept": "application/json"}
     name = "job-details"
     resource_config = "runs_resource"
     title = "Job Details"
@@ -97,6 +103,27 @@ class JobsDetailsView(JobsAdminMixin, AdminResourceListView):
         "action": {"text": _("Action"), "order": 5, "width": 2},
     }
 
+    def get_api_endpoint(self, pid_value=None):
+        """overwrite get_api_endpoint to accept pid_value."""
+        return f"/api/jobs/{pid_value}/runs"
+
+    def get_details_api_endpoint(self):
+        api_url_prefix = current_app.config["SITE_API_URL"]
+        slash_tpl = "/" if not self.api_endpoint.startswith("/") else ""
+
+        if not self.api_endpoint.startswith(api_url_prefix):
+            return f"{api_url_prefix}{slash_tpl}{self.api_endpoint}"
+
+        return f"{slash_tpl}{self.api_endpoint}"
+
+    def get_context(self, **kwargs):
+        ctx = super().get_context(**kwargs)
+        ctx["request_headers"] = self.request_headers
+        ctx["ui_config"] = self.item_field_list
+        ctx["name"] = self.name
+        ctx["api_endpoint"] = self.get_details_api_endpoint()
+        return ctx
+
 
 class JobsFormMixin:
     """Mixin class for form fields."""
@@ -108,7 +135,7 @@ class JobsFormMixin:
             {"title_l10n": str(queue["title"]), "id": queue["name"]}
             for queue in JOBS_QUEUES.values()
         ]
-        tasks = [{"title_l10n": name, "id": name} for name, t in Task.all().items()]
+        tasks = [{"title_l10n": t.title, "id": name} for name, t in Task.all().items()]
         return {
             "title": {
                 "order": 1,
@@ -137,11 +164,6 @@ class JobsFormMixin:
             "active": {
                 "order": 5,
                 "text": _("Active"),
-            },
-            "default_args": {
-                "order": 6,
-                "text": _("Default Arguments"),
-                "description": _("A task for the job run."),
             },
             "created": {"order": 7},
             "updated": {"order": 8},
