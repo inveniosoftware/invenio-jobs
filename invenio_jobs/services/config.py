@@ -54,6 +54,7 @@ class TasksServiceConfig(ServiceConfig, ConfiguratorMixin):
     record_cls = Task
     search = TasksSearchOptions
     schema = TaskSchema
+    argument_item_cls = results.Item
 
     permission_policy_cls = FromConfig(
         "JOBS_TASKS_PERMISSION_POLICY",
@@ -94,12 +95,13 @@ class JobsServiceConfig(ServiceConfig, ConfiguratorMixin):
         default=JobPermissionPolicy,
     )
 
-    result_item_cls = results.Item
-    result_list_cls = results.List
+    result_item_cls = results.JobItem
+    result_list_cls = results.JobList
 
     links_item = {
         "self": JobLink("{+api}/jobs/{id}"),
         "runs": JobLink("{+api}/jobs/{id}/runs"),
+        "self_admin_html": JobLink("{+ui}/administration/jobs/{id}"),
     }
 
     links_search = pagination_links("{+api}/jobs{?args*}")

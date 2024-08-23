@@ -50,11 +50,13 @@ class TasksResourceConfig(ResourceConfig, ConfiguratorMixin):
     # Blueprint configuration
     blueprint_name = "tasks"
     url_prefix = "/tasks"
-    routes = {"list": ""}
+    routes = {"list": "", "arguments": "/<registered_task_id>/args"}
+
 
     # Request handling
     request_search_args = SearchRequestArgsSchema
     request_body_parsers = request_body_parsers
+    request_view_args = {"registered_task_id": ma.fields.String()}
 
     # Response handling
     response_handlers = response_handlers

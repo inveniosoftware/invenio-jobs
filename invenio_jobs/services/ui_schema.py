@@ -7,12 +7,9 @@
 
 """UI schemas."""
 
-from invenio_i18n import lazy_gettext as _
 from marshmallow import Schema, fields
 from marshmallow_oneofschema import OneOfSchema
-from marshmallow_utils.fields import SanitizedUnicode
-from marshmallow_utils.permissions import FieldPermissionsMixin
-from marshmallow_utils.validators import LazyOneOf
+
 
 
 class IntervalScheduleUISchema(Schema):

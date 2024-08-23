@@ -13,6 +13,7 @@ from celery import shared_task
 from invenio_db import db
 
 from invenio_jobs.models import Run, RunStatusEnum
+from invenio_jobs.proxies import current_jobs
 
 
 # TODO 1. Move to service? 2. Don't use kwargs?
@@ -29,9 +30,8 @@ def update_run(run, **kwargs):
 def execute_run(self, run_id, kwargs=None):
     """Execute and manage a run state and task."""
     run = Run.query.filter_by(id=run_id).one_or_none()
-    task = self.app.tasks.get(run.job.task)
+    task = current_jobs.registry.get(run.job.task).task
     update_run(run, status=RunStatusEnum.RUNNING, started_at=datetime.now(timezone.utc))
-
     try:
         result = task.apply(kwargs=run.args, throw=True)
     except SystemExit as e:
@@ -46,6 +46,7 @@ def execute_run(self, run_id, kwargs=None):
             run,
             status=RunStatusEnum.FAILED,
             finished_at=datetime.now(timezone.utc),
+            message=f"{e.__class__.__name__}: {str(e)}"
         )
         return
 

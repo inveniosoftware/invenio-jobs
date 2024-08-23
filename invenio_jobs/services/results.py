@@ -7,7 +7,7 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 
 """Service results."""
-
+import json
 from collections.abc import Iterable, Sized
 
 from invenio_records_resources.services.records.results import (
@@ -24,6 +24,12 @@ except ImportError:
     from flask_sqlalchemy.pagination import Pagination
 
 
+class AttrDict(dict):
+    def __init__(self, *args, **kwargs):
+        super(AttrDict, self).__init__(*args, **kwargs)
+        self.__dict__ = self
+
+
 class Item(RecordItem):
     """Single item result."""
 
@@ -31,6 +37,36 @@ class Item(RecordItem):
     def id(self):
         """Get the result id."""
         return str(self._record.id)
+
+
+class JobItem(Item):
+    """Single Job result."""
+
+    @property
+    def data(self):
+        if self._data:
+            return self._data
+
+        job_dict = self._obj.dump()
+        if self._obj.last_run:
+            job_dict["last_run"] = self._obj.last_run.dump()
+            job_dict["last_runs"] = self._obj.last_runs
+        job_dict["default_args"] = json.dumps(
+            self._obj.default_args, indent=4, sort_keys=True, default=str
+        )
+        job_record = AttrDict(job_dict)
+
+        self._data = self._schema.dump(
+            job_record,
+            context={
+                "identity": self._identity,
+                "record": self._record,
+            },
+        )
+
+        if self._links_tpl:
+            self._data["links"] = self.links
+        return self._data
 
 
 class List(RecordList):
@@ -71,8 +107,38 @@ class List(RecordList):
         """Iterator over the hits."""
         for hit in self.items:
             # Project the hit
+            hit_dict = hit.dump()
+            hit_record = AttrDict(hit_dict)
             projection = self._schema.dump(
-                hit,
+                hit_record,
+                context=dict(identity=self._identity, record=hit),
+            )
+            if self._links_item_tpl:
+                projection["links"] = self._links_item_tpl.expand(self._identity, hit)
+            if self._nested_links_item:
+                for link in self._nested_links_item:
+                    link.expand(self._identity, hit, projection)
+
+            yield projection
+
+
+class JobList(List):
+    """List result."""
+
+    @property
+    def hits(self):
+        """Iterator over the hits."""
+        for hit in self.items:
+            # Project the hit
+            job_dict = hit.dump()
+            job_dict["last_run"] = hit.last_run
+            job_dict["last_runs"] = hit.last_runs
+            job_dict["default_args"] = json.dumps(
+                hit.default_args, indent=4, sort_keys=True, default=str
+            )
+            job_record = AttrDict(job_dict)
+            projection = self._schema.dump(
+                job_record,
                 context=dict(identity=self._identity, record=hit),
             )
             if self._links_item_tpl:

@@ -10,6 +10,7 @@
 
 from flask import g
 from flask_resources import Resource, resource_requestctx, response_handler, route
+from invenio_administration.marshmallow_utils import jsonify_schema
 from invenio_records_resources.resources.errors import ErrorHandlersMixin
 from invenio_records_resources.resources.records.resource import (
     request_data,
@@ -32,6 +33,7 @@ class TasksResource(ErrorHandlersMixin, Resource):
         routes = self.config.routes
         url_rules = [
             route("GET", routes["list"], self.search),
+            route("GET", routes["arguments"], self.read_arguments)
         ]
 
         return url_rules
@@ -49,6 +51,13 @@ class TasksResource(ErrorHandlersMixin, Resource):
             params=resource_requestctx.args,
         )
         return hits.to_dict(), 200
+
+    @request_view_args
+    def read_arguments(self):
+        identity = g.identity
+        registered_task_id = resource_requestctx.view_args["registered_task_id"]
+        arguments_schema = self.service.read_registered_task_arguments(identity, registered_task_id)
+        return jsonify_schema(arguments_schema) if arguments_schema else {}
 
 
 class JobsResource(ErrorHandlersMixin, Resource):
