@@ -7,6 +7,8 @@
 import { initDefaultSearchComponents } from "@js/invenio_administration";
 import { createSearchAppInit } from "@js/invenio_search_ui";
 import { NotificationController } from "@js/invenio_administration";
+import { JobRunsHeader } from "./JobRunsHeader";
+import { RunActionForm } from "./RunActionForm";
 import { SearchResultItemLayout } from "./JobSearchResultItemLayout";
 import { JobSearchLayout } from "./JobSearchLayout";
 import { JobActions } from "./JobActions";
@@ -20,6 +22,7 @@ const overridenComponents = {
   "InvenioAdministration.SearchResultItem.layout": SearchResultItemLayout,
   "InvenioAdministration.ResourceActions": JobActions,
   "SearchApp.layout": JobSearchLayout,
+  "InvenioAdministration.ActionForm.runs.layout": RunActionForm,
 };
 
 createSearchAppInit(

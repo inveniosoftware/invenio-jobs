@@ -17,9 +17,8 @@ export class JobActions extends Component {
   }
 
   onModalTriggerClick = (e, { payloadSchema, dataName, dataActionKey }) => {
-    const { resource } = this.props;
     const { modalOpen } = this.state;
-
+    const { resource, actions: actionsConfig } = this.props;
     if (dataActionKey === "schedule") {
       this.setState({
         modalOpen: true,
@@ -46,6 +45,8 @@ export class JobActions extends Component {
             actionSuccessCallback={this.handleSuccess}
             actionCancelCallback={this.closeModal}
             resource={resource}
+            actionPayload={resource}
+            actionConfig={actionsConfig[dataActionKey]}
           />
         ),
       });
@@ -61,50 +62,41 @@ export class JobActions extends Component {
   };
 
   handleSuccess = () => {
+    const {resource} = this.props;
     this.setState({
       modalOpen: false,
       modalHeader: undefined,
       modalBody: undefined,
     });
     setTimeout(() => {
-      window.location.reload();
+      window.location = resource.links.self_admin_html;
     }, 1000);
   };
 
   render() {
     const { actions, Element, resource } = this.props;
     const { modalOpen, modalHeader, modalBody } = this.state;
+
     return (
       <>
         {Object.entries(actions).map(([actionKey, actionConfig]) => {
-          if (actionKey === "schedule") {
-            return (
-              <Element
-                key={actionKey}
-                onClick={this.onModalTriggerClick}
-                payloadSchema={actionConfig.payload_schema}
-                dataName={actionConfig.text}
-                dataActionKey={actionKey}
-                icon
-                labelPosition="left"
-              >
-                <Icon name="calendar" />
-                {actionConfig.text}
-              </Element>
-            );
-          } else {
-            return (
-              <Element
-                key={actionKey}
-                onClick={this.onModalTriggerClick}
-                payloadSchema={actionConfig.payload_schema}
-                dataName={actionConfig.text}
-                dataActionKey={actionKey}
-              >
-                {actionConfig.text}
-              </Element>
-            );
-          }
+          const icon = actionConfig.icon;
+          const labelPos = icon ? "left" : null;
+          return (
+            <Element
+              key={actionKey}
+              onClick={this.onModalTriggerClick}
+              payloadSchema={actionConfig.payload_schema}
+              dataName={actionConfig.text}
+              dataActionKey={actionKey}
+              basic
+              icon={!_isEmpty(icon)}
+              labelPosition={labelPos}
+            >
+              {!_isEmpty(icon) && <Icon name={icon} />}
+              {actionConfig.text}
+            </Element>
+          );
         })}
         <ActionModal modalOpen={modalOpen} resource={resource}>
           {modalHeader && <Modal.Header>{modalHeader}</Modal.Header>}
