@@ -24,6 +24,20 @@ from invenio_jobs.proxies import current_jobs_service
 
 
 @pytest.fixture(scope="module")
+def extra_entry_points():
+    """Extra entry points to load the mock_module features."""
+    # __import__("ipdb").set_trace()
+    return {
+        "invenio_jobs.jobs": [
+            "mock_module = mock_module.jobs:mock_job",
+        ],
+        "invenio_celery.tasks": [
+            "mock_module = mock_module.tasks",
+        ],
+    }
+
+
+@pytest.fixture(scope="module")
 def app_config(app_config):
     """Application config override."""
 
@@ -44,20 +58,9 @@ def app_config(app_config):
 
 
 @pytest.fixture(scope="module")
-def create_app(instance_path):
+def create_app(instance_path, entry_points):
     """Application factory fixture."""
     return create_api
-
-
-@pytest.fixture(scope="module")
-def extra_entry_points():
-    """Extra entry points to load the mock_module features."""
-    __import__("ipdb").set_trace()
-    return {
-        "invenio_celery.tasks": [
-            "mock_module = mock_module.tasks",
-        ],
-    }
 
 
 #
@@ -93,7 +96,7 @@ def user(UserFixture, app, db):
 def jobs(db, anon_identity):
     """Job fixtures."""
     common_data = {
-        "task": "tasks.mock_task",
+        "task": "update_expired_embargos",
         "default_queue": "low",
         "default_args": {
             "arg1": "value1",

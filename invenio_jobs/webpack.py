@@ -22,7 +22,7 @@ administration = WebpackThemeBundle(
             dependencies={
                 "react-invenio-forms": "^4.0.0",
                 "react-searchkit": "^2.0.0",
-                "react-json-view": "^1.21.3",
+                "@microlink/react-json-view": "^1.21.3",
             },
             aliases={
                 "@less/invenio_jobs": "less/invenio_jobs",

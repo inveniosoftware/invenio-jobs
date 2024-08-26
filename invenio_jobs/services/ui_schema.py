@@ -11,7 +11,6 @@ from marshmallow import Schema, fields
 from marshmallow_oneofschema import OneOfSchema
 
 
-
 class IntervalScheduleUISchema(Schema):
     """Schema for an interval schedule based on ``datetime.timedelta``."""
 

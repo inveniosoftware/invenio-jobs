@@ -108,6 +108,7 @@ class JobsDetailsView(JobsAdminMixin, AdminResourceListView):
         return f"/api/jobs/{pid_value}/runs"
 
     def get_details_api_endpoint(self):
+        """Compute api endpoint link for job details view."""
         api_url_prefix = current_app.config["SITE_API_URL"]
         slash_tpl = "/" if not self.api_endpoint.startswith("/") else ""
 
@@ -117,6 +118,7 @@ class JobsDetailsView(JobsAdminMixin, AdminResourceListView):
         return f"{slash_tpl}{self.api_endpoint}"
 
     def get_context(self, **kwargs):
+        """Compute admin view context."""
         ctx = super().get_context(**kwargs)
         ctx["request_headers"] = self.request_headers
         ctx["ui_config"] = self.item_field_list

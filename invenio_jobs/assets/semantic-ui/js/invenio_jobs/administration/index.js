@@ -7,7 +7,6 @@
 import { initDefaultSearchComponents } from "@js/invenio_administration";
 import { createSearchAppInit } from "@js/invenio_search_ui";
 import { NotificationController } from "@js/invenio_administration";
-import { JobRunsHeader } from "./JobRunsHeader";
 import { RunActionForm } from "./RunActionForm";
 import { SearchResultItemLayout } from "./JobSearchResultItemLayout";
 import { JobSearchLayout } from "./JobSearchLayout";

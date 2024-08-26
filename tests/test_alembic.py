@@ -22,8 +22,8 @@ def test_alembic(base_app, database):
 
     # Check that this package's SQLAlchemy models have been properly registered
     tables = [x.name for x in db.get_tables_for_bind()]
-    assert "run" in tables
-    assert "job" in tables
+    assert "jobs_run" in tables
+    assert "jobs_job" in tables
 
     # Check that Alembic agrees that there's no further tables to create.
     assert len(ext.alembic.compare_metadata()) == 0
@@ -36,7 +36,7 @@ def test_alembic(base_app, database):
 
     # Try to upgrade and downgrade
     ext.alembic.stamp()
-    ext.alembic.downgrade(target="356496a01197")
+    ext.alembic.downgrade(target="1f896f6990b8")
     ext.alembic.upgrade()
     assert len(ext.alembic.compare_metadata()) == 0
 

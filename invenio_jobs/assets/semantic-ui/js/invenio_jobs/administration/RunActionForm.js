@@ -1,7 +1,13 @@
+// This file is part of InvenioRDM
+// Copyright (C) 2024 CERN
+//
+// Invenio RDM Records is free software; you can redistribute it and/or modify it
+// under the terms of the MIT License; see LICENSE file for more details.
+
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { ActionFormLayout } from "@js/invenio_administration";
-import ReactJson from "react-json-view";
+import ReactJson from "@microlink/react-json-view";
 import { Accordion, Icon, Modal } from "semantic-ui-react";
 
 export class RunActionForm extends Component {

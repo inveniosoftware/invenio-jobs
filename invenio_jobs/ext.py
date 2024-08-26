@@ -104,7 +104,6 @@ class InvenioJobs:
         return self.registry.all_registered_jobs()
 
 
-
 def finalize_app(app):
     """Finalize app."""
     rr_ext = app.extensions["invenio-records-resources"]

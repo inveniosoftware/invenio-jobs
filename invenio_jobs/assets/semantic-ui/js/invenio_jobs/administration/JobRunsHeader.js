@@ -14,10 +14,8 @@ import { i18next } from "@translations/invenio_app_rdm/i18next";
 import _isEmpty from "lodash/isEmpty";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
-import { http } from "react-invenio-forms";
 import { Divider, Button, Grid, Header } from "semantic-ui-react";
 import { AdminUIRoutes } from "@js/invenio_administration";
-import { withCancel } from "react-invenio-forms";
 
 export class JobRunsHeader extends Component {
   constructor(props) {
@@ -45,17 +43,13 @@ export class JobRunsHeader extends Component {
 
   render() {
     const {
-      pid,
-      columns,
       actions,
       apiEndpoint,
       idKeyPath,
       listUIEndpoint,
-      resourceSchema,
       resourceName,
       displayDelete,
       displayEdit,
-      uiSchema,
       data,
       error,
       loading,

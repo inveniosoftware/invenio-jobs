@@ -24,6 +24,7 @@ from invenio_records_resources.services.uow import (
 
 from invenio_jobs.tasks import execute_run
 
+from ..api import AttrDict
 from ..models import Job, Run, RunStatusEnum, Task
 from ..proxies import current_jobs
 from .errors import JobNotFoundError, RunNotFoundError, RunStatusChangeError
@@ -44,42 +45,41 @@ class BaseService(RecordService):
 class TasksService(BaseService):
     """Tasks service."""
 
-    def search(self, identity, params):
-        """Search for tasks."""
-        self.require_permission(identity, "search")
-
-        # TODO change this to .jobs
-        tasks = current_jobs.tasks.values()
-
-        search_params = map_search_params(self.config.search, params)
-        query_param = search_params["q"]
-        if query_param:
-            tasks = [
-                task
-                for task in tasks
-                if (
-                    query_param in task.name.lower()
-                    or query_param in task.description.lower()
-                )
-            ]
-        sort_direction = search_params["sort_direction"]
-        tasks = sort_direction(tasks)
-
-        return self.result_list(
-            service=self,
-            identity=identity,
-            results=tasks,
-            params=search_params,
-            links_tpl=LinksTemplate(self.config.links_search, context={"args": params}),
-            links_item_tpl=self.links_item_tpl,
-        )
+    # def search(self, identity, params):
+    #     """Search for tasks."""
+    #     self.require_permission(identity, "search")
+    #
+    #     # TODO change this to .jobs
+    #     tasks = current_jobs.tasks.values()
+    #
+    #     search_params = map_search_params(self.config.search, params)
+    #     query_param = search_params["q"]
+    #     if query_param:
+    #         tasks = [
+    #             task
+    #             for task in tasks
+    #             if (
+    #                 query_param in task.title.lower()
+    #                 or query_param in task.description.lower()
+    #             )
+    #         ]
+    #     sort_direction = search_params["sort_direction"]
+    #     tasks = sort_direction(tasks)
+    #
+    #     return self.result_list(
+    #         service=self,
+    #         identity=identity,
+    #         results=tasks,
+    #         params=search_params,
+    #         links_tpl=LinksTemplate(self.config.links_search, context={"args": params}),
+    #         links_item_tpl=self.links_item_tpl,
+    #     )
 
     def read_registered_task_arguments(self, identity, registered_task_id):
         """Return arguments allowed for given task."""
         task = Task.get(registered_task_id)
         if task.arguments_schema:
             return task.arguments_schema()
-
 
 
 def get_job(job_id):
@@ -96,12 +96,6 @@ def get_run(run_id, job_id=None):
     if run is None or run.job_id != job_id:
         raise RunNotFoundError(run_id, job_id=job_id)
     return run
-
-
-class AttrDict(dict):
-    def __init__(self, *args, **kwargs):
-        super(AttrDict, self).__init__(*args, **kwargs)
-        self.__dict__ = self
 
 
 class JobsService(BaseService):
@@ -246,7 +240,9 @@ class RunsService(BaseService):
         run = get_run(job_id=job_id, run_id=run_id)
         run_dict = run.dump()
         run_record = AttrDict(run_dict)
-        return self.result_item(self, identity, run_record, links_tpl=self.links_item_tpl)
+        return self.result_item(
+            self, identity, run_record, links_tpl=self.links_item_tpl
+        )
 
     @unit_of_work()
     def create(self, identity, job_id, data, uow=None):

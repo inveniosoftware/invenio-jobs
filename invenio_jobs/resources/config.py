@@ -52,7 +52,6 @@ class TasksResourceConfig(ResourceConfig, ConfiguratorMixin):
     url_prefix = "/tasks"
     routes = {"list": "", "arguments": "/<registered_task_id>/args"}
 
-
     # Request handling
     request_search_args = SearchRequestArgsSchema
     request_body_parsers = request_body_parsers

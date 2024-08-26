@@ -33,7 +33,7 @@ class TasksResource(ErrorHandlersMixin, Resource):
         routes = self.config.routes
         url_rules = [
             route("GET", routes["list"], self.search),
-            route("GET", routes["arguments"], self.read_arguments)
+            route("GET", routes["arguments"], self.read_arguments),
         ]
 
         return url_rules
@@ -54,9 +54,12 @@ class TasksResource(ErrorHandlersMixin, Resource):
 
     @request_view_args
     def read_arguments(self):
+        """Read arguments schema of task resource."""
         identity = g.identity
         registered_task_id = resource_requestctx.view_args["registered_task_id"]
-        arguments_schema = self.service.read_registered_task_arguments(identity, registered_task_id)
+        arguments_schema = self.service.read_registered_task_arguments(
+            identity, registered_task_id
+        )
         return jsonify_schema(arguments_schema) if arguments_schema else {}
 
 
