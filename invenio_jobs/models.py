@@ -8,6 +8,7 @@
 """Models."""
 
 import enum
+import json
 import uuid
 from copy import deepcopy
 from datetime import timedelta
@@ -23,10 +24,8 @@ from sqlalchemy.dialects import postgresql
 from sqlalchemy_utils import Timestamp
 from sqlalchemy_utils.types import ChoiceType, JSONType, UUIDType
 from werkzeug.utils import cached_property
+
 from invenio_jobs.proxies import current_jobs
-
-
-from .utils import eval_tpl_str, walk_values
 
 JSON = (
     db.JSON()
@@ -36,11 +35,6 @@ JSON = (
 )
 
 
-class AttrDict(dict):
-    def __init__(self, *args, **kwargs):
-        super(AttrDict, self).__init__(*args, **kwargs)
-        self.__dict__ = self
-
 def _dump_dict(model):
     """Dump a model to a dictionary."""
     return {c.key: getattr(model, c.key) for c in sa.inspect(model).mapper.column_attrs}
@@ -49,14 +43,15 @@ def _dump_dict(model):
 class Job(db.Model, Timestamp):
     """Job model."""
 
+    __tablename__ = "jobs_job"
+
     id = db.Column(UUIDType, primary_key=True, default=uuid.uuid4)
     active = db.Column(db.Boolean, default=True, nullable=False)
     title = db.Column(db.String(255), nullable=False)
     description = db.Column(db.Text)
-
+    # default_args = db.Column(JSON, default=lambda: dict(), nullable=True)
     task = db.Column(db.String(255))
     default_queue = db.Column(db.String(64))
-    # default_args = db.Column(JSON, default=lambda: dict(), nullable=True)
     schedule = db.Column(JSON, nullable=True)
 
     @property
@@ -70,12 +65,15 @@ class Job(db.Model, Timestamp):
         """Last run of the job."""
         _runs = {}
         for status in RunStatusEnum:
-            run = self.runs.filter_by(status=status).order_by(Run.created.desc()).first()
+            run = (
+                self.runs.filter_by(status=status).order_by(Run.created.desc()).first()
+            )
             _runs[status.name.lower()] = run if run else {}
         return _runs
 
     @property
     def default_args(self):
+        """Compute default job arguments."""
         return Task.get(self.task).build_task_arguments(job_obj=self)
 
     @property
@@ -110,6 +108,8 @@ class RunStatusEnum(enum.Enum):
 
 class Run(db.Model, Timestamp):
     """Run model."""
+
+    __tablename__ = "jobs_run"
 
     id = db.Column(UUIDType, primary_key=True, default=uuid.uuid4)
 
@@ -161,26 +161,18 @@ class Run(db.Model, Timestamp):
         execute arbitrary code, or perform harmful DB operations (e.g. delete rows).
         """
         args = deepcopy(job.default_args)
-
-        # ctx = {"job": job.dump()}
-        # Add last runs
-        # last_runs = {}
-        # for status in RunStatusEnum:
-        #     run = job.runs.filter_by(status=status).order_by(cls.created.desc()).first()
-        #     last_runs[status.name.lower()] = run.dump() if run else None
-        # ctx["last_runs"] = last_runs
-        # ctx["last_run"] = job.last_run.dump() if job.last_run else None
-        import json
         args = json.dumps(args, indent=4, sort_keys=True, default=str)
         args = json.loads(args)
-        # walk_values(args, lambda val: eval_tpl_str(val, ctx))
         return args
 
     def dump(self):
         """Dump the run as a dictionary."""
-        dict_run = _dump_dict(self)
         from invenio_jobs.services.schema import RegisteredTaskArgumentsSchema
-        serialized_args = RegisteredTaskArgumentsSchema().load({"args": dict_run["args"]})
+
+        dict_run = _dump_dict(self)
+        serialized_args = RegisteredTaskArgumentsSchema().load(
+            {"args": dict_run["args"]}
+        )
 
         dict_run["args"] = serialized_args
         return dict_run
@@ -207,12 +199,6 @@ class Task:
             return ""
         return self._obj.__doc__.split("\n")[0]
 
-    # @cached_property
-    # def parameters(self):
-    #     """Return the task's parameters."""
-    #     TODO: Make this result more user friendly or enhance with type information
-        # return signature(self._obj).parameters
-
     @classmethod
     def all(cls):
         """Return all tasks."""
@@ -220,4 +206,5 @@ class Task:
 
     @classmethod
     def get(cls, id_):
+        """Get registered task by id."""
         return cls(current_jobs.registry.get(id_))

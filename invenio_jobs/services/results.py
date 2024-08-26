@@ -44,6 +44,7 @@ class JobItem(Item):
 
     @property
     def data(self):
+        """Data representation of job result item."""
         if self._data:
             return self._data
 

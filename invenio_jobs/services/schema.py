@@ -13,7 +13,7 @@ from datetime import timezone
 
 from invenio_i18n import lazy_gettext as _
 from invenio_users_resources.services import schemas as user_schemas
-from marshmallow import EXCLUDE, Schema, fields, validate, types, post_load, pre_dump
+from marshmallow import EXCLUDE, Schema, fields, post_load, pre_dump, types, validate
 from marshmallow_oneofschema import OneOfSchema
 from marshmallow_utils.fields import SanitizedUnicode, TZDateTime
 from marshmallow_utils.permissions import FieldPermissionsMixin
@@ -92,6 +92,8 @@ class CrontabScheduleSchema(Schema):
 
 
 class CustomArgsSchema(Schema):
+    """Custom arguments schema."""
+
     args = fields.Raw(load_default=dict, allow_none=True)
 
 
@@ -111,21 +113,25 @@ class ScheduleSchema(OneOfSchema):
 
 
 class RegisteredTaskArgumentsSchema(OneOfSchema):
+    """Base schema for tasks with arguments."""
 
     type_field_remove = False
 
     def __init__(self, *args, **kwargs):
+        """Constructor."""
         self.type_schemas = deepcopy(current_jobs.registry.registered_schemas())
         self.type_schemas["custom"] = CustomArgsSchema
         super().__init__(*args, **kwargs)
 
     def get_obj_type(self, obj):
+        """Return object type."""
         if isinstance(obj, dict) and "type" in obj:
             return obj["type"]
         if isinstance(obj, dict) and "type" not in obj:
             return "custom"
 
     def get_data_type(self, data):
+        """Get data type. Defaults to custom if no type is provided."""
         data_type = super().get_data_type(data)
         if data_type is None:
             return "custom"
@@ -151,7 +157,7 @@ class JobSchema(Schema, FieldPermissionsMixin):
 
     task = fields.String(
         required=True,
-        validate=LazyOneOf(choices=lambda: [name for name, t in Task.all().items()])
+        validate=LazyOneOf(choices=lambda: [name for name, t in Task.all().items()]),
     )
     default_queue = fields.String(
         validate=LazyOneOf(choices=lambda: current_jobs.queues.keys()),
@@ -167,6 +173,7 @@ class JobSchema(Schema, FieldPermissionsMixin):
 
     @pre_dump
     def dump_last_runs(self, obj, many=False, **kwargs):
+        """Dump last runs of a job."""
         last_runs = obj.get("last_runs", {})
         for key, value in last_runs.items():
             if value:
@@ -238,6 +245,7 @@ class RunSchema(Schema, FieldPermissionsMixin):
 
     @post_load
     def pick_args(self, obj, many, **kwargs):
+        """Choose custom or default args."""
         custom_args = obj.pop("custom_args")
         if custom_args:
             obj["args"] = custom_args

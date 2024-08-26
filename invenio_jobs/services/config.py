@@ -34,11 +34,11 @@ class TasksSearchOptions(SearchOptionsBase):
     sort_direction_options = {
         "asc": dict(
             title=_("Ascending"),
-            fn=partial(sorted, key=lambda t: t.name),
+            fn=partial(sorted, key=lambda t: t.title),
         ),
         "desc": dict(
             title=_("Descending"),
-            fn=partial(sorted, key=lambda t: t.name, reverse=True),
+            fn=partial(sorted, key=lambda t: t.title, reverse=True),
         ),
     }
     sort_options = {"name": dict(title=_("Name"), fields=["name"])}

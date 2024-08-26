@@ -14,7 +14,6 @@ import { UserListItemCompact, toRelativeTime } from "react-invenio-forms";
 import { withState } from "react-searchkit";
 import { Popup, Table, Button } from "semantic-ui-react";
 import { Actions } from "@js/invenio_administration";
-import { RunButton } from "./RunButton";
 import { StatusFormatter } from "./StatusFormatter";
 import { AdminUIRoutes } from "@js/invenio_administration/src/routes";
 

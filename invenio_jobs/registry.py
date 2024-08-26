@@ -5,6 +5,9 @@
 # Invenio-Jobs is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 
+"""Registry of jobs."""
+
+
 class JobsRegistry:
     """A simple class to register jobs."""
 
@@ -17,9 +20,7 @@ class JobsRegistry:
         if job_id is None:
             job_id = job_instance.id
         if job_id in self._jobs:
-            raise RuntimeError(
-                f"Job with job id '{job_id}' is already registered."
-            )
+            raise RuntimeError(f"Job with job id '{job_id}' is already registered.")
         self._jobs[job_id] = job_instance
 
     def get(self, job_id):
@@ -37,10 +38,8 @@ class JobsRegistry:
         """Return a list of available tasks."""
         return self._jobs
 
-    def all_arguments(self):
-        return [task.arguments_schema for task_id, task in self._jobs.items()]
-
     def registered_schemas(self):
+        """Return all schemas registered for tasks."""
         schemas = {}
         for id_, registered_task in self._jobs.items():
             schema = registered_task.arguments_schema

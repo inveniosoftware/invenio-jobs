@@ -4,18 +4,25 @@
 #
 # Invenio-Jobs is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
+
+"""Jobs module."""
+
 from functools import partial
 
 
 class RegisteredTask:
+    """Base class to register tasks available in the admin panel."""
 
     arguments_schema = None
     task = None
     id = None
     title = None
     description = None
+
     @classmethod
-    def factory(cls, job_cls_name, arguments_schema, id_, task, description, title, attrs=None):
+    def factory(
+        cls, job_cls_name, arguments_schema, id_, task, description, title, attrs=None
+    ):
         """Create a new instance of a job."""
         if not attrs:
             attrs = {}
@@ -34,6 +41,7 @@ class RegisteredTask:
 
     @classmethod
     def build_task_arguments(cls, job_obj, since=None, custom_args=None, **kwargs):
+        """Build task arguments."""
         if custom_args:
             return custom_args
         return {}
