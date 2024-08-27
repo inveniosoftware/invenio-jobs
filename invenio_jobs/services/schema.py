@@ -234,7 +234,7 @@ class RunSchema(Schema, FieldPermissionsMixin):
         allow_none=True,
         metadata={
             "title": "Custom args",
-            "description": "Advanced configuration for seasoned administrators",
+            "description": "Advanced configuration for seasoned administrators.",
         },
     )
     queue = fields.String(
