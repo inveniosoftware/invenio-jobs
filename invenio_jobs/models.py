@@ -49,7 +49,6 @@ class Job(db.Model, Timestamp):
     active = db.Column(db.Boolean, default=True, nullable=False)
     title = db.Column(db.String(255), nullable=False)
     description = db.Column(db.Text)
-    # default_args = db.Column(JSON, default=lambda: dict(), nullable=True)
     task = db.Column(db.String(255))
     default_queue = db.Column(db.String(64))
     schedule = db.Column(JSON, nullable=True)
@@ -146,13 +145,15 @@ class Run(db.Model, Timestamp):
         """Create a new run."""
         if "args" not in kwargs:
             kwargs["args"] = cls.generate_args(job)
+        else:
+            task_arguments = deepcopy(kwargs["args"].get("args", {}))
+            kwargs["args"] = cls.generate_args(job, task_arguments=task_arguments)
         if "queue" not in kwargs:
             kwargs["queue"] = job.default_queue
-
         return cls(job=job, **kwargs)
 
     @classmethod
-    def generate_args(cls, job):
+    def generate_args(cls, job, task_arguments=None):
         """Generate new run args.
 
         We allow a templating mechanism to generate the args for the run. It's important
@@ -160,7 +161,10 @@ class Run(db.Model, Timestamp):
         classes or Python objects or functions. Otherwise, we risk that users could
         execute arbitrary code, or perform harmful DB operations (e.g. delete rows).
         """
-        args = deepcopy(job.default_args)
+        if task_arguments:
+            args = Task.get(job.task).build_task_arguments(job_obj=job, **task_arguments)
+        else:
+            args = deepcopy(job.default_args)
         args = json.dumps(args, indent=4, sort_keys=True, default=str)
         args = json.loads(args)
         return args
@@ -208,3 +212,4 @@ class Task:
     def get(cls, id_):
         """Get registered task by id."""
         return cls(current_jobs.registry.get(id_))
+

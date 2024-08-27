@@ -8,12 +8,14 @@
 """Service schemas."""
 
 import inspect
+import json
 from copy import deepcopy
 from datetime import timezone
 
 from invenio_i18n import lazy_gettext as _
 from invenio_users_resources.services import schemas as user_schemas
-from marshmallow import EXCLUDE, Schema, fields, post_load, pre_dump, types, validate
+from marshmallow import EXCLUDE, Schema, fields, post_load, pre_dump, types, validate, \
+    pre_load
 from marshmallow_oneofschema import OneOfSchema
 from marshmallow_utils.fields import SanitizedUnicode, TZDateTime
 from marshmallow_utils.permissions import FieldPermissionsMixin
@@ -243,10 +245,16 @@ class RunSchema(Schema, FieldPermissionsMixin):
         dump_default=lambda: current_jobs.default_queue,
     )
 
+    @pre_load
+    def wrap_args(self, obj, many, **kwargs):
+        """Workaround for nested args."""
+        obj["args"] = {"args": obj["args"]}
+        return obj
+
     @post_load
     def pick_args(self, obj, many, **kwargs):
         """Choose custom or default args."""
         custom_args = obj.pop("custom_args")
         if custom_args:
-            obj["args"] = custom_args
+            obj["args"] = json.loads(custom_args)
         return obj
