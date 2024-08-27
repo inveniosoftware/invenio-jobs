@@ -4,11 +4,31 @@
 // Invenio RDM Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
 
+import _get from "lodash/get";
+import isEmpty from "lodash/isEmpty";
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { ActionFormLayout } from "@js/invenio_administration";
+import {
+  mapFormFields,
+  DynamicSubFormField,
+  generateDynamicFieldProps,
+  generateFieldProps,
+  ErrorMessage,
+} from "@js/invenio_administration";
 import ReactJson from "@microlink/react-json-view";
-import { Accordion, Icon, Modal } from "semantic-ui-react";
+import {
+  Accordion,
+  Icon,
+  Modal,
+  Button,
+  Divider,
+  Message,
+  Header,
+} from "semantic-ui-react";
+import { Form, Formik } from "formik";
+import { Form as SemanticForm } from "semantic-ui-react";
+import { i18next } from "@translations/invenio_administration/i18next";
+import { Input, Dropdown, TextArea } from "react-invenio-forms";
 
 export class RunActionForm extends Component {
   state = { activeIndex: -1 };
@@ -26,7 +46,6 @@ export class RunActionForm extends Component {
       actionSchema,
       actionCancelCallback,
       actionConfig,
-      actionKey,
       loading,
       formData,
       error,
@@ -37,31 +56,123 @@ export class RunActionForm extends Component {
     const { activeIndex } = this.state;
     return (
       <>
-        <Modal.Content>
-          <Accordion>
-            <Accordion.Title
-              active={activeIndex === 0}
-              index={0}
-              onClick={this.handleClick}
-            >
-              <Icon name="dropdown" />
-              Check advanced arguments
-            </Accordion.Title>
-            <Accordion.Content active={activeIndex === 0}>
-              <ReactJson src={jsonData} name={null} />
-            </Accordion.Content>
-          </Accordion>
-        </Modal.Content>
-        <ActionFormLayout
-          actionSchema={actionSchema}
-          actionCancelCallback={actionCancelCallback}
-          actionConfig={actionConfig}
-          actionKey={actionKey}
-          loading={loading}
-          formData={formData}
-          error={error}
-          onSubmit={onSubmit}
-        />
+        <Formik initialValues={formData} onSubmit={onSubmit}>
+          {(props) => (
+            <>
+              <Modal.Content>
+                <SemanticForm
+                  as={Form}
+                  id="action-form"
+                  onSubmit={props.handleSubmit}
+                >
+                  <Input
+                    fieldSchema={_get(actionSchema, "title")}
+                    {...generateFieldProps(
+                      "title",
+                      _get(actionSchema, "title"),
+                      undefined,
+                      true,
+                      actionSchema["title"],
+                      props,
+                      actionSchema,
+                      formData,
+                      mapFormFields
+                    )}
+                  />
+                  <Dropdown
+                    fieldSchema={_get(actionSchema, "queue")}
+                    {...generateFieldProps(
+                      "queue",
+                      _get(actionSchema, "queue"),
+                      undefined,
+                      true,
+                      actionSchema["queue"],
+                      props,
+                      actionSchema,
+                      formData,
+                      mapFormFields
+                    )}
+                  />
+                  <DynamicSubFormField
+                    {...generateDynamicFieldProps(
+                      "args",
+                      _get(actionSchema, "args"),
+                      undefined,
+                      true,
+                      actionSchema["args"],
+                      props,
+                      actionSchema,
+                      formData,
+                      mapFormFields
+                    )}
+                    fieldSchema={_get(actionSchema, "args")}
+                  />
+                  <Accordion fluid styled>
+                    <Accordion.Title
+                      active={activeIndex === 0}
+                      index={0}
+                      onClick={this.handleClick}
+                    >
+                      <Icon name="dropdown" />
+                      Advanced configuration
+                    </Accordion.Title>
+                    <Accordion.Content active={activeIndex === 0}>
+                       <Message info>
+                        Modifying <b>Custom args</b> field will replace any arguments
+                        specified above and run the task with custom
+                        configuration.
+                      </Message>
+                      <Header size="tiny">
+                        Reference configuration of this job:
+                      </Header>
+                      <ReactJson src={jsonData} name={null} />
+                    </Accordion.Content>
+                    <Accordion.Content active={activeIndex === 0}>
+                      <Divider />
+                      <TextArea
+                        {...generateFieldProps(
+                          "custom_args",
+                          _get(actionSchema, "custom_args"),
+                          undefined,
+                          true,
+                          actionSchema["custom_args"],
+                          props,
+                          actionSchema,
+                          formData,
+                          mapFormFields
+                        )}
+                        fieldSchema={_get(actionSchema, "custom_args")}
+                      />
+                    </Accordion.Content>
+                  </Accordion>
+                  {!isEmpty(error) && (
+                    <ErrorMessage
+                      {...error}
+                      removeNotification={this.resetErrorState}
+                    />
+                  )}
+                </SemanticForm>
+              </Modal.Content>
+              <Modal.Actions>
+                <Button
+                  type="submit"
+                  primary
+                  form="action-form"
+                  loading={loading}
+                >
+                  {i18next.t(actionConfig.text)}
+                </Button>
+                <Button
+                  onClick={actionCancelCallback}
+                  floated="left"
+                  icon="cancel"
+                  labelPosition="left"
+                  content={i18next.t("Cancel")}
+                />
+              </Modal.Actions>
+            </>
+          )}
+        </Formik>
       </>
     );
   }
