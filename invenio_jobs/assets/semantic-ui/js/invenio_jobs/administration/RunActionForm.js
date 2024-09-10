@@ -27,7 +27,8 @@ import {
 } from "semantic-ui-react";
 import { Form, Formik } from "formik";
 import { Form as SemanticForm } from "semantic-ui-react";
-import { i18next } from "@translations/invenio_administration/i18next";
+import { i18next } from "@translations/invenio_jobs/i18next";
+import { Trans } from "react-i18next";
 import { Input, Dropdown, TextArea } from "react-invenio-forms";
 
 export class RunActionForm extends Component {
@@ -114,21 +115,23 @@ export class RunActionForm extends Component {
                       onClick={this.handleClick}
                     >
                       <Icon name="dropdown" />
-                      Advanced configuration
+                      {i18next.t("Advanced configuration")}
                     </Accordion.Title>
                     <Accordion.Content active={activeIndex === 0}>
-                       <Message info>
-                        Modifying <b>Custom args</b> field will replace any arguments
-                        specified above and run the task with custom
-                        configuration.
-                      </Message>
                       <Header size="tiny">
-                        Reference configuration of this job:
+                        {i18next.t("Reference configuration of this job:")}
                       </Header>
                       <ReactJson src={jsonData} name={null} />
                     </Accordion.Content>
                     <Accordion.Content active={activeIndex === 0}>
                       <Divider />
+                      <Message info>
+                        <Trans>
+                          "Modifying the <b>Custom arguments</b> field will
+                          replace any arguments specified above and run the task
+                          with custom configuration.
+                        </Trans>
+                      </Message>
                       <TextArea
                         {...generateFieldProps(
                           "custom_args",

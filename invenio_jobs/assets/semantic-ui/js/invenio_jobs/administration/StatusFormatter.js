@@ -5,7 +5,7 @@
 // under the terms of the MIT License; see LICENSE file for more details.
 
 import { BoolFormatter } from "@js/invenio_administration";
-import { i18next } from "@translations/invenio_app_rdm/i18next";
+import { i18next } from "@translations/invenio_jobs/i18next";
 import React from "react";
 import PropTypes from "prop-types";
 

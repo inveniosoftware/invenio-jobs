@@ -10,7 +10,7 @@ import {
   ErrorPage,
   Actions
 } from "@js/invenio_administration";
-import { i18next } from "@translations/invenio_app_rdm/i18next";
+import { i18next } from "@translations/invenio_jobs/i18next";
 import _isEmpty from "lodash/isEmpty";
 import PropTypes from "prop-types";
 import React, { Component } from "react";

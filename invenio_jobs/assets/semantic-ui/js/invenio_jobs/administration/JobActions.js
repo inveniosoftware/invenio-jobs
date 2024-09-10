@@ -9,7 +9,7 @@ import PropTypes from "prop-types";
 import { Button, Modal, Icon } from "semantic-ui-react";
 import { ActionModal, ActionForm } from "@js/invenio_administration";
 import _isEmpty from "lodash/isEmpty";
-import { i18next } from "@translations/invenio_app_rdm/i18next";
+import { i18next } from "@translations/invenio_jobs/i18next";
 import ScheduleJobModal from "./ScheduleJobModal";
 
 export class JobActions extends Component {

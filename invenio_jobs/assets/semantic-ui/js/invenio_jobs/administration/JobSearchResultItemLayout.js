@@ -7,7 +7,7 @@
  */
 
 import { BoolFormatter, NotificationContext } from "@js/invenio_administration";
-import { i18next } from "@translations/invenio_app_rdm/i18next";
+import { i18next } from "@translations/invenio_jobs/i18next";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
 import { UserListItemCompact, toRelativeTime } from "react-invenio-forms";
