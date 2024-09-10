@@ -34,11 +34,12 @@ class JobsRegistry:
                 return job_id
         raise KeyError("Job not found in registry.")
 
-    def all_registered_jobs(self):
+    def get_all(self):
         """Return a list of available tasks."""
         return self._jobs
 
-    def registered_schemas(self):
+    @property
+    def schemas(self):
         """Return all schemas registered for tasks."""
         schemas = {}
         for id_, registered_task in self._jobs.items():

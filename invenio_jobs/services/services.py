@@ -45,38 +45,10 @@ class BaseService(RecordService):
 class TasksService(BaseService):
     """Tasks service."""
 
-    # def search(self, identity, params):
-    #     """Search for tasks."""
-    #     self.require_permission(identity, "search")
-    #
-    #     # TODO change this to .jobs
-    #     tasks = current_jobs.tasks.values()
-    #
-    #     search_params = map_search_params(self.config.search, params)
-    #     query_param = search_params["q"]
-    #     if query_param:
-    #         tasks = [
-    #             task
-    #             for task in tasks
-    #             if (
-    #                 query_param in task.title.lower()
-    #                 or query_param in task.description.lower()
-    #             )
-    #         ]
-    #     sort_direction = search_params["sort_direction"]
-    #     tasks = sort_direction(tasks)
-    #
-    #     return self.result_list(
-    #         service=self,
-    #         identity=identity,
-    #         results=tasks,
-    #         params=search_params,
-    #         links_tpl=LinksTemplate(self.config.links_search, context={"args": params}),
-    #         links_item_tpl=self.links_item_tpl,
-    #     )
-
     def read_registered_task_arguments(self, identity, registered_task_id):
         """Return arguments allowed for given task."""
+        self.require_permission(identity, "read")
+
         task = Task.get(registered_task_id)
         if task.arguments_schema:
             return task.arguments_schema()
@@ -250,7 +222,6 @@ class RunsService(BaseService):
         self.require_permission(identity, "create")
 
         job = get_job(job_id)
-
         # TODO: See if we need extra validation (e.g. tasks, args, etc.)
         valid_data, errors = self.schema.load(
             data,

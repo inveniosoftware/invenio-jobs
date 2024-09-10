@@ -10,8 +10,8 @@
 from functools import partial
 
 
-class RegisteredTask:
-    """Base class to register tasks available in the admin panel."""
+class JobType:
+    """Base class to register celery tasks available in the admin panel."""
 
     arguments_schema = None
     task = None
@@ -20,7 +20,7 @@ class RegisteredTask:
     description = None
 
     @classmethod
-    def factory(
+    def create(
         cls, job_cls_name, arguments_schema, id_, task, description, title, attrs=None
     ):
         """Create a new instance of a job."""
@@ -28,7 +28,7 @@ class RegisteredTask:
             attrs = {}
         return type(
             job_cls_name,
-            (RegisteredTask,),
+            (JobType,),
             dict(
                 id=id_,
                 arguments_schema=arguments_schema,
@@ -41,7 +41,10 @@ class RegisteredTask:
 
     @classmethod
     def build_task_arguments(cls, job_obj, since=None, custom_args=None, **kwargs):
-        """Build task arguments."""
+        """Build arguments to be passed to the task.
+
+        Custom arguments can be passed to overwrite the default arguments of a job.
+        """
         if custom_args:
             return custom_args
         return {}

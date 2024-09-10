@@ -14,8 +14,15 @@ from datetime import timezone
 
 from invenio_i18n import lazy_gettext as _
 from invenio_users_resources.services import schemas as user_schemas
-from marshmallow import EXCLUDE, Schema, fields, post_load, pre_dump, types, validate, \
-    pre_load
+from marshmallow import (
+    EXCLUDE,
+    Schema,
+    fields,
+    post_load,
+    pre_dump,
+    pre_load,
+    validate,
+)
 from marshmallow_oneofschema import OneOfSchema
 from marshmallow_utils.fields import SanitizedUnicode, TZDateTime
 from marshmallow_utils.permissions import FieldPermissionsMixin
@@ -114,14 +121,14 @@ class ScheduleSchema(OneOfSchema):
     type_field_remove = False
 
 
-class RegisteredTaskArgumentsSchema(OneOfSchema):
+class JobArgumentsSchema(OneOfSchema):
     """Base schema for tasks with arguments."""
 
     type_field_remove = False
 
     def __init__(self, *args, **kwargs):
         """Constructor."""
-        self.type_schemas = deepcopy(current_jobs.registry.registered_schemas())
+        self.type_schemas = deepcopy(current_jobs.registry.schemas)
         self.type_schemas["custom"] = CustomArgsSchema
         super().__init__(*args, **kwargs)
 
@@ -224,7 +231,7 @@ class RunSchema(Schema, FieldPermissionsMixin):
     # Input fields
     title = SanitizedUnicode(validate=_not_blank(max=250), dump_default="Manual run")
     args = fields.Nested(
-        lambda: RegisteredTaskArgumentsSchema,
+        lambda: JobArgumentsSchema,
         metadata={
             "type": "dynamic",
             "endpoint": "/api/tasks/<item_id>/args",
