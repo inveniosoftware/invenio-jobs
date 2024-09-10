@@ -7,7 +7,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { Modal, Dropdown, Input, Button, Icon } from "semantic-ui-react";
-import { i18next } from "@translations/invenio_app_rdm/i18next";
+import { i18next } from "@translations/invenio_jobs/i18next";
 import { Formik, Form, Field } from "formik";
 import { http, withCancel, ErrorMessage } from "react-invenio-forms";
 import { NotificationContext } from "@js/invenio_administration";
