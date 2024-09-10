@@ -7,11 +7,11 @@
 
 """Mock module jobs."""
 
-from invenio_jobs.jobs import RegisteredTask
+from invenio_jobs.jobs import JobType
 
 from .tasks import mock_task
 
-mock_job = RegisteredTask.factory(
+mock_job = JobType.create(
     arguments_schema=None,
     job_cls_name="MockJob",
     id_="update_expired_embargos",

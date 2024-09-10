@@ -101,7 +101,7 @@ class InvenioJobs:
     @property
     def jobs(self):
         """Return the tasks."""
-        return self.registry.all_registered_jobs()
+        return self.registry.get_all()
 
 
 def finalize_app(app):

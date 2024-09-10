@@ -12,10 +12,8 @@ import json
 import uuid
 from copy import deepcopy
 from datetime import timedelta
-from inspect import signature
 
 import sqlalchemy as sa
-from celery import current_app as current_celery_app
 from celery.schedules import crontab
 from invenio_accounts.models import User
 from invenio_db import db
@@ -154,29 +152,20 @@ class Run(db.Model, Timestamp):
 
     @classmethod
     def generate_args(cls, job, task_arguments=None):
-        """Generate new run args.
-
-        We allow a templating mechanism to generate the args for the run. It's important
-        that the Jinja template context only includes "safe" values, i.e. no DB model
-        classes or Python objects or functions. Otherwise, we risk that users could
-        execute arbitrary code, or perform harmful DB operations (e.g. delete rows).
-        """
-        if task_arguments:
-            args = Task.get(job.task).build_task_arguments(job_obj=job, **task_arguments)
-        else:
-            args = deepcopy(job.default_args)
+        """Generate new run args"""
+        args = Task.get(job.task).build_task_arguments(
+            job_obj=job, **task_arguments or {}
+        )
         args = json.dumps(args, indent=4, sort_keys=True, default=str)
         args = json.loads(args)
         return args
 
     def dump(self):
         """Dump the run as a dictionary."""
-        from invenio_jobs.services.schema import RegisteredTaskArgumentsSchema
+        from invenio_jobs.services.schema import JobArgumentsSchema
 
         dict_run = _dump_dict(self)
-        serialized_args = RegisteredTaskArgumentsSchema().load(
-            {"args": dict_run["args"]}
-        )
+        serialized_args = JobArgumentsSchema().load({"args": dict_run["args"]})
 
         dict_run["args"] = serialized_args
         return dict_run
@@ -212,4 +201,3 @@ class Task:
     def get(cls, id_):
         """Get registered task by id."""
         return cls(current_jobs.registry.get(id_))
-
