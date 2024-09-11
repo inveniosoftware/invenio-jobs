@@ -93,6 +93,7 @@ export class RunActionForm extends Component {
                       formData,
                       mapFormFields
                     )}
+                    value={resource.default_queue}
                   />
                   <DynamicSubFormField
                     {...generateDynamicFieldProps(

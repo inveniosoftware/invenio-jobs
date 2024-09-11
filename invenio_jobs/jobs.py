@@ -7,10 +7,10 @@
 
 """Jobs module."""
 
-from functools import partial
+from abc import ABC, abstractmethod
 
 
-class JobType:
+class JobType(ABC):
     """Base class to register celery tasks available in the admin panel."""
 
     arguments_schema = None
@@ -39,12 +39,17 @@ class JobType:
             ),
         )
 
+    @abstractmethod
+    def default_args(self, *args, **kwargs):
+        """Abstract method to enforce implementing default arguments."""
+        return {}
+
     @classmethod
-    def build_task_arguments(cls, job_obj, since=None, custom_args=None, **kwargs):
+    def build_task_arguments(cls, job_obj, custom_args=None, **kwargs):
         """Build arguments to be passed to the task.
 
         Custom arguments can be passed to overwrite the default arguments of a job.
         """
         if custom_args:
             return custom_args
-        return {}
+        return cls.default_args(job_obj, **kwargs)

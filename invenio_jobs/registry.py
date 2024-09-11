@@ -45,5 +45,5 @@ class JobsRegistry:
         for id_, registered_task in self._jobs.items():
             schema = registered_task.arguments_schema
             if schema:
-                schemas[f"{schema.__name__}API"] = schema
+                schemas[f"{schema.__name__}"] = schema
         return schemas

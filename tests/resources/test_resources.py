@@ -116,7 +116,7 @@ def test_simple_flow(mock_apply_async, app, db, client, user):
         "status": "QUEUED",
         "message": None,
         "title": "Manually triggered run",
-        "args": {"args": {}, "type": "custom"},
+        "args": {"job_arg_schema": "custom"},
         "queue": "celery",
         "created": res.json["created"],
         "updated": res.json["updated"],
@@ -133,7 +133,7 @@ def test_simple_flow(mock_apply_async, app, db, client, user):
 
     list_expected_run = deepcopy(expected_run)
     list_expected_run.pop("started_by")
-    list_expected_run["args"] = {"args": {"args": {}}, "type": "custom"}
+    list_expected_run["args"] = {"args": {}, "job_arg_schema": "custom"}
     # List runs
     res = client.get(f"/jobs/{job_id}/runs")
     assert res.status_code == 200
