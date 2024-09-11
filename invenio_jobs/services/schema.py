@@ -14,15 +14,7 @@ from datetime import timezone
 
 from invenio_i18n import lazy_gettext as _
 from invenio_users_resources.services import schemas as user_schemas
-from marshmallow import (
-    EXCLUDE,
-    Schema,
-    fields,
-    post_load,
-    pre_dump,
-    pre_load,
-    validate,
-)
+from marshmallow import EXCLUDE, Schema, fields, post_load, pre_dump, pre_load, validate
 from marshmallow_oneofschema import OneOfSchema
 from marshmallow_utils.fields import SanitizedUnicode, TZDateTime
 from marshmallow_utils.permissions import FieldPermissionsMixin
