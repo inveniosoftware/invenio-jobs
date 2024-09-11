@@ -61,7 +61,7 @@ def test_simple_flow(mock_apply_async, app, db, client, user):
     list_repr = deepcopy(expected_job)
     list_repr.update(
         {
-            "last_run": {"queue": "celery", "title": "Manual run"},
+            "last_run": {"title": "Manual run"},
             "last_runs": {
                 "cancelled": {},
                 "cancelling": {},
@@ -324,7 +324,7 @@ def test_jobs_search(client, jobs):
             "type": "interval",
             "hours": 4,
         },
-        "last_run": {"queue": "celery", "title": "Manual run"},
+        "last_run": {"title": "Manual run"},
         "last_runs": {
             "cancelled": {},
             "cancelling": {},
@@ -360,7 +360,7 @@ def test_jobs_search(client, jobs):
             "day_of_month": "*",
             "month_of_year": "*",
         },
-        "last_run": {"queue": "celery", "title": "Manual run"},
+        "last_run": {"title": "Manual run"},
         "last_runs": {
             "cancelled": {},
             "cancelling": {},
@@ -389,7 +389,7 @@ def test_jobs_search(client, jobs):
         "default_queue": "low",
         "default_args": "{}",
         "schedule": None,
-        "last_run": {"queue": "celery", "title": "Manual run"},
+        "last_run": {"title": "Manual run"},
         "last_runs": {
             "cancelled": {},
             "cancelling": {},

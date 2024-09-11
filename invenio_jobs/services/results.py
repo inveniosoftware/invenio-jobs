@@ -25,7 +25,10 @@ except ImportError:
 
 
 class AttrDict(dict):
+    """Helper class to fake API layer."""
+
     def __init__(self, *args, **kwargs):
+        """Constructor."""
         super(AttrDict, self).__init__(*args, **kwargs)
         self.__dict__ = self
 
