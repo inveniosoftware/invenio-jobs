@@ -41,6 +41,14 @@ export class JobRunsHeader extends Component {
     console.error(e);
   };
 
+  handleSuccess = () => {
+    const { data } = this.props;
+    setTimeout(() => {
+      window.location = data.links.self_admin_html;
+    }, 1500);
+  };
+
+
   render() {
     const {
       actions,
@@ -87,7 +95,7 @@ export class JobRunsHeader extends Component {
                     displayDelete={displayDelete}
                     resource={data}
                     idKeyPath={idKeyPath}
-                    successCallback={this.handleDelete}
+                    successCallback={this.handleSuccess}
                     listUIEndpoint={listUIEndpoint}
                   />
                 </Button.Group>
