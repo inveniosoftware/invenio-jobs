@@ -152,7 +152,7 @@ class Run(db.Model, Timestamp):
 
     @classmethod
     def generate_args(cls, job, task_arguments=None):
-        """Generate new run args"""
+        """Generate new run args."""
         args = Task.get(job.task).build_task_arguments(
             job_obj=job, **task_arguments or {}
         )

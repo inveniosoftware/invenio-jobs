@@ -68,7 +68,7 @@ export class JobActions extends Component {
   };
 
   handleSuccess = () => {
-    const {resource} = this.props;
+    const { resource } = this.props;
     this.setState({
       modalOpen: false,
       modalHeader: undefined,
@@ -76,7 +76,7 @@ export class JobActions extends Component {
     });
     setTimeout(() => {
       window.location = resource.links.self_admin_html;
-    }, 1000);
+    }, 1500);
   };
 
   render() {

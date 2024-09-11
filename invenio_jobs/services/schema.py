@@ -125,6 +125,7 @@ class JobArgumentsSchema(OneOfSchema):
     """Base schema for tasks with arguments."""
 
     type_field_remove = False
+    type_field = "job_arg_schema"
 
     def __init__(self, *args, **kwargs):
         """Constructor."""
@@ -134,9 +135,9 @@ class JobArgumentsSchema(OneOfSchema):
 
     def get_obj_type(self, obj):
         """Return object type."""
-        if isinstance(obj, dict) and "type" in obj:
-            return obj["type"]
-        if isinstance(obj, dict) and "type" not in obj:
+        if isinstance(obj, dict) and "job_arg_schema" in obj:
+            return obj["job_arg_schema"]
+        if isinstance(obj, dict) and "job_arg_schema" not in obj:
             return "custom"
 
     def get_data_type(self, data):
@@ -173,7 +174,7 @@ class JobSchema(Schema, FieldPermissionsMixin):
         load_default=lambda: current_jobs.default_queue,
     )
 
-    default_args = fields.Raw(dump_only=True)
+    default_args = fields.Raw(dump_only=True, dump_default=dict, load_default=dict)
 
     schedule = fields.Nested(ScheduleSchema, allow_none=True, load_default=None)
 
@@ -248,14 +249,13 @@ class RunSchema(Schema, FieldPermissionsMixin):
     )
     queue = fields.String(
         validate=LazyOneOf(choices=lambda: current_jobs.queues.keys()),
-        load_default=lambda: current_jobs.default_queue,
-        dump_default=lambda: current_jobs.default_queue,
     )
 
     @pre_load
     def wrap_args(self, obj, many, **kwargs):
         """Workaround for nested args."""
-        obj["args"] = {"args": obj["args"]}
+        # it is possible job has no arguments, that's why we use .get
+        obj["args"] = {"args": obj.get("args", {})}
         return obj
 
     @post_load
