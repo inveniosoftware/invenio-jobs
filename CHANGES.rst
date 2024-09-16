@@ -7,6 +7,10 @@
 Changes
 =======
 
+Version v0.5.1 (released 2024-09-19)
+
+fix: add compatibility layer to move to flask>=3
+
 Version v0.5.0 (released 2024-08-22)
 
 - bump invenio-users-resources
