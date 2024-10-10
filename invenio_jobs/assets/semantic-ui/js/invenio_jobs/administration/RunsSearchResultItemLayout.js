@@ -10,21 +10,31 @@ import { NotificationContext } from "@js/invenio_administration";
 import { i18next } from "@translations/invenio_jobs/i18next";
 import PropTypes from "prop-types";
 import React, { Component } from "react";
+import { DateTime } from "luxon";
 import { UserListItemCompact } from "react-invenio-forms";
 import { withState } from "react-searchkit";
-import { Table } from "semantic-ui-react";
+import { Button, Table } from "semantic-ui-react";
 import { StatusFormatter } from "./StatusFormatter";
 import { StopButton } from "./StopButton";
 import { diffTimestamps } from "./utils/diffTimestamps";
+
+const MSG_MAX_LINES = 3;
 
 class SearchResultItemComponent extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      msgShowAll: false,
       status: props.result.status,
     };
   }
+
+  toggleShowAll = () => {
+    this.setState((prevState) => ({
+      msgShowAll: !prevState.msgShowAll,
+    }));
+  };
 
   static contextType = NotificationContext;
 
@@ -40,9 +50,18 @@ class SearchResultItemComponent extends Component {
 
   render() {
     const { result } = this.props;
-    const { status } = this.state;
+    const { msgShowAll, status } = this.state;
+    const msgLines = result.message ? result.message.split("\n") : [];
+    const msgHasMoreThanMaxLines = msgLines.length > MSG_MAX_LINES;
+    const msgLinesShown =
+      msgHasMoreThanMaxLines && msgShowAll
+        ? msgLines
+        : msgLines.slice(0, MSG_MAX_LINES);
+    const createdFormatted = DateTime.fromISO(result.created).toFormat(
+      "yyyy/LL/dd HH:mm:ss"
+    );
     return (
-      <Table.Row>
+      <Table.Row verticalAlign="top">
         <Table.Cell
           key={`run-name-${result.started_at}`}
           data-label={i18next.t("Run")}
@@ -50,7 +69,7 @@ class SearchResultItemComponent extends Component {
           className="word-break-all"
         >
           <StatusFormatter status={status} />
-          <a href={result.links.self}>{result.created.slice(0, 16)}</a>
+          <a href={result.links.self}>{createdFormatted}</a>
         </Table.Cell>
         <Table.Cell
           key={`run-last-run-${status}`}
@@ -77,33 +96,40 @@ class SearchResultItemComponent extends Component {
         <Table.Cell
           key={`run-last-run-${result.message}`}
           data-label={i18next.t("Message")}
-          collapsing
           className=""
         >
-          {result.message}
+          {msgLinesShown.map((line, index) => (
+            <React.Fragment key={index}>
+              {line}
+              <br />
+            </React.Fragment>
+          ))}
+          {msgHasMoreThanMaxLines && (
+            <React.Fragment>
+              {!msgShowAll && <div>...</div>}
+              <Button as="a" onClick={this.toggleShowAll} size="mini">
+                {msgShowAll ? i18next.t("Show less") : i18next.t("Show all")}
+              </Button>
+            </React.Fragment>
+          )}
         </Table.Cell>
-        {result.started_by ? (
-          <Table.Cell
-            key={`job-user-${result.started_by.id}`}
-            data-label={i18next.t("Started by")}
-            collapsing
-            className="word-break-all"
-          >
+
+        <Table.Cell
+          key={`job-user-${result?.started_by?.id}`}
+          data-label={i18next.t("Started by")}
+          collapsing
+          className="word-break-all"
+        >
+          {result.started_by ? (
             <UserListItemCompact
               user={result.started_by}
               id={result.started_by.id}
             />
-          </Table.Cell>
-        ) : (
-          <Table.Cell
-            key="job-user"
-            data-label={i18next.t("Started by")}
-            collapsing
-            className="word-break-all"
-          >
-            System
-          </Table.Cell>
-        )}
+          ) : (
+            i18next.t("System")
+          )}
+        </Table.Cell>
+
         <Table.Cell collapsing>
           {status === "RUNNING" ? (
             <StopButton

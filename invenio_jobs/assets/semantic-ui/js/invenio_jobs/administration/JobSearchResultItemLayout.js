@@ -12,6 +12,7 @@ import PropTypes from "prop-types";
 import React, { Component } from "react";
 import { UserListItemCompact, toRelativeTime } from "react-invenio-forms";
 import { withState } from "react-searchkit";
+import { DateTime } from "luxon";
 import { Popup, Table, Button } from "semantic-ui-react";
 import { Actions } from "@js/invenio_administration";
 import { StatusFormatter } from "./StatusFormatter";
@@ -52,6 +53,15 @@ class SearchResultItemComponent extends Component {
     } = this.props;
 
     const { lastRunStatus, lastRunCreatedTime } = this.state;
+    const lastRunFormatted = DateTime.fromISO(lastRunCreatedTime)
+      .setLocale(i18next.language)
+      .toLocaleString(DateTime.DATETIME_FULL_WITH_SECONDS);
+
+    const nextRunFormatted = result.next_run
+      ? DateTime.fromISO(result.next_run)
+          .setLocale(i18next.language)
+          .toLocaleString(DateTime.DATETIME_FULL_WITH_SECONDS)
+      : "-";
 
     return (
       <Table.Row>
@@ -77,7 +87,7 @@ class SearchResultItemComponent extends Component {
           />
           <BoolFormatter
             tooltip={i18next.t("Active")}
-            icon="check"
+            icon="check circle"
             color="green"
             value={result.active === true}
           />
@@ -92,7 +102,7 @@ class SearchResultItemComponent extends Component {
             <>
               <StatusFormatter status={lastRunStatus} />
               <Popup
-                content={lastRunCreatedTime}
+                content={lastRunFormatted}
                 trigger={
                   <span>
                     {toRelativeTime(lastRunCreatedTime, i18next.language)}
@@ -101,40 +111,42 @@ class SearchResultItemComponent extends Component {
               />
             </>
           ) : (
-            "−"
+            "-"
           )}
         </Table.Cell>
-        {result?.last_run?.started_by ? (
-          <Table.Cell
-            key={`job-user-${result.last_run.started_by.id}`}
-            data-label={i18next.t("Started by")}
-            collapsing
-            className="word-break-all"
-          >
+        <Table.Cell
+          key={`job-user-${result?.last_run?.started_by?.id}`}
+          data-label={i18next.t("Started by")}
+          collapsing
+          className="word-break-all"
+        >
+          {result?.last_run?.started_by ? (
             <UserListItemCompact
               user={result.last_run.started_by}
               id={result.last_run.started_by.id}
             />
-          </Table.Cell>
-        ) : (
-          <Table.Cell
-            key="job-user"
-            data-label={i18next.t("Started by")}
-            collapsing
-            className="word-break-all"
-          >
-            System
-          </Table.Cell>
-        )}
+          ) : (
+            i18next.t("System")
+          )}
+        </Table.Cell>
         <Table.Cell
           collapsing
           key={`job-next-run${result.next_run}`}
           data-label={i18next.t("Next run")}
           className="word-break-all"
         >
-          {result.active === false
-            ? "Inactive"
-            : toRelativeTime(result.next_run, i18next.language) ?? "−"}
+          {result.active === false ? (
+            "Inactive"
+          ) : (
+            <Popup
+              content={nextRunFormatted}
+              trigger={
+                <span>
+                  {toRelativeTime(result.next_run, i18next.language) ?? "-"}
+                </span>
+              }
+            />
+          )}
         </Table.Cell>
         <Table.Cell collapsing>
           <Button.Group size="tiny" className="relaxed">

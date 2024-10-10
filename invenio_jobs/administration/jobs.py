@@ -7,6 +7,7 @@
 # details.
 
 """Invenio administration view module."""
+
 from flask import current_app
 from invenio_administration.views.base import (
     AdminResourceCreateView,
@@ -96,7 +97,7 @@ class JobsDetailsView(JobsAdminMixin, AdminResourceListView):
     pid_value = "<pid_value>"
 
     item_field_list = {
-        "run": {"text": _("Run"), "order": 1, "width": 2},
+        "run": {"text": _("Run (ISO UTC)"), "order": 1, "width": 2},
         "duration": {"text": _("Duration"), "order": 2, "width": 2},
         "message": {"text": _("Message"), "order": 3, "width": 10},
         "user": {"text": _("Started by"), "order": 4, "width": 2},

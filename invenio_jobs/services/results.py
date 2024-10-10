@@ -7,6 +7,7 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 
 """Service results."""
+
 import json
 from collections.abc import Iterable, Sized
 
@@ -16,21 +17,14 @@ from invenio_records_resources.services.records.results import (
     RecordList,
 )
 
+from ..api import AttrDict
+
 try:
     # flask_sqlalchemy<3.0.0
     from flask_sqlalchemy import Pagination
 except ImportError:
     # flask_sqlalchemy>=3.0.0
     from flask_sqlalchemy.pagination import Pagination
-
-
-class AttrDict(dict):
-    """Helper class to fake API layer."""
-
-    def __init__(self, *args, **kwargs):
-        """Constructor."""
-        super(AttrDict, self).__init__(*args, **kwargs)
-        self.__dict__ = self
 
 
 class Item(RecordItem):
@@ -152,34 +146,3 @@ class JobList(List):
                     link.expand(self._identity, hit, projection)
 
             yield projection
-
-
-class ModelExpandableField(ExpandableField):
-    """Expandable entity resolver field.
-
-    It will use the Entity resolver registry to retrieve the service to
-    use to fetch records and the fields to return when serializing
-    the referenced record.
-    """
-
-    entity_proxy = None
-
-    def ghost_record(self, value):
-        """Return ghost representation of not resolved value."""
-        return self.entity_proxy.ghost_record(value)
-
-    def system_record(self):
-        """Return the representation of a system user."""
-        return self.entity_proxy.system_record()
-
-    def get_value_service(self, value):
-        """Return the value and the service via entity resolvers."""
-        self.entity_proxy = ResolverRegistry.resolve_entity_proxy(value)
-        v = self.entity_proxy._parse_ref_dict_id()
-        _resolver = self.entity_proxy.get_resolver()
-        service = _resolver.get_service()
-        return v, service
-
-    def pick(self, identity, resolved_rec):
-        """Pick fields defined in the entity resolver."""
-        return self.entity_proxy.pick_resolved_fields(identity, resolved_rec)

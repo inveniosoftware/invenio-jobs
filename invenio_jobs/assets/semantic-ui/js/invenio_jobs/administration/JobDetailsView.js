@@ -25,14 +25,14 @@ const domContainer = document.getElementById("invenio-search-config");
 
 const defaultComponents = initDefaultSearchComponents(domContainer);
 
-const overridenComponents = {
+const searchOverriddenComponents = {
   ...defaultComponents,
   "InvenioAdministration.SearchResultItem.layout": SearchResultItemLayout,
   "SearchApp.layout": JobSearchLayout,
 };
 
 createSearchAppInit(
-  overridenComponents,
+  searchOverriddenComponents,
   true,
   "invenio-search-config",
   false,
@@ -48,7 +48,6 @@ const fields = JSON.parse(detailsConfig.dataset.fields);
 const resourceName = JSON.parse(detailsConfig.dataset.resourceName);
 const displayEdit = JSON.parse(detailsConfig.dataset.displayEdit);
 const displayDelete = JSON.parse(detailsConfig.dataset.displayDelete);
-const actions = JSON.parse(detailsConfig.dataset.actions);
 const apiEndpoint = _get(detailsConfig.dataset, "apiEndpoint");
 const idKeyPath = JSON.parse(_get(detailsConfig.dataset, "pidPath", "pid"));
 const listUIEndpoint = detailsConfig.dataset.listEndpoint;
@@ -67,7 +66,6 @@ detailsConfig &&
     <OverridableContext.Provider value={cmps}>
       <AdminDetailsView
         title={title}
-        actions={actions}
         apiEndpoint={apiEndpoint}
         columns={fields}
         pid={pidValue}

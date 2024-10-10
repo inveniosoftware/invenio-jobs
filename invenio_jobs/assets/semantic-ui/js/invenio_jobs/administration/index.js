@@ -16,7 +16,7 @@ const domContainer = document.getElementById("invenio-search-config");
 
 const defaultComponents = initDefaultSearchComponents(domContainer);
 
-const overridenComponents = {
+const overriddenComponents = {
   ...defaultComponents,
   "InvenioAdministration.SearchResultItem.layout": SearchResultItemLayout,
   "InvenioAdministration.ResourceActions": JobActions,
@@ -25,7 +25,7 @@ const overridenComponents = {
 };
 
 createSearchAppInit(
-  overridenComponents,
+  overriddenComponents,
   true,
   "invenio-search-config",
   false,

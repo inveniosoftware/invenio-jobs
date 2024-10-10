@@ -71,7 +71,7 @@ class Job(db.Model, Timestamp):
     @property
     def default_args(self):
         """Compute default job arguments."""
-        return Task.get(self.task).build_task_arguments(job_obj=self)
+        return Task.get(self.task)._build_task_arguments(job_obj=self)
 
     @property
     def parsed_schedule(self):
@@ -153,7 +153,7 @@ class Run(db.Model, Timestamp):
     @classmethod
     def generate_args(cls, job, task_arguments=None):
         """Generate new run args."""
-        args = Task.get(job.task).build_task_arguments(
+        args = Task.get(job.task)._build_task_arguments(
             job_obj=job, **task_arguments or {}
         )
         args = json.dumps(args, indent=4, sort_keys=True, default=str)
