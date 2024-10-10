@@ -7,6 +7,7 @@
 
 """Tasks."""
 
+import traceback
 from datetime import datetime, timezone
 
 from celery import shared_task
@@ -46,7 +47,7 @@ def execute_run(self, run_id, kwargs=None):
             run,
             status=RunStatusEnum.FAILED,
             finished_at=datetime.now(timezone.utc),
-            message=f"{e.__class__.__name__}: {str(e)}",
+            message=f"{e.__class__.__name__}: {str(e)}\n{traceback.format_exc()}",
         )
         return
 

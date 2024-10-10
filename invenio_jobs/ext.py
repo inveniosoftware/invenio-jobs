@@ -7,6 +7,7 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 
 """Jobs extension."""
+
 import importlib_metadata
 from celery import current_app as current_celery_app
 from flask import current_app

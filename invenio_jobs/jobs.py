@@ -7,17 +7,55 @@
 
 """Jobs module."""
 
-from abc import ABC, abstractmethod
+from abc import ABC
+from datetime import timezone
+
+from invenio_i18n import gettext as _
+from marshmallow import Schema, fields
+from marshmallow_utils.fields import TZDateTime
+
+
+class PredefinedArgsSchema(Schema):
+    """Base schema of predefined task input arguments.
+
+    Attributes:
+        job_arg_schema (fields.String): A system hidden field that holds the name of
+            this schema class. Required whenever at least one argument is needed.
+        since (TZDateTime): A date-time field with UTC timezone and ISO format.
+            It includes a description indicating that the field can be left
+            empty to continue from the last successful run.
+    """
+
+    """Schema of task input arguments."""
+
+    job_arg_schema = fields.String(
+        metadata={"type": "hidden"},
+        dump_default="PredefinedArgsSchema",
+        load_default="PredefinedArgsSchema",
+    )
+
+    since = TZDateTime(
+        timezone=timezone.utc,
+        format="iso",
+        metadata={
+            "description": _(
+                "YYYY-MM-DD HH:mm format. "
+                "Leave empty to continue since last successful run."
+            )
+        },
+    )
 
 
 class JobType(ABC):
-    """Base class to register celery tasks available in the admin panel."""
+    """Base class to define a job."""
 
-    arguments_schema = None
-    task = None
     id = None
     title = None
     description = None
+
+    task = None
+
+    arguments_schema = PredefinedArgsSchema
 
     @classmethod
     def create(
@@ -39,17 +77,30 @@ class JobType(ABC):
             ),
         )
 
-    @abstractmethod
-    def default_args(self, *args, **kwargs):
-        """Abstract method to enforce implementing default arguments."""
+    @classmethod
+    def build_task_arguments(cls, job_obj, since=None, **kwargs):
+        """Override to define extra arguments to be injected on task execution.
+
+        :param job_obj (Job): the Job object.
+        :param since (datetime): last time the job was executed, or None if never
+            executed.
+        :return: a dict of arguments to be injected on task execution.
+        """
         return {}
 
     @classmethod
-    def build_task_arguments(cls, job_obj, custom_args=None, **kwargs):
-        """Build arguments to be passed to the task.
+    def _build_task_arguments(cls, job_obj, since=None, custom_args=None, **kwargs):
+        """Build dict of arguments injected on task execution.
 
-        Custom arguments can be passed to overwrite the default arguments of a job.
+        :param job_obj (Job): the Job object.
+        :param since (datetime): last time the job was executed.
+        :param custom_args (dict): when provided, takes precedence over any other
+            provided argument.
+        :return: a dict of arguments to be injected on task execution.
         """
         if custom_args:
             return custom_args
-        return cls.default_args(job_obj, **kwargs)
+
+        if since is None and job_obj.last_runs["success"]:
+            since = job_obj.last_runs["success"].started_at
+        return {**cls.build_task_arguments(job_obj, since=since, **kwargs)}

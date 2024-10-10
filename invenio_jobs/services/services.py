@@ -26,7 +26,6 @@ from invenio_jobs.tasks import execute_run
 
 from ..api import AttrDict
 from ..models import Job, Run, RunStatusEnum, Task
-from ..proxies import current_jobs
 from .errors import JobNotFoundError, RunNotFoundError, RunStatusChangeError
 
 

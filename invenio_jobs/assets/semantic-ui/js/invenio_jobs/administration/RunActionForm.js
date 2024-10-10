@@ -128,9 +128,8 @@ export class RunActionForm extends Component {
                       <Divider />
                       <Message info>
                         <Trans>
-                          "Modifying the <b>Custom arguments</b> field will
-                          replace any arguments specified above and run the task
-                          with custom configuration.
+                          <b>Custom args:</b> when provided, the input below will
+                          override any arguments specified above.
                         </Trans>
                       </Message>
                       <TextArea
