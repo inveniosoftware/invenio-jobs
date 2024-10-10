@@ -21,7 +21,7 @@ administration = WebpackThemeBundle(
             },
             dependencies={
                 "react-invenio-forms": "^4.0.0",
-                "react-searchkit": "^2.0.0",
+                "react-searchkit": "^3.0.0",
                 "@microlink/react-json-view": "^1.21.3",
             },
             aliases={
