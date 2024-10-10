@@ -7,6 +7,10 @@
 Changes
 =======
 
+Version v1.1.0 (released 2024-10-10)
+
+- webpack: bump react-searchkit
+
 Version v1.0.0 (released 2024-09-27)
 
 - db: change tables names
