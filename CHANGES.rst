@@ -7,6 +7,10 @@
 Changes
 =======
 
+Version v2.0.0 (released 2024-10-14)
+
+- job types: refactor public method name (breaking change)
+
 Version v1.1.0 (released 2024-10-10)
 
 - webpack: bump react-searchkit
