@@ -7,6 +7,10 @@
 Changes
 =======
 
+Version v1.1.1 (released 2024-12-09)
+
+- tasks: use utcnow to avoid timezone issues with the Celery scheduler
+
 Version v1.1.0 (released 2024-10-10)
 
 - webpack: bump react-searchkit
