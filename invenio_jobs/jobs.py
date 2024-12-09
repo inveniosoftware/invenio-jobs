@@ -73,7 +73,7 @@ class JobType(ABC):
                 task=task,
                 description=description,
                 title=title,
-                **attrs
+                **attrs,
             ),
         )
 
