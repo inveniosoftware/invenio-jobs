@@ -1,6 +1,7 @@
 #
 # This file is part of Invenio.
 # Copyright (C) 2016-2018 CERN.
+# Copyright (C) 2024 Graz University of Technology.
 #
 # Invenio is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -10,7 +11,11 @@
 import sqlalchemy as sa
 import sqlalchemy_utils
 from alembic import op
+from invenio_db import db
 from sqlalchemy.dialects import postgresql
+from sqlalchemy_utils.types import ChoiceType
+
+from invenio_jobs.models import RunStatusEnum
 
 # revision identifiers, used by Alembic.
 revision = "356496a01197"
@@ -64,7 +69,12 @@ def upgrade():
         sa.Column("started_at", sa.DateTime(), nullable=True),
         sa.Column("finished_at", sa.DateTime(), nullable=True),
         sa.Column("task_id", sqlalchemy_utils.types.uuid.UUIDType(), nullable=True),
-        sa.Column("status", sa.CHAR(1), nullable=False),
+        sa.Column(
+            "status",
+            ChoiceType(RunStatusEnum, impl=db.String(1)),
+            nullable=False,
+            default=RunStatusEnum.QUEUED.value,
+        ),
         sa.Column("message", sa.Text(), nullable=True),
         sa.Column("title", sa.Text(), nullable=True),
         sa.Column(
