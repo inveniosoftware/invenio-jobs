@@ -10,6 +10,6 @@
 
 from .ext import InvenioJobs
 
-__version__ = "3.0.0.dev1"
+__version__ = "3.0.0.dev2"
 
 __all__ = ("__version__", "InvenioJobs")
