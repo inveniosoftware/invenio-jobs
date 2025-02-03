@@ -46,7 +46,8 @@ class JobsAdminMixin:
             "icon": "calendar",
         },
         "runs": {
-            "text": "Run now",
+            "text": "Configure and run",
+            "modal_text": "Run now",
             "payload_schema": RunSchema,
             "order": 2,
             "icon": "play",

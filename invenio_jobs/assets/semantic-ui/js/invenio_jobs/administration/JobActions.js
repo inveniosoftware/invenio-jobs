@@ -100,7 +100,7 @@ export class JobActions extends Component {
               labelPosition={labelPos}
             >
               {!_isEmpty(icon) && <Icon name={icon} />}
-              {actionConfig.text}
+              {actionConfig.text}...
             </Element>
           );
         })}
