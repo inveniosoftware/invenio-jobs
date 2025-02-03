@@ -56,9 +56,10 @@ export class RunActionForm extends Component {
     const jsonData = JSON.parse(resource.default_args);
     const { activeIndex } = this.state;
     return (
-      <>
-        <Formik initialValues={formData} onSubmit={onSubmit}>
-          {(props) => (
+      <Formik initialValues={formData} onSubmit={onSubmit}>
+        {(props) => {
+          const actions_errors = props?.errors
+          return (
             <>
               <Modal.Content>
                 <SemanticForm
@@ -128,8 +129,8 @@ export class RunActionForm extends Component {
                       <Divider />
                       <Message info>
                         <Trans>
-                          <b>Custom args:</b> when provided, the input below will
-                          override any arguments specified above.
+                          <b>Custom args:</b> when provided, the input below
+                          will override any arguments specified above.
                         </Trans>
                       </Message>
                       <TextArea
@@ -151,6 +152,11 @@ export class RunActionForm extends Component {
                   {!isEmpty(error) && (
                     <ErrorMessage
                       {...error}
+                      content={
+                        actions_errors && Object.keys(actions_errors).length > 0
+                          ? Object.values(actions_errors)[0]
+                          : error.content
+                      }
                       removeNotification={this.resetErrorState}
                     />
                   )}
@@ -163,7 +169,7 @@ export class RunActionForm extends Component {
                   form="action-form"
                   loading={loading}
                 >
-                  {i18next.t(actionConfig.text)}
+                  {i18next.t(actionConfig.modal_text) || i18next.t(actionConfig.text)}
                 </Button>
                 <Button
                   onClick={actionCancelCallback}
@@ -174,9 +180,9 @@ export class RunActionForm extends Component {
                 />
               </Modal.Actions>
             </>
-          )}
-        </Formik>
-      </>
+          );
+        }}
+      </Formik>
     );
   }
 }
