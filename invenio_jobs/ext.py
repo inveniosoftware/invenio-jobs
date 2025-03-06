@@ -17,6 +17,8 @@ from . import config
 from .models import Task
 from .registry import JobsRegistry
 from .resources import (
+    AppLogResource,
+    AppLogResourceConfig,
     JobsResource,
     JobsResourceConfig,
     RunsResource,
@@ -25,6 +27,8 @@ from .resources import (
     TasksResourceConfig,
 )
 from .services import (
+    AppLogService,
+    AppLogServiceConfig,
     JobsService,
     JobsServiceConfig,
     RunsService,
@@ -62,6 +66,7 @@ class InvenioJobs:
         self.service = JobsService(JobsServiceConfig.build(app))
         self.runs_service = RunsService(RunsServiceConfig.build(app))
         self.tasks_service = TasksService(TasksServiceConfig.build(app))
+        self.app_log_service = AppLogService(AppLogServiceConfig.build(app))
 
     def init_resource(self, app):
         """Initialize resources."""
@@ -71,6 +76,9 @@ class InvenioJobs:
         )
         self.tasks_resource = TasksResource(
             TasksResourceConfig.build(app), self.tasks_service
+        )
+        self.app_log_resource = AppLogResource(
+            AppLogResourceConfig.build(app), self.app_log_service
         )
 
     def load_entry_point_group(self):

@@ -127,3 +127,22 @@ class RunsResourceConfig(ResourceConfig, ConfiguratorMixin):
     # Response handling
     response_handlers = response_handlers
     error_handlers = error_handlers
+
+
+class AppLogResourceConfig(ResourceConfig, ConfiguratorMixin):
+    """Logs resource config."""
+
+    # Blueprint configuration
+    blueprint_name = "app-logs"
+    url_prefix = "/logs/app"
+    routes = {"list": ""}
+
+    # Request handling
+    request_read_args = {}
+    request_view_args = {}
+    request_search_args = SearchRequestArgsSchema
+    request_body_parsers = request_body_parsers
+
+    # Response handling
+    response_handlers = response_handlers
+    error_handlers = error_handlers
