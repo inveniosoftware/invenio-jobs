@@ -8,6 +8,10 @@
 Changes
 =======
 
+Version v3.0.1 (released 2025-03-10)
+
+- ui: rename job run button label (ux improvement)
+
 Version v3.0.0 (released 2025-02-13)
 
 - Promote to stable release.
