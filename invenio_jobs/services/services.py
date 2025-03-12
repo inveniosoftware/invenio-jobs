@@ -11,7 +11,12 @@
 import uuid
 
 import sqlalchemy as sa
-from invenio_records_resources.services.base import LinksTemplate
+from flask import current_app
+from invenio_logging.datastreams.log_event import LogEvent
+from invenio_logging.datastreams.uow import LoggingOp
+from invenio_logging.proxies import current_datastream_logging_manager
+from invenio_records_resources.records.systemfields import IndexField
+from invenio_records_resources.services.base import LinksTemplate, Service
 from invenio_records_resources.services.base.utils import map_search_params
 from invenio_records_resources.services.records import RecordService
 from invenio_records_resources.services.uow import (
@@ -21,6 +26,7 @@ from invenio_records_resources.services.uow import (
     TaskRevokeOp,
     unit_of_work,
 )
+from invenio_search.engine import dsl
 
 from invenio_jobs.tasks import execute_run
 
@@ -85,7 +91,22 @@ class JobsService(BaseService):
         )
 
         job = Job(**valid_data)
+
+        uow.session.add(job)
+        uow.session.flush()  # Required to get the job.id
+
         uow.register(ModelCommitOp(job))
+
+        log_event = LogEvent(
+            log_type="audit",
+            event={"action": "job.create"},
+            resource={"type": "job", "id": str(job.id)},
+            user={"id": str(identity.id)},
+            message=f"Job '{job.title}' created.",
+        )
+
+        uow.register(LoggingOp(log_event))
+
         return self.result_item(self, identity, job, links_tpl=self.links_item_tpl)
 
     def search(self, identity, params):
@@ -236,11 +257,32 @@ class RunsService(BaseService):
             status=RunStatusEnum.QUEUED,
             **valid_data,
         )
+        # We want to flush to gain access to the run.id
+        uow.session.flush()
         uow.register(ModelCommitOp(run))
+
+        log_event = LogEvent(
+            log_type="app",
+            event={"action": "job.run"},
+            resource={
+                "type": "job",
+                "id": str(job_id),
+                "parent": {"type": "run", "id": str(run.id)},
+            },
+            user={"id": str(identity.id)},
+            message=f"Run '{job.title}' created.",
+        )
+
+        uow.register(LoggingOp(log_event))
+
         uow.register(
             TaskOp.for_async_apply(
                 execute_run,
-                kwargs={"run_id": run.id},
+                kwargs={
+                    "run_id": run.id,
+                    "log_data": log_event.to_dict(),
+                    "log_type": log_event.type,
+                },
                 task_id=str(run.task_id),
                 queue=run.queue,
             )
@@ -292,3 +334,21 @@ class RunsService(BaseService):
         uow.register(TaskRevokeOp(str(run.task_id)))
 
         return self.result_item(self, identity, run, links_tpl=self.links_item_tpl)
+
+
+class AppLogService(BaseService):
+    """App log service."""
+
+    def search(self, identity, params):
+        """Search for app logs."""
+        self.require_permission(identity, "search")
+        search_params = map_search_params(self.config.search, params)
+        query_param = search_params["q"]
+        results = current_datastream_logging_manager.search("app", query_param)
+
+        return self.result_list(
+            self,
+            identity,
+            results,
+            links_tpl=self.links_item_tpl,
+        )

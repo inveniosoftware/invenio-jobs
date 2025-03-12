@@ -11,6 +11,7 @@
 from functools import partial
 
 from invenio_i18n import gettext as _
+from invenio_logging.datastreams.schema import LogEventSchema
 from invenio_records_resources.services.base import ServiceConfig
 from invenio_records_resources.services.base.config import ConfiguratorMixin, FromConfig
 from invenio_records_resources.services.records.config import (
@@ -22,7 +23,12 @@ from sqlalchemy import asc, desc
 from ..models import Job, Run, Task
 from . import results
 from .links import JobLink, RunLink
-from .permissions import JobPermissionPolicy, RunPermissionPolicy, TasksPermissionPolicy
+from .permissions import (
+    AppLogsPermissionPolicy,
+    JobPermissionPolicy,
+    RunPermissionPolicy,
+    TasksPermissionPolicy,
+)
 from .schema import JobSchema, RunSchema, TaskSchema
 
 
@@ -118,6 +124,8 @@ class RunSearchOptions(SearchOptionsBase):
     }
     sort_options = {"created": dict(title=_("Created"), fields=["created"])}
 
+    sort_default_no_query = "bestmatch"
+
     pagination_options = {"default_results_per_page": 25}
 
 
@@ -145,3 +153,35 @@ class RunsServiceConfig(ServiceConfig, ConfiguratorMixin):
     }
 
     links_search = pagination_links("{+api}/jobs/{job_id}{?args*}")
+
+
+class AppLogSearchOptions(SearchOptionsBase):
+    """App log search options."""
+
+    sort_default = "timestamp"
+    sort_direction_default = "desc"
+    sort_direction_options = {
+        "asc": dict(title=_("Ascending"), fn=asc),
+        "desc": dict(title=_("Descending"), fn=desc),
+    }
+    sort_options = {
+        "timestamp": dict(title=_("Timestamp"), fields=["@timestamp"]),
+    }
+
+    pagination_options = {"default_results_per_page": 25}
+
+
+class AppLogServiceConfig(ServiceConfig, ConfiguratorMixin):
+    """App log service configuration."""
+
+    service_id = "app-logs"
+    permission_policy_cls = FromConfig(
+        "APP_LOGS_PERMISSION_POLICY",
+        default=AppLogsPermissionPolicy,
+    )
+    search = AppLogSearchOptions
+    schema = LogEventSchema
+    components = []
+    links_item = None
+    result_item_cls = results.Item
+    result_list_cls = results.AppLogsList
