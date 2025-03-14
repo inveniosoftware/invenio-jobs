@@ -9,13 +9,12 @@
 """Services."""
 
 from .config import (
-    AppLogServiceConfig,
     JobsServiceConfig,
     RunsServiceConfig,
     TasksServiceConfig,
 )
 from .schema import JobSchema
-from .services import AppLogService, JobsService, RunsService, TasksService
+from .services import JobsService, RunsService, TasksService
 
 __all__ = (
     "JobSchema",
@@ -25,6 +24,4 @@ __all__ = (
     "RunsServiceConfig",
     "TasksService",
     "TasksServiceConfig",
-    "AppLogService",
-    "AppLogServiceConfig",
 )

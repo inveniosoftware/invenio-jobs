@@ -11,7 +11,6 @@
 from functools import partial
 
 from invenio_i18n import gettext as _
-from invenio_logging.datastreams.schema import LogEventSchema
 from invenio_records_resources.services.base import ServiceConfig
 from invenio_records_resources.services.base.config import ConfiguratorMixin, FromConfig
 from invenio_records_resources.services.records.config import (
@@ -24,7 +23,6 @@ from ..models import Job, Run, Task
 from . import results
 from .links import JobLink, RunLink
 from .permissions import (
-    AppLogsPermissionPolicy,
     JobPermissionPolicy,
     RunPermissionPolicy,
     TasksPermissionPolicy,
@@ -169,19 +167,3 @@ class AppLogSearchOptions(SearchOptionsBase):
     }
 
     pagination_options = {"default_results_per_page": 25}
-
-
-class AppLogServiceConfig(ServiceConfig, ConfiguratorMixin):
-    """App log service configuration."""
-
-    service_id = "app-logs"
-    permission_policy_cls = FromConfig(
-        "APP_LOGS_PERMISSION_POLICY",
-        default=AppLogsPermissionPolicy,
-    )
-    search = AppLogSearchOptions
-    schema = LogEventSchema
-    components = []
-    links_item = None
-    result_item_cls = results.Item
-    result_list_cls = results.AppLogsList

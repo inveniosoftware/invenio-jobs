@@ -27,8 +27,6 @@ from .resources import (
     TasksResourceConfig,
 )
 from .services import (
-    AppLogService,
-    AppLogServiceConfig,
     JobsService,
     JobsServiceConfig,
     RunsService,
@@ -37,6 +35,7 @@ from .services import (
     TasksServiceConfig,
 )
 
+from invenio_jobs.logging.app_logs.services import AppLogService, AppLogServiceConfig
 
 class InvenioJobs:
     """Invenio-Jobs extension."""

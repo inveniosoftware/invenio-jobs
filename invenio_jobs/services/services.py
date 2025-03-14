@@ -11,12 +11,9 @@
 import uuid
 
 import sqlalchemy as sa
-from flask import current_app
-from invenio_logging.datastreams.log_event import LogEvent
-from invenio_logging.datastreams.uow import LoggingOp
-from invenio_logging.proxies import current_datastream_logging_manager
-from invenio_records_resources.records.systemfields import IndexField
-from invenio_records_resources.services.base import LinksTemplate, Service
+from invenio_jobs.logging.app_logs.log_event import LogEvent
+from invenio_logging.engine.uow import LoggingOp
+from invenio_records_resources.services.base import LinksTemplate
 from invenio_records_resources.services.base.utils import map_search_params
 from invenio_records_resources.services.records import RecordService
 from invenio_records_resources.services.uow import (
@@ -26,8 +23,6 @@ from invenio_records_resources.services.uow import (
     TaskRevokeOp,
     unit_of_work,
 )
-from invenio_search.engine import dsl
-
 from invenio_jobs.tasks import execute_run
 
 from ..api import AttrDict
@@ -70,6 +65,10 @@ def get_job(job_id):
 def get_run(run_id, job_id=None):
     """Get a job by id."""
     run = Run.query.get(run_id)
+
+    if isinstance(job_id, str):
+        job_id = uuid.UUID(job_id)
+
     if run is None or run.job_id != job_id:
         raise RunNotFoundError(run_id, job_id=job_id)
     return run
@@ -264,6 +263,7 @@ class RunsService(BaseService):
         log_event = LogEvent(
             log_type="app",
             event={"action": "job.run"},
+            status="INFO",
             resource={
                 "type": "job",
                 "id": str(job_id),
@@ -334,21 +334,3 @@ class RunsService(BaseService):
         uow.register(TaskRevokeOp(str(run.task_id)))
 
         return self.result_item(self, identity, run, links_tpl=self.links_item_tpl)
-
-
-class AppLogService(BaseService):
-    """App log service."""
-
-    def search(self, identity, params):
-        """Search for app logs."""
-        self.require_permission(identity, "search")
-        search_params = map_search_params(self.config.search, params)
-        query_param = search_params["q"]
-        results = current_datastream_logging_manager.search("app", query_param)
-
-        return self.result_list(
-            self,
-            identity,
-            results,
-            links_tpl=self.links_item_tpl,
-        )
