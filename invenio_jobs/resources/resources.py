@@ -8,7 +8,7 @@
 
 """Resources definitions."""
 
-from flask import g
+from flask import g, redirect, url_for
 from flask_resources import Resource, resource_requestctx, response_handler, route
 from invenio_administration.marshmallow_utils import jsonify_schema
 from invenio_records_resources.resources.errors import ErrorHandlersMixin
@@ -204,17 +204,10 @@ class RunsResource(ErrorHandlersMixin, Resource):
         return item.to_dict(), 200
 
     @request_view_args
-    @response_handler()
     def logs(self):
         """Read an item."""
-        identity = g.identity
-        hits = self.service.search(
-            identity=identity,
-            job_id=resource_requestctx.view_args["job_id"],
-            run_id=resource_requestctx.view_args["run_id"],
-            params=resource_requestctx.args,
-        )
-        return hits.to_dict(), 200
+        params = dict(q=resource_requestctx.view_args["run_id"])
+        return redirect(url_for("app-logs.search", **params))
 
     @request_view_args
     @response_handler()
@@ -253,3 +246,33 @@ class RunsResource(ErrorHandlersMixin, Resource):
             data=resource_requestctx.view_args["id"],
         )
         return "", 204
+
+
+class AppLogResource(ErrorHandlersMixin, Resource):
+    """App log resource."""
+
+    def __init__(self, config, service):
+        """Constructor."""
+        super().__init__(config)
+        self.service = service
+
+    def create_url_rules(self):
+        """Create the URL rules for the app log resource."""
+        routes = self.config.routes
+        url_rules = [
+            route("GET", routes["list"], self.search),
+        ]
+
+        return url_rules
+
+    @request_search_args
+    @request_view_args
+    @response_handler(many=True)
+    def search(self):
+        """Perform a search."""
+        identity = g.identity
+        hits = self.service.search(
+            identity=identity,
+            params=resource_requestctx.args,
+        )
+        return hits.to_dict(), 200

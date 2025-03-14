@@ -8,8 +8,13 @@
 
 """Jobs resources."""
 
-from .config import JobsResourceConfig, RunsResourceConfig, TasksResourceConfig
-from .resources import JobsResource, RunsResource, TasksResource
+from .config import (
+    AppLogResourceConfig,
+    JobsResourceConfig,
+    RunsResourceConfig,
+    TasksResourceConfig,
+)
+from .resources import AppLogResource, JobsResource, RunsResource, TasksResource
 
 __all__ = (
     "JobsResource",
@@ -18,4 +23,6 @@ __all__ = (
     "TasksResourceConfig",
     "RunsResource",
     "RunsResourceConfig",
+    "AppLogResource",
+    "AppLogResourceConfig",
 )

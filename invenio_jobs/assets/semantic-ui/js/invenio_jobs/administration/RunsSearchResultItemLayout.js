@@ -69,7 +69,7 @@ class SearchResultItemComponent extends Component {
           className="word-break-all"
         >
           <StatusFormatter status={status} />
-          <a href={result.links.self}>{createdFormatted}</a>
+          <a href={`/administration/runs/${result.id}`}>{createdFormatted}</a>
         </Table.Cell>
         <Table.Cell
           key={`run-last-run-${status}`}

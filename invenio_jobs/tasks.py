@@ -28,13 +28,16 @@ def update_run(run, **kwargs):
 
 
 @shared_task(bind=True, ignore_result=True)
-def execute_run(self, run_id, kwargs=None):
+def execute_run(self, run_id, log_data={}, log_type=None):
     """Execute and manage a run state and task."""
     run = Run.query.filter_by(id=run_id).one_or_none()
     task = current_jobs.registry.get(run.job.task).task
     update_run(run, status=RunStatusEnum.RUNNING, started_at=datetime.utcnow())
+    kwargs = run.args.copy()
+    kwargs["log_data"] = log_data
+    kwargs["log_type"] = log_type
     try:
-        result = task.apply(kwargs=run.args, throw=True)
+        result = task.apply(kwargs=kwargs, throw=True)
     except SystemExit as e:
         update_run(
             run,
