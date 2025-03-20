@@ -106,5 +106,6 @@ class RunScheduler(Scheduler):
         """Create run from a JobEntry."""
         job = Job.query.get(entry.job.id)
         run = Run.create(job=job, task_id=uuid.uuid4())
+        db.session.add(run)
         db.session.commit()
         return run
