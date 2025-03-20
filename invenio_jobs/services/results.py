@@ -12,7 +12,6 @@ import json
 from collections.abc import Iterable, Sized
 
 from invenio_records_resources.services.records.results import (
-    ExpandableField,
     RecordItem,
     RecordList,
 )

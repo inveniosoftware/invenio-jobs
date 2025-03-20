@@ -9,7 +9,7 @@
 """Service permissions."""
 
 from invenio_administration.generators import Administration
-from invenio_records_permissions.generators import SystemProcess
+from invenio_records_permissions.generators import Disable, SystemProcess
 from invenio_records_permissions.policies import BasePermissionPolicy
 
 

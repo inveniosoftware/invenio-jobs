@@ -1,0 +1,80 @@
+{# Copyright (C) 2024 CERN.
+
+    Invenio App RDM is free software; you can redistribute it and/or modify it
+    under the terms of the MIT License; see LICENSE file for more details.
+  #}
+  
+  {%- from "invenio_administration/macros.html" import go_back %}
+
+  {% extends "invenio_administration/search.html" %}
+  {% block admin_main_column %}
+  <main
+    id="admin-main-content"
+    class="ten wide mobile twelve wide tablet thirteen wide computer fourteen wide widescreen column"
+  >
+    <div class="ui container fluid pl-10 pr-10 pt-10 pb-10">
+    {{ go_back() }}
+      <div class="ui divider"></div>
+      <div class="ui right floated buttons">
+        <button class="ui icon left labeled button">
+          <i class="play icon"></i> Run now
+        </button>
+      </div>
+      <div class="ui container">
+        <h2 class="ui header mt-20">{{run.title}}</h2>
+
+        <div class="ui divider"></div>
+        <div class="ui internally celled grid">
+            <div class="three wide column">
+                <h4 class="ui grey header">Job run</h4>
+                <div class="ui list">
+                    <div class="item">
+                        {% if run.status == "SUCCESS" %}
+                            <i class="green check circle icon"></i>
+                        {% else %}
+                            <i class="red times circle icon"></i>
+                        {% endif %}
+                        <div class="content">
+                            <p><strong>{{ run.formatted_started_at }}</strong></p>
+                            <p class="description">{{ run_duration }} mins</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="thirteen wide column">
+                <h4 class="ui grey header">Logs</h4>
+                <table class="ui very basic table">
+                    <thead>
+                        <tr>
+                            <th class="two wide">Timestamp</th>
+                            <th class="one wide">Level</th>
+                            <th class="eleven wide">Message</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for log in logs %}
+                        <tr>
+                            <td>{{ log.formatted_timestamp }}</td>
+                            <td>
+                                {% if log.status == "ERROR" %}
+                                    <span class="ui basic red label">{{ log.status }}</span>
+                                {% elif log.status == "INFO" %}
+                                    <span class="ui basic blue label">{{ log.status }}</span>
+                                {% elif log.status == "WARNING" %}
+                                    <span class="ui basic yellow label">{{ log.status }}</span>
+                                {% elif log.status == "DEBUG" %}
+                                    <span class="ui basic grey label">{{ log.status }}</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ log.message }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    </div>
+  </main>
+{% endblock %}

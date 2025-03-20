@@ -8,7 +8,11 @@
 
 """Services."""
 
-from .config import JobsServiceConfig, RunsServiceConfig, TasksServiceConfig
+from .config import (
+    JobsServiceConfig,
+    RunsServiceConfig,
+    TasksServiceConfig,
+)
 from .schema import JobSchema
 from .services import JobsService, RunsService, TasksService
 

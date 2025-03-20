@@ -11,6 +11,8 @@
 import uuid
 
 import sqlalchemy as sa
+from invenio_jobs.logging.app_logs.log_event import LogEvent
+from invenio_logging.engine.uow import LoggingOp
 from invenio_records_resources.services.base import LinksTemplate
 from invenio_records_resources.services.base.utils import map_search_params
 from invenio_records_resources.services.records import RecordService
@@ -21,7 +23,6 @@ from invenio_records_resources.services.uow import (
     TaskRevokeOp,
     unit_of_work,
 )
-
 from invenio_jobs.tasks import execute_run
 
 from ..api import AttrDict
@@ -64,6 +65,10 @@ def get_job(job_id):
 def get_run(run_id, job_id=None):
     """Get a job by id."""
     run = Run.query.get(run_id)
+
+    if isinstance(job_id, str):
+        job_id = uuid.UUID(job_id)
+
     if run is None or run.job_id != job_id:
         raise RunNotFoundError(run_id, job_id=job_id)
     return run
@@ -85,7 +90,22 @@ class JobsService(BaseService):
         )
 
         job = Job(**valid_data)
+
+        uow.session.add(job)
+        uow.session.flush()  # Required to get the job.id
+
         uow.register(ModelCommitOp(job))
+
+        log_event = LogEvent(
+            log_type="audit",
+            event={"action": "job.create"},
+            resource={"type": "job", "id": str(job.id)},
+            user={"id": str(identity.id)},
+            message=f"Job '{job.title}' created.",
+        )
+
+        uow.register(LoggingOp(log_event))
+
         return self.result_item(self, identity, job, links_tpl=self.links_item_tpl)
 
     def search(self, identity, params):
@@ -236,11 +256,33 @@ class RunsService(BaseService):
             status=RunStatusEnum.QUEUED,
             **valid_data,
         )
+        # We want to flush to gain access to the run.id
+        uow.session.flush()
         uow.register(ModelCommitOp(run))
+
+        log_event = LogEvent(
+            log_type="app",
+            event={"action": "job.run"},
+            status="INFO",
+            resource={
+                "type": "job",
+                "id": str(job_id),
+                "parent": {"type": "run", "id": str(run.id)},
+            },
+            user={"id": str(identity.id)},
+            message=f"Run '{job.title}' created.",
+        )
+
+        uow.register(LoggingOp(log_event))
+
         uow.register(
             TaskOp.for_async_apply(
                 execute_run,
-                kwargs={"run_id": run.id},
+                kwargs={
+                    "run_id": run.id,
+                    "log_data": log_event.to_dict(),
+                    "log_type": log_event.type,
+                },
                 task_id=str(run.task_id),
                 queue=run.queue,
             )
