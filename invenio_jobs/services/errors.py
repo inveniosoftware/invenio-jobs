@@ -53,3 +53,15 @@ class RunStatusChangeError(JobsError):
                 old=run.status, new=new_status
             )
         )
+
+
+class RunTooManyResults(JobsError):
+    """Run too many results error."""
+
+    def __init__(self, total, max_docs):
+        """Initialise error."""
+        super().__init__(
+            description=_(
+                f"Too many log results returned ({total}). The maximum allowed is {max_docs}. Please refine your search criteria to reduce the result size."
+            )
+        )

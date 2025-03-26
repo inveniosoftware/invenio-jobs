@@ -8,16 +8,24 @@
 
 """Services."""
 
-from .config import JobsServiceConfig, RunsServiceConfig, TasksServiceConfig
-from .schema import JobSchema
-from .services import JobsService, RunsService, TasksService
+from .config import (
+    JobLogServiceConfig,
+    JobsServiceConfig,
+    RunsServiceConfig,
+    TasksServiceConfig,
+)
+from .schema import JobLogEntrySchema, JobSchema
+from .services import JobLogService, JobsService, RunsService, TasksService
 
 __all__ = (
     "JobSchema",
+    "JobLogEntrySchema",
     "JobsService",
     "JobsServiceConfig",
     "RunsService",
     "RunsServiceConfig",
     "TasksService",
     "TasksServiceConfig",
+    "JobLogService",
+    "JobLogServiceConfig",
 )

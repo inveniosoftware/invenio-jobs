@@ -41,6 +41,9 @@ error_handlers = {
     errors.RunStatusChangeError: create_error_handler(
         lambda e: HTTPJSONException(code=400, description=e.description)
     ),
+    errors.RunTooManyResults: create_error_handler(
+        lambda e: HTTPJSONException(code=400, description=e.description)
+    ),
 }
 
 
@@ -122,6 +125,31 @@ class RunsResourceConfig(ResourceConfig, ConfiguratorMixin):
         "run_id": ma.fields.UUID(),
     }
     request_search_args = RunsSearchRequestArgsSchema
+    request_body_parsers = request_body_parsers
+
+    # Response handling
+    response_handlers = response_handlers
+    error_handlers = error_handlers
+
+
+class JobLogsSearchRequestArgsSchema(SearchRequestArgsSchema):
+    """Request URL query string arguments."""
+
+    search_after = ma.fields.List(ma.fields.Field())
+
+
+class JobLogResourceConfig(ResourceConfig, ConfiguratorMixin):
+    """Logs resource config."""
+
+    # Blueprint configuration
+    blueprint_name = "jobs-logs"
+    url_prefix = "/logs/jobs"
+    routes = {"list": ""}
+
+    # Request handling
+    request_read_args = {}
+    request_view_args = {}
+    request_search_args = JobLogsSearchRequestArgsSchema
     request_body_parsers = request_body_parsers
 
     # Response handling
