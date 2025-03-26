@@ -54,6 +54,12 @@ export const StatusFormatter = ({ status }) => {
         color="red"
         value={status === "CANCELLED"}
       />
+      <BoolFormatter
+        tooltip={i18next.t("Partial Success")}
+        icon="exclamation circle"
+        color="orange"
+        value={status === "PARTIAL_SUCCESS"}
+      />
     </span>
   );
 };

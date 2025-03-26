@@ -10,6 +10,7 @@
 from invenio_i18n import lazy_gettext as _
 
 from .services.permissions import (
+    JobLogsPermissionPolicy,
     JobPermissionPolicy,
     RunPermissionPolicy,
     TasksPermissionPolicy,
@@ -23,6 +24,9 @@ JOBS_PERMISSION_POLICY = JobPermissionPolicy
 
 JOBS_RUNS_PERMISSION_POLICY = RunPermissionPolicy
 """Permission policy for job runs."""
+
+APP_LOGS_PERMISSION_POLICY = JobLogsPermissionPolicy
+"""Permission policy for job logs."""
 
 JOBS_ADMINISTRATION_ENABLED = False
 """Disable Jobs administration views if ``True``."""
@@ -76,3 +80,9 @@ JOBS_SEARCH = {
     "sort": ["jobs", "last_run_start_time", "user", "next_run"],
 }
 """Jobs search configuration."""
+
+JOBS_LOGGING_LEVEL = "DEBUG"
+"""Logging level for jobs."""
+
+JOBS_LOGGING = True
+"""Enable logging for jobs."""

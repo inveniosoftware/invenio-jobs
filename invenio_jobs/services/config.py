@@ -11,6 +11,7 @@
 from functools import partial
 
 from invenio_i18n import gettext as _
+from invenio_records_resources.records.systemfields import IndexField
 from invenio_records_resources.services.base import ServiceConfig
 from invenio_records_resources.services.base.config import ConfiguratorMixin, FromConfig
 from invenio_records_resources.services.records.config import (
@@ -22,8 +23,13 @@ from sqlalchemy import asc, desc
 from ..models import Job, Run, Task
 from . import results
 from .links import JobLink, RunLink
-from .permissions import JobPermissionPolicy, RunPermissionPolicy, TasksPermissionPolicy
-from .schema import JobSchema, RunSchema, TaskSchema
+from .permissions import (
+    JobLogsPermissionPolicy,
+    JobPermissionPolicy,
+    RunPermissionPolicy,
+    TasksPermissionPolicy,
+)
+from .schema import JobLogEntrySchema, JobSchema, RunSchema, TaskSchema
 
 
 class TasksSearchOptions(SearchOptionsBase):
@@ -141,7 +147,45 @@ class RunsServiceConfig(ServiceConfig, ConfiguratorMixin):
     links_item = {
         "self": RunLink("{+api}/jobs/{job_id}/runs/{id}"),
         "stop": RunLink("{+api}/jobs/{job_id}/runs/{id}/actions/stop"),
-        "logs": RunLink("{+api}/jobs/{job_id}/runs/{id}/logs"),
+        "logs": RunLink("{+api}/logs/jobs?q={id}"),
     }
 
     links_search = pagination_links("{+api}/jobs/{job_id}{?args*}")
+
+
+class JobLogSearchOptions(SearchOptionsBase):
+    """Job log search options."""
+
+    sort_default = "timestamp"
+    sort_direction_default = "desc"
+    sort_default_no_query = "timestamp"
+    sort_direction_options = {
+        "asc": dict(title=_("Ascending"), fn=asc),
+        "desc": dict(title=_("Descending"), fn=desc),
+    }
+    sort_options = {
+        "timestamp": dict(title=_("Timestamp"), fields=["timestamp"]),
+    }
+
+
+class JobLog:
+    """Job Log API."""
+
+    index = IndexField("job-logs-v1.0.0", search_alias="job-logs")
+
+
+class JobLogServiceConfig(ServiceConfig, ConfiguratorMixin):
+    """Job log service configuration."""
+
+    service_id = "job-logs"
+    permission_policy_cls = FromConfig(
+        "APP_LOGS_PERMISSION_POLICY",
+        default=JobLogsPermissionPolicy,
+    )
+    search = JobLogSearchOptions
+    schema = JobLogEntrySchema
+    components = []
+    links_item = None
+    result_item_cls = results.Item
+    result_list_cls = results.AppLogsList
+    record_cls = JobLog

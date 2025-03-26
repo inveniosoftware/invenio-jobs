@@ -54,6 +54,8 @@ def app_config(app_config):
     app_config["JOBS_TASKS_PERMISSION_POLICY"] = MockPermissionPolicy
     app_config["JOBS_PERMISSION_POLICY"] = MockPermissionPolicy
     app_config["JOBS_RUNS_PERMISSION_POLICY"] = MockPermissionPolicy
+    app_config["APP_LOGS_PERMISSION_POLICY"] = MockPermissionPolicy
+    app_config["THEME_FRONTPAGE"] = False
     return app_config
 
 

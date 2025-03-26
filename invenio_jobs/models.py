@@ -101,6 +101,7 @@ class RunStatusEnum(enum.Enum):
     WARNING = "W"
     CANCELLING = "C"
     CANCELLED = "X"
+    PARTIAL_SUCCESS = "P"
 
 
 class Run(db.Model, Timestamp):

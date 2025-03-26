@@ -11,6 +11,7 @@
 import uuid
 
 import sqlalchemy as sa
+from flask import current_app
 from invenio_records_resources.services.base import LinksTemplate
 from invenio_records_resources.services.base.utils import map_search_params
 from invenio_records_resources.services.records import RecordService
@@ -22,11 +23,18 @@ from invenio_records_resources.services.uow import (
     unit_of_work,
 )
 
+from invenio_jobs.logging.jobs import EMPTY_JOB_CTX, job_context, with_job_context
+from invenio_jobs.services.uow import JobContextOp
 from invenio_jobs.tasks import execute_run
 
 from ..api import AttrDict
 from ..models import Job, Run, RunStatusEnum, Task
-from .errors import JobNotFoundError, RunNotFoundError, RunStatusChangeError
+from .errors import (
+    JobNotFoundError,
+    RunNotFoundError,
+    RunStatusChangeError,
+    RunTooManyResults,
+)
 
 
 class BaseService(RecordService):
@@ -61,9 +69,12 @@ def get_job(job_id):
     return job
 
 
-def get_run(run_id, job_id=None):
+def get_run(run_id=None, job_id=None):
     """Get a job by id."""
     run = Run.query.get(run_id)
+    if isinstance(job_id, str):
+        job_id = uuid.UUID(job_id)
+
     if run is None or run.job_id != job_id:
         raise RunNotFoundError(run_id, job_id=job_id)
     return run
@@ -215,6 +226,7 @@ class RunsService(BaseService):
             self, identity, run_record, links_tpl=self.links_item_tpl
         )
 
+    @with_job_context(EMPTY_JOB_CTX)
     @unit_of_work()
     def create(self, identity, job_id, data, uow=None):
         """Create a run."""
@@ -236,6 +248,7 @@ class RunsService(BaseService):
             status=RunStatusEnum.QUEUED,
             **valid_data,
         )
+
         uow.register(ModelCommitOp(run))
         uow.register(
             TaskOp.for_async_apply(
@@ -245,6 +258,11 @@ class RunsService(BaseService):
                 queue=run.queue,
             )
         )
+        # Make sure this is the last operation in the unit of work
+        # so tht the post_commit (that is resetting the job context)
+        # is executed after the TaskOp post_commit.
+        uow.register(JobContextOp({"run_id": str(run.id), "job_id": str(job_id)}))
+        current_app.logger.debug("Run created")
 
         return self.result_item(self, identity, run, links_tpl=self.links_item_tpl)
 
@@ -292,3 +310,57 @@ class RunsService(BaseService):
         uow.register(TaskRevokeOp(str(run.task_id)))
 
         return self.result_item(self, identity, run, links_tpl=self.links_item_tpl)
+
+
+class JobLogService(BaseService):
+    """Job log service."""
+
+    def search(self, identity, params):
+        """Search for app logs."""
+        self.require_permission(identity, "search")
+        search_after = params.pop("search_after", None)
+        search = self._search(
+            "search",
+            identity,
+            params,
+            None,
+            permission_action="read",
+        )
+        MAX_DOCS = 50_000
+        BATCH_SIZE = 1_000
+
+        # Clone and strip version before counting
+        count_search = search._clone()
+        count_search._params.pop("version", None)  # strip unsupported param
+        total = count_search.count()
+        if total > MAX_DOCS:
+            raise RunTooManyResults(total=total, max_docs=MAX_DOCS)
+
+        search = search.sort("@timestamp", "_id").extra(size=BATCH_SIZE)
+        if search_after:
+            search = search.extra(search_after=search_after)
+
+        final_results = None
+        # Keep fetching until no more results
+        while True:
+            results = search.execute()
+            hits = results.hits
+            if not hits:
+                if final_results is None:
+                    final_results = results
+                break
+
+            if not final_results:
+                final_results = results  # keep metadata from first page
+            else:
+                final_results.hits.extend(hits)
+                final_results.hits.hits.extend(hits.hits)
+
+            search = search.extra(search_after=hits[-1].meta.sort)
+
+        return self.result_list(
+            self,
+            identity,
+            final_results,
+            links_tpl=self.links_item_tpl,
+        )

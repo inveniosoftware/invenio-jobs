@@ -253,3 +253,35 @@ class RunsResource(ErrorHandlersMixin, Resource):
             data=resource_requestctx.view_args["id"],
         )
         return "", 204
+
+
+class JobLogResource(ErrorHandlersMixin, Resource):
+    """Job log resource."""
+
+    def __init__(self, config, service):
+        """Constructor."""
+        super().__init__(config)
+        self.service = service
+
+    def create_url_rules(self):
+        """Create the URL rules for the job log resource."""
+        routes = self.config.routes
+        url_rules = [
+            route("GET", routes["list"], self.search),
+        ]
+
+        return url_rules
+
+    @request_search_args
+    @request_view_args
+    @response_handler(many=True)
+    def search(self):
+        """Perform a search."""
+        identity = g.identity
+
+        hits = self.service.search(
+            identity=identity,
+            params=resource_requestctx.args,
+        )
+
+        return hits.to_dict(), 200
