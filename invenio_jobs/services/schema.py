@@ -10,7 +10,7 @@
 import inspect
 import json
 from copy import deepcopy
-from datetime import timezone
+from datetime import datetime, timezone
 
 from invenio_i18n import lazy_gettext as _
 from invenio_users_resources.services import schemas as user_schemas
@@ -257,3 +257,33 @@ class RunSchema(Schema, FieldPermissionsMixin):
         if custom_args:
             obj["args"] = json.loads(custom_args)
         return obj
+
+
+class LogContextSchema(Schema):
+    """Schema for the job context with required job_id and dynamic fields."""
+
+    job_id = fields.Str(required=True)
+    run_id = fields.Str(required=True)
+
+
+class JobLogEntrySchema(Schema):
+    """Schema for structured OpenSearch job log entries."""
+
+    timestamp = fields.DateTime(required=True)
+    level = fields.Str(
+        required=True,
+        validate=validate.OneOf(["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]),
+    )
+    message = fields.Str(required=True)
+    module = fields.Str(required=True)
+    function = fields.Str(required=True)
+    line = fields.Int(required=True)
+    context = fields.Nested(LogContextSchema, required=True)
+    sort = fields.List(fields.Field, dump_only=True)
+
+    def dump(self, obj, **kwargs):
+        """Ensure `timestamp` is converted to datetime before dumping."""
+        ts = obj.get("timestamp")
+        if isinstance(ts, str):
+            obj["timestamp"] = datetime.fromisoformat(ts.replace("Z", "+00:00"))
+        return super().dump(obj, **kwargs)

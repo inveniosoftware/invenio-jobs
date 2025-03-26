@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2024 CERN.
+# Copyright (C) 2025 CERN.
 # Copyright (C) 2024 University of Münster.
 #
 # Invenio-Jobs is free software; you can redistribute it and/or modify it
@@ -8,8 +8,13 @@
 
 """Jobs resources."""
 
-from .config import JobsResourceConfig, RunsResourceConfig, TasksResourceConfig
-from .resources import JobsResource, RunsResource, TasksResource
+from .config import (
+    JobLogResourceConfig,
+    JobsResourceConfig,
+    RunsResourceConfig,
+    TasksResourceConfig,
+)
+from .resources import JobLogResource, JobsResource, RunsResource, TasksResource
 
 __all__ = (
     "JobsResource",
@@ -18,4 +23,6 @@ __all__ = (
     "TasksResourceConfig",
     "RunsResource",
     "RunsResourceConfig",
+    "JobLogResource",
+    "JobLogResourceConfig",
 )

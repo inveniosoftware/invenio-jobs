@@ -13,6 +13,7 @@ from datetime import datetime
 from celery import shared_task
 from invenio_db import db
 
+from invenio_jobs.errors import TaskExecutionError
 from invenio_jobs.models import Run, RunStatusEnum
 from invenio_jobs.proxies import current_jobs
 
@@ -42,6 +43,14 @@ def execute_run(self, run_id, kwargs=None):
             finished_at=datetime.utcnow(),
         )
         raise e
+    except TaskExecutionError as e:
+        update_run(
+            run,
+            status=RunStatusEnum.PARTIAL_SUCCESS,
+            finished_at=datetime.utcnow(),
+            message=e.message,
+        )
+        return
     except Exception as e:
         update_run(
             run,

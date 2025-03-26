@@ -18,6 +18,7 @@ administration = WebpackThemeBundle(
             entry={
                 "invenio-jobs-search": "./js/invenio_jobs/administration/index.js",
                 "invenio-jobs-details": "./js/invenio_jobs/administration/JobDetailsView.js",
+                "invenio-runs-logs-details": "./js/invenio_jobs/administration/RunsLogsView.js",
             },
             dependencies={
                 "react-invenio-forms": "^4.0.0",
