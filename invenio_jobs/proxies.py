@@ -21,3 +21,6 @@ current_runs_service = LocalProxy(lambda: current_jobs.runs_service)
 
 current_tasks_service = LocalProxy(lambda: current_jobs.tasks_service)
 """Tasks service."""
+
+current_jobs_logs_service = LocalProxy(lambda: current_jobs.jobs_log_service)
+"""Job logs service."""

@@ -33,3 +33,9 @@ def create_runs_bp(app):
     """Create runs blueprint."""
     ext = app.extensions["invenio-jobs"]
     return ext.runs_resource.as_blueprint()
+
+
+def create_job_logs_bp(app):
+    """Create job logs blueprint."""
+    ext = app.extensions["invenio-jobs"]
+    return ext.job_log_resource.as_blueprint()

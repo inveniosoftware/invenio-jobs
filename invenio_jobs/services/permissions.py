@@ -9,7 +9,7 @@
 """Service permissions."""
 
 from invenio_administration.generators import Administration
-from invenio_records_permissions.generators import SystemProcess
+from invenio_records_permissions.generators import Disable, SystemProcess
 from invenio_records_permissions.policies import BasePermissionPolicy
 
 
@@ -42,3 +42,13 @@ class RunPermissionPolicy(BasePermissionPolicy):
     can_update = [Administration(), SystemProcess()]
     can_delete = [Administration(), SystemProcess()]
     can_stop = [Administration(), SystemProcess()]
+
+
+class JobLogsPermissionPolicy(BasePermissionPolicy):
+    """Access control configuration for job logs."""
+
+    can_search = [Administration(), SystemProcess()]
+    can_create = [Disable()]  # Logs are crated via python logging
+    can_read = [Disable()]
+    can_update = [Disable()]
+    can_delete = [Disable()]

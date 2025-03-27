@@ -7,10 +7,12 @@
 
 """Resource tests."""
 from copy import deepcopy
+from time import sleep
 from unittest.mock import patch
 
 import pytest
 
+from invenio_jobs.logging.jobs import job_context
 from invenio_jobs.tasks import execute_run
 
 
@@ -66,6 +68,7 @@ def test_simple_flow(mock_apply_async, app, db, client, user):
                 "cancelled": {},
                 "cancelling": {},
                 "failed": {},
+                "partial_success": {},
                 "queued": {},
                 "running": {},
                 "success": {},
@@ -78,6 +81,8 @@ def test_simple_flow(mock_apply_async, app, db, client, user):
     res = client.get("/jobs")
     assert res.status_code == 200
     assert res.json["hits"]["total"] == 1
+    print(res.json["hits"]["hits"][0])
+    print(list_repr)
     assert res.json["hits"]["hits"][0] == list_repr
 
     # Get job
@@ -122,7 +127,7 @@ def test_simple_flow(mock_apply_async, app, db, client, user):
         "updated": res.json["updated"],
         "links": {
             "self": f"https://127.0.0.1:5000/api/jobs/{job_id}/runs/{run_id}",
-            "logs": f"https://127.0.0.1:5000/api/jobs/{job_id}/runs/{run_id}/logs",
+            "logs": f"https://127.0.0.1:5000/api/logs/jobs?q={run_id}",
             "stop": f"https://127.0.0.1:5000/api/jobs/{job_id}/runs/{run_id}/actions/stop",
         },
     }
@@ -149,6 +154,17 @@ def test_simple_flow(mock_apply_async, app, db, client, user):
     res = client.post(f"/jobs/{job_id}/runs/{run_id}/actions/stop")
     assert res.status_code == 202
     assert res.json["status"] == "CANCELLING"
+
+    # Search for log jobs, first set the logger level to INFO
+    # and log a message by setting the job context
+    job_context.set(dict(job_id=job_id, run_id=run_id))
+    app.logger.setLevel("INFO")
+    app.logger.info("Test log message")
+    sleep(1)  # Wait for log to be indexed
+    res = client.get(f"/logs/jobs?q={job_id}")
+    assert res.status_code == 200
+    assert res.json["hits"]["total"] == 1
+    assert res.json["hits"]["hits"][0]["message"] == "Test log message"
 
 
 @pytest.mark.skip("Tasks search not needed.")
@@ -329,6 +345,7 @@ def test_jobs_search(client, jobs):
             "cancelled": {},
             "cancelling": {},
             "failed": {},
+            "partial_success": {},
             "queued": {},
             "running": {},
             "success": {},
@@ -365,6 +382,7 @@ def test_jobs_search(client, jobs):
             "cancelled": {},
             "cancelling": {},
             "failed": {},
+            "partial_success": {},
             "queued": {},
             "running": {},
             "success": {},
@@ -394,6 +412,7 @@ def test_jobs_search(client, jobs):
             "cancelled": {},
             "cancelling": {},
             "failed": {},
+            "partial_success": {},
             "queued": {},
             "running": {},
             "success": {},
@@ -513,7 +532,7 @@ def test_job_template_args(mock_apply_async, app, db, client, user):
         "updated": res.json["updated"],
         "links": {
             "self": f"https://127.0.0.1:5000/api/jobs/{job_id}/runs/{run_id}",
-            "logs": f"https://127.0.0.1:5000/api/jobs/{job_id}/runs/{run_id}/logs",
+            "logs": f"https://127.0.0.1:5000/api/logs/jobs?q={run_id}",
             "stop": f"https://127.0.0.1:5000/api/jobs/{job_id}/runs/{run_id}/actions/stop",
         },
     }
@@ -555,7 +574,7 @@ def test_job_template_args(mock_apply_async, app, db, client, user):
         "updated": res.json["updated"],
         "links": {
             "self": f"https://127.0.0.1:5000/api/jobs/{job_id}/runs/{run_id}",
-            "logs": f"https://127.0.0.1:5000/api/jobs/{job_id}/runs/{run_id}/logs",
+            "logs": f"https://127.0.0.1:5000/api/logs/jobs?q={run_id}",
             "stop": f"https://127.0.0.1:5000/api/jobs/{job_id}/runs/{run_id}/actions/stop",
         },
     }

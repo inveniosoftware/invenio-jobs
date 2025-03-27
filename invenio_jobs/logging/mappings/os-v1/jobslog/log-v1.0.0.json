@@ -1,0 +1,36 @@
+{
+  "mappings": {
+    "properties": {
+      "timestamp": {
+        "type": "date"
+      },
+      "level": {
+        "type": "keyword"
+      },
+      "message": {
+        "type": "text"
+      },
+      "module": {
+        "type": "keyword"
+      },
+      "function": {
+        "type": "keyword"
+      },
+      "line": {
+        "type": "integer"
+      },
+      "context": {
+        "type": "object",
+        "properties": {
+          "job_id": {
+            "type": "keyword"
+          },
+          "run_id": {
+            "type": "keyword"
+          }
+        },
+        "dynamic": true
+      }
+    }
+  }
+}
