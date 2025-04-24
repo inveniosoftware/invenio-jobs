@@ -127,6 +127,8 @@ class JobArgumentsSchema(OneOfSchema):
 
     def get_obj_type(self, obj):
         """Return object type."""
+        # print(100*"-")
+        # print(f"get_obj_type obj: {obj}")
         if isinstance(obj, dict) and "job_arg_schema" in obj:
             return obj["job_arg_schema"]
         if isinstance(obj, dict) and "job_arg_schema" not in obj:
@@ -134,9 +136,14 @@ class JobArgumentsSchema(OneOfSchema):
 
     def get_data_type(self, data):
         """Get data type. Defaults to custom if no type is provided."""
+        # print(100*"*")
+        # print(f"get_data_type data: {data}")
         data_type = super().get_data_type(data)
-        if data_type is None:
-            return "custom"
+        # print(f"get_data_type data_type: {data_type}")
+        value = data_type if data_type is not None else "custom"
+        # print(f"get_data_type value: {value}")
+        # print(100*"*")
+        return value
 
 
 class JobSchema(Schema, FieldPermissionsMixin):
@@ -224,7 +231,7 @@ class RunSchema(Schema, FieldPermissionsMixin):
     # Input fields
     title = SanitizedUnicode(validate=_not_blank(max=250), dump_default="Manual run")
     args = fields.Nested(
-        lambda: JobArgumentsSchema,
+        JobArgumentsSchema,
         metadata={
             "type": "dynamic",
             "endpoint": "/api/tasks/<item_id>/args",
@@ -247,13 +254,20 @@ class RunSchema(Schema, FieldPermissionsMixin):
     def wrap_args(self, obj, many, **kwargs):
         """Workaround for nested args."""
         # it is possible job has no arguments, that's why we use .get
-        obj["args"] = {"args": obj.get("args", {})}
+        obj["args"] = obj.get("args", {})
+        print(100*"1")
+        print(f"RunSchema pre_load obj: {obj}")
         return obj
 
     @post_load
     def pick_args(self, obj, many, **kwargs):
         """Choose custom or default args."""
+        print(100*"2")
+        print(f"RunSchema post_load obj: {type(obj)} - {obj}")
         custom_args = obj.pop("custom_args")
         if custom_args:
+            print(f"RunSchema post_load popping!")
             obj["args"] = json.loads(custom_args)
+            print(f"RunSchema post_load popped!")
+        print(f"RunSchema post_load AFTER obj: {obj}")
         return obj

@@ -23,7 +23,8 @@ from sqlalchemy_utils import Timestamp
 from sqlalchemy_utils.types import ChoiceType, JSONType, UUIDType
 from werkzeug.utils import cached_property
 
-from invenio_jobs.proxies import current_jobs
+from .proxies import current_jobs
+from .utils import custom_json_serializer
 
 JSON = (
     db.JSON()
@@ -141,11 +142,7 @@ class Run(db.Model, Timestamp):
     @classmethod
     def create(cls, job, **kwargs):
         """Create a new run."""
-        if "args" not in kwargs:
-            kwargs["args"] = cls.generate_args(job)
-        else:
-            task_arguments = deepcopy(kwargs["args"].get("args", {}))
-            kwargs["args"] = cls.generate_args(job, task_arguments=task_arguments)
+        kwargs["args"] = cls.generate_args(job, task_arguments=kwargs.get("args", {}))
         if "queue" not in kwargs:
             kwargs["queue"] = job.default_queue
         return cls(job=job, **kwargs)
@@ -156,7 +153,9 @@ class Run(db.Model, Timestamp):
         args = Task.get(job.task)._build_task_arguments(
             job_obj=job, **task_arguments or {}
         )
-        args = json.dumps(args, indent=4, sort_keys=True, default=str)
+        args = json.dumps(
+            args, indent=4, sort_keys=True, default=custom_json_serializer
+        )
         args = json.loads(args)
         return args
 
@@ -165,9 +164,8 @@ class Run(db.Model, Timestamp):
         from invenio_jobs.services.schema import JobArgumentsSchema
 
         dict_run = _dump_dict(self)
-        serialized_args = JobArgumentsSchema().load({"args": dict_run["args"]})
-
-        dict_run["args"] = serialized_args
+        # serialize dynamic args
+        dict_run["args"] = JobArgumentsSchema().load(dict_run["args"])
         return dict_run
 
 

@@ -6,6 +6,7 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 
 """Resource tests."""
+
 from copy import deepcopy
 from unittest.mock import patch
 
@@ -18,7 +19,7 @@ from invenio_jobs.tasks import execute_run
 def test_simple_flow(mock_apply_async, app, db, client, user):
     """Test simple flow."""
     client = user.login(client)
-    job_paylod = {
+    job_payload = {
         "title": "Test job",
         "task": "update_expired_embargos",
         "description": "Test description",
@@ -28,7 +29,7 @@ def test_simple_flow(mock_apply_async, app, db, client, user):
     }
 
     # Create a job
-    res = client.post("/jobs", json=job_paylod)
+    res = client.post("/jobs", json=job_payload)
     assert res.status_code == 201
     job_id = res.json["id"]
     expected_job = {
@@ -52,7 +53,7 @@ def test_simple_flow(mock_apply_async, app, db, client, user):
     assert res.json == expected_job
 
     # Activate the job (i.e. update)
-    res = client.put(f"/jobs/{job_id}", json={**job_paylod, "active": True})
+    res = client.put(f"/jobs/{job_id}", json={**job_payload, "active": True})
     assert res.status_code == 200
     expected_job["active"] = True
     expected_job["updated"] = res.json["updated"]

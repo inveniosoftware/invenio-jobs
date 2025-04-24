@@ -98,6 +98,10 @@ class JobType(ABC):
             provided argument.
         :return: a dict of arguments to be injected on task execution.
         """
+        print(100*"-")
+        print(f"job_obj: {job_obj}")
+        print(f"since: {type(since)} - {since}")
+        print(f"custom_args: {custom_args}")
         if custom_args:
             return custom_args
 
