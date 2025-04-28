@@ -8,6 +8,15 @@
 Changes
 =======
 
+Version v3.1.0 (released 2025-04-28)
+
+- Add custom logging handler using contextvars and OpenSearch
+- Define JobLogEntrySchema and LogContextSchema
+- Support search_after pagination in log search API
+- Fetch logs incrementally from UI using search_after cursor
+- Add React log viewer with fade-in and scroll support
+- WARNING: It's required to add the job logs index template for this feature to work correctly
+
 Version v3.0.2 (released 2025-03-24)
 
 - scheduler: (fix) add newly created run object to db session (sqlalchemy v2 compatibility)
