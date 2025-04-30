@@ -33,10 +33,11 @@ def restore_context(task=None, **kwargs):
     # Synchronous celery tasks will already be aware of the context although it's missing
     # in the task headers, as the before_task_publish signal is not triggered
     if job_context.get() is EMPTY_JOB_CTX:
-        task_context = getattr(task.request, "context", {})
-        token = job_context.set(task_context)
-        # Store token in task.request
-        task.request._job_context_token = token
+        task_context = getattr(task.request, "context", None)
+        if task_context:
+            token = job_context.set(task_context)
+            # Store token in task.request
+            task.request._job_context_token = token
 
 
 # Clean up context after task execution
