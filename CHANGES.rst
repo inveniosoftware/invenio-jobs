@@ -8,6 +8,10 @@
 Changes
 =======
 
+Version v3.1.1 (released 2025-04-30)
+
+- logging: fix celery signal
+
 Version v3.1.0 (released 2025-04-28)
 
 - Add custom logging handler using contextvars and OpenSearch
