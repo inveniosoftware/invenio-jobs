@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2024 CERN.
 # Copyright (C) 2024 University of Münster.
+# Copyright (C) 2025 Graz University of Technology.
 #
 # Invenio-Jobs is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -114,8 +115,12 @@ class JobsService(BaseService):
                 ]
             )
 
+        # if filters == [] -> True
+        # if filters != [] -> False
+        default_element = not bool(len(filters))
+
         jobs = (
-            Job.query.filter(sa.or_(*filters))
+            Job.query.filter(sa.or_(default_element, *filters))
             .order_by(
                 search_params["sort_direction"](
                     sa.text(",".join(search_params["sort"]))
