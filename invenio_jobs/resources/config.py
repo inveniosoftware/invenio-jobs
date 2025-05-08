@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2024 CERN.
 # Copyright (C) 2024 University of Münster.
+# Copyright (C) 2025 Graz University of Technology.
 #
 # Invenio-Jobs is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -135,7 +136,7 @@ class RunsResourceConfig(ResourceConfig, ConfiguratorMixin):
 class JobLogsSearchRequestArgsSchema(SearchRequestArgsSchema):
     """Request URL query string arguments."""
 
-    search_after = ma.fields.List(ma.fields.Field())
+    search_after = ma.fields.List(ma.fields.Raw())
 
 
 class JobLogResourceConfig(ResourceConfig, ConfiguratorMixin):

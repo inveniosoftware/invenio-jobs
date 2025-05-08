@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2024 CERN.
 # Copyright (C) 2024 University of Münster.
+# Copyright (C) 2025 Graz University of Technology.
 #
 # Invenio-Jobs is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -12,6 +13,7 @@ import uuid
 
 import sqlalchemy as sa
 from flask import current_app
+from invenio_db import db
 from invenio_records_resources.services.base import LinksTemplate
 from invenio_records_resources.services.base.utils import map_search_params
 from invenio_records_resources.services.records import RecordService
@@ -63,7 +65,7 @@ class TasksService(BaseService):
 
 def get_job(job_id):
     """Get a job by id."""
-    job = Job.query.get(job_id)
+    job = db.session.get(Job, job_id)
     if job is None:
         raise JobNotFoundError(job_id)
     return job
@@ -71,7 +73,7 @@ def get_job(job_id):
 
 def get_run(run_id=None, job_id=None):
     """Get a job by id."""
-    run = Run.query.get(run_id)
+    run = db.session.get(Run, run_id)
     if isinstance(job_id, str):
         job_id = uuid.UUID(job_id)
 
@@ -114,8 +116,12 @@ class JobsService(BaseService):
                 ]
             )
 
+        # if filters == [] -> True
+        # if filters != [] -> False
+        default_element = not bool(len(filters))
+
         jobs = (
-            Job.query.filter(sa.or_(*filters))
+            Job.query.filter(sa.or_(default_element, *filters))
             .order_by(
                 search_params["sort_direction"](
                     sa.text(",".join(search_params["sort"]))
