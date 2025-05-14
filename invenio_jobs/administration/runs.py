@@ -63,7 +63,7 @@ class RunsDetailsView(JobsAdminMixin, AdminResourceListView):
             abort(413, description=e.description)
         result_dict = logs_result.to_dict()
         logs = result_dict["hits"]["hits"]
-        sort = result_dict["hits"]["sort"]
+        sort = result_dict["hits"].get("sort")
 
         return logs, sort
 
