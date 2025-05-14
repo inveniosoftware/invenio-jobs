@@ -131,63 +131,74 @@ export class RunsLogs extends Component {
 
     const defaultStatusIcon = { name: "clock outline", color: "grey" };
     const iconProps = statusIconMapping[run.status] || defaultStatusIcon;
-
     return (
       <Container>
-        <Header as="h2" className="mt-20">
-          {run.title}
-        </Header>
-        <Divider />
-        {error && (
-          <Message negative>
-            <Message.Header>Error Fetching Logs</Message.Header>
-            <p>{error}</p>
+        {logs.length === 0 && (
+          <Message info>
+            <Message.Header className="mb-5">No logs to display</Message.Header>
+            Possible reasons include:
+            <Message.List>
+              <Message.Item>The job has not produced any logs yet.</Message.Item>
+              <Message.Item>Logs were deleted due to the retention policy.</Message.Item>
+            </Message.List>
           </Message>
         )}
-        <Grid celled>
-          <Grid.Row>
-            <Grid.Column width={3}>
-              <Header as="h4" color="grey">
-                Job run
-              </Header>
-              <List>
-                <List.Item>
-                  <Icon name={iconProps.name} color={iconProps.color} />
-                  <List.Content>
-                    {formatted_started_at ? (
-                      <>
-                        <p>
-                          <strong>{formatted_started_at}</strong>
-                        </p>
-                        <p className="description">{runDuration} mins</p>
-                      </>
-                    ) : (
-                      <p className="description">Not yet started</p>
-                    )}
-                    {run.message && (
-                      <Label basic
-                        color={iconProps.color}
-                      >
-                        {run.message}
-                      </Label>
-                    )}
-                  </List.Content>
-                </List.Item>
-              </List>
-            </Grid.Column>
-            <Grid.Column className="log-table" width={13}>
-              <Segment>
-                {logs.map((log, index) => (
-                  <div key={index} className={`log-line ${log.level.toLowerCase()}`}>
-                    <span className="log-timestamp">[{log.formatted_timestamp}]</span>{" "}
-                    <span className={getClassForLogLevel(log.level)}>{log.level}</span>{" "}
-                    <span className="log-message">{log.message}</span>
-                  </div>
-                ))}
-              </Segment>
-            </Grid.Column>
-          </Grid.Row>
-        </Grid>
+        {logs.length > 0 && (
+          <>
+            <Header as="h2" className="mt-20">
+              {run.title}
+            </Header>
+            <Divider />
+            {error && (
+              <Message negative>
+                <Message.Header>Error Fetching Logs</Message.Header>
+                <p>{error}</p>
+              </Message>
+            )}
+            <Grid celled>
+              <Grid.Row>
+                <Grid.Column width={3}>
+                  <Header as="h4" color="grey">
+                    Job run
+                  </Header>
+                  <List>
+                    <List.Item>
+                      <Icon name={iconProps.name} color={iconProps.color} />
+                      <List.Content>
+                        {formatted_started_at ? (
+                          <>
+                            <p>
+                              <strong>{formatted_started_at}</strong>
+                            </p>
+                            <p className="description">{runDuration} mins</p>
+                          </>
+                        ) : (
+                          <p className="description">Not yet started</p>
+                        )}
+                        {run.message && (
+                          <Label basic color={iconProps.color}>
+                            {run.message}
+                          </Label>
+                        )}
+                      </List.Content>
+                    </List.Item>
+                  </List>
+                </Grid.Column>
+                <Grid.Column className="log-table" width={13}>
+                  <Segment>
+                    {logs.map((log, index) => (
+                      <div key={index} className={`log-line ${log.level.toLowerCase()}`}>
+                        <span className="log-timestamp">[{log.formatted_timestamp}]</span>{" "}
+                        <span className={getClassForLogLevel(log.level)}>{log.level}</span>{" "}
+                        <span className="log-message">{log.message}</span>
+                      </div>
+                    ))}
+                  </Segment>
+                </Grid.Column>
+              </Grid.Row>
+            </Grid>
+          </>
+        )}
       </Container>
     );
   }

@@ -8,6 +8,10 @@
 Changes
 =======
 
+Version v3.1.2 (released 2025-05-14)
+
+- logs: fix minor bug
+
 Version v3.1.1 (released 2025-04-30)
 
 - logging: fix celery signal
