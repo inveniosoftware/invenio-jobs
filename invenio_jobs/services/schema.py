@@ -39,6 +39,14 @@ def _not_blank(**kwargs):
     )
 
 
+class ContextAwareNested(fields.Nested):
+    @property
+    def schema(self):
+        super().schema
+        self._schema.context = self.parent.context
+        return self._schema
+
+
 class TaskParameterSchema(WrapSchemaToPreserveContext):
     """Schema for a task parameter."""
 
@@ -173,7 +181,7 @@ class JobSchema(WrapSchemaToPreserveContext, FieldPermissionsMixin):
 
     schedule = fields.Nested(ScheduleSchema, allow_none=True, load_default=None)
 
-    last_run = fields.Nested(lambda: RunSchema, dump_only=True)
+    last_run = ContextAwareNested(lambda: RunSchema, dump_only=True)
     last_runs = fields.Raw(dump_only=True)
 
     @pre_dump
@@ -214,7 +222,7 @@ class RunSchema(WrapSchemaToPreserveContext, FieldPermissionsMixin):
     updated = TZDateTime(timezone=timezone.utc, format="iso", dump_only=True)
 
     started_by_id = fields.Integer(dump_only=True)
-    started_by = fields.Nested(UserSchema, dump_only=True)
+    started_by = ContextAwareNested(UserSchema, dump_only=True)
 
     started_at = TZDateTime(timezone=timezone.utc, format="iso", dump_only=True)
     finished_at = TZDateTime(timezone=timezone.utc, format="iso", dump_only=True)
