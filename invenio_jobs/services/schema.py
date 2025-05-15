@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2024 CERN.
+# Copyright (C) 2025 Graz University of Technology.
 #
 # Invenio-Jobs is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -13,9 +14,10 @@ from copy import deepcopy
 from datetime import datetime, timezone
 
 from dateutil.parser import isoparse
+from flask_resources import WrapSchemaToPreserveContext
 from invenio_i18n import lazy_gettext as _
 from invenio_users_resources.services import schemas as user_schemas
-from marshmallow import EXCLUDE, Schema, fields, post_load, pre_dump, pre_load, validate
+from marshmallow import EXCLUDE, fields, post_load, pre_dump, pre_load, validate
 from marshmallow_oneofschema import OneOfSchema
 from marshmallow_utils.fields import SanitizedUnicode, TZDateTime
 from marshmallow_utils.permissions import FieldPermissionsMixin
@@ -37,7 +39,7 @@ def _not_blank(**kwargs):
     )
 
 
-class TaskParameterSchema(Schema):
+class TaskParameterSchema(WrapSchemaToPreserveContext):
     """Schema for a task parameter."""
 
     name = SanitizedUnicode()
@@ -56,7 +58,7 @@ class TaskParameterSchema(Schema):
             return str(obj.default)
 
 
-class TaskSchema(Schema, FieldPermissionsMixin):
+class TaskSchema(WrapSchemaToPreserveContext, FieldPermissionsMixin):
     """Schema for a task."""
 
     name = SanitizedUnicode()
@@ -67,7 +69,7 @@ class TaskSchema(Schema, FieldPermissionsMixin):
     )
 
 
-class IntervalScheduleSchema(Schema):
+class IntervalScheduleSchema(WrapSchemaToPreserveContext):
     """Schema for an interval schedule based on ``datetime.timedelta``."""
 
     type = fields.Constant("interval")
@@ -81,7 +83,7 @@ class IntervalScheduleSchema(Schema):
     weeks = fields.Integer()
 
 
-class CrontabScheduleSchema(Schema):
+class CrontabScheduleSchema(WrapSchemaToPreserveContext):
     """Schema for a crontab schedule."""
 
     type = fields.Constant("crontab")
@@ -93,7 +95,7 @@ class CrontabScheduleSchema(Schema):
     month_of_year = fields.String(load_default="*")
 
 
-class CustomArgsSchema(Schema):
+class CustomArgsSchema(WrapSchemaToPreserveContext):
     """Custom arguments schema."""
 
     args = fields.Raw(load_default=dict, allow_none=True)
@@ -140,7 +142,7 @@ class JobArgumentsSchema(OneOfSchema):
             return "custom"
 
 
-class JobSchema(Schema, FieldPermissionsMixin):
+class JobSchema(WrapSchemaToPreserveContext, FieldPermissionsMixin):
     """Base schema for a job."""
 
     class Meta:
@@ -197,7 +199,7 @@ class UserSchema(OneOfSchema):
     }
 
 
-class RunSchema(Schema, FieldPermissionsMixin):
+class RunSchema(WrapSchemaToPreserveContext, FieldPermissionsMixin):
     """Base schema for a job run."""
 
     class Meta:
@@ -260,14 +262,14 @@ class RunSchema(Schema, FieldPermissionsMixin):
         return obj
 
 
-class LogContextSchema(Schema):
+class LogContextSchema(WrapSchemaToPreserveContext):
     """Schema for the job context with required job_id and dynamic fields."""
 
     job_id = fields.Str(required=True)
     run_id = fields.Str(required=True)
 
 
-class JobLogEntrySchema(Schema):
+class JobLogEntrySchema(WrapSchemaToPreserveContext):
     """Schema for structured OpenSearch job log entries."""
 
     timestamp = fields.DateTime(attribute="@timestamp", required=True)
