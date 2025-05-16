@@ -19,7 +19,7 @@ from contextvars import ContextVar
 from datetime import datetime
 from functools import wraps
 
-from flask import request
+from flask import current_app
 from invenio_logging.ext import InvenioLoggingBase
 from invenio_search import current_search_client
 from invenio_search.utils import prefix_index
@@ -58,7 +58,7 @@ class ContextAwareOSHandler(logging.Handler):
 
     def index_in_os(self, log_data):
         """Send log data to OpenSearch."""
-        full_index_name = prefix_index("job-logs")
+        full_index_name = prefix_index(current_app.config["JOBS_LOGGING_INDEX"])
         current_search_client.index(index=full_index_name, body=log_data)
 
 
