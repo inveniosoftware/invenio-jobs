@@ -86,3 +86,9 @@ JOBS_LOGGING_LEVEL = "DEBUG"
 
 JOBS_LOGGING = True
 """Enable logging for jobs."""
+
+JOBS_LOGGING_INDEX = "job-logs"
+""""Index name for job logs."""
+
+JOBS_LOGGING_RETENTION_DAYS = 90
+"""Retention period for job logs in days."""
