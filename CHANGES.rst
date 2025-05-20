@@ -8,6 +8,10 @@
 Changes
 =======
 
+Version v3.2.0 (released 2025-05-20)
+
+- logging: add log deletion task
+
 Version v3.1.2 (released 2025-05-14)
 
 - logs: fix minor bug
