@@ -121,7 +121,7 @@ class JobsService(BaseService):
         default_element = not bool(len(filters))
 
         jobs = (
-            Job.query.filter(sa.or_(default_element, *filters))
+            Job.query.filter(sa.or_(False, *filters))
             .order_by(
                 search_params["sort_direction"](
                     sa.text(",".join(search_params["sort"]))
