@@ -1,12 +1,17 @@
 ..
     Copyright (C) 2024 CERN.
-    Copyright (C) 2024 Graz University of Technology.
+    Copyright (C) 2024-2025 Graz University of Technology.
 
     Invenio-Jobs is free software; you can redistribute it and/or modify it
     under the terms of the MIT License; see LICENSE file for more details.
 
 Changes
 =======
+
+Version v4.0.0 (released 2025-06-03)
+
+- setup: bump major dependencies
+- fix: ChangedInMarshmallow4Warning
 
 Version v3.2.0 (released 2025-05-20)
 
