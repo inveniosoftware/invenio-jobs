@@ -25,7 +25,7 @@ from invenio_records_resources.services.uow import (
     unit_of_work,
 )
 
-from invenio_jobs.logging.jobs import EMPTY_JOB_CTX, job_context, with_job_context
+from invenio_jobs.logging.jobs import EMPTY_JOB_CTX, with_job_context
 from invenio_jobs.services.uow import JobContextOp
 from invenio_jobs.tasks import execute_run
 
@@ -105,23 +105,20 @@ class JobsService(BaseService):
         """Search for jobs."""
         self.require_permission(identity, "search")
 
-        search_params = map_search_params(self.config.search, params)
-        query_param = search_params["q"]
         filters = []
+        search_params = map_search_params(self.config.search, params)
+
+        query_param = search_params["q"]
         if query_param:
-            filters.extend(
-                [
+            filters.append(
+                sa.or_(
                     Job.title.ilike(f"%{query_param}%"),
                     Job.description.ilike(f"%{query_param}%"),
-                ]
+                )
             )
 
-        # if filters == [] -> True
-        # if filters != [] -> False
-        default_element = not bool(len(filters))
-
         jobs = (
-            Job.query.filter(sa.or_(default_element, *filters))
+            Job.query.filter(*filters)
             .order_by(
                 search_params["sort_direction"](
                     sa.text(",".join(search_params["sort"]))
@@ -187,20 +184,22 @@ class RunsService(BaseService):
         """Search for runs."""
         self.require_permission(identity, "search")
 
+        filters = [
+            Run.job_id == job_id,
+        ]
         search_params = map_search_params(self.config.search, params)
+
         query_param = search_params["q"]
-        base_query = Run.query.filter(Run.job_id == job_id)
-        filters = []
         if query_param:
-            filters.extend(
-                [
-                    Run.title.ilike(f"%{query_param}%"),
-                    Run.message.ilike(f"%{query_param}%"),
-                ]
+            filters.append(
+                sa.or_(
+                    Run.id.ilike(f"%{query_param}%"),
+                    Run.task_id.ilike(f"%{query_param}%"),
+                )
             )
 
         runs = (
-            base_query.filter(sa.or_(*filters))
+            Run.query.filter(*filters)
             .order_by(
                 search_params["sort_direction"](
                     sa.text(",".join(search_params["sort"]))
