@@ -8,6 +8,7 @@
 """Utilities."""
 
 import ast
+from datetime import datetime
 
 from jinja2.sandbox import SandboxedEnvironment
 
@@ -44,3 +45,10 @@ def walk_values(obj, transform_fn):
             walk_values(val, transform_fn)
         else:
             obj[key] = transform_fn(val)
+
+
+def custom_json_serializer(obj):
+    """JSON serializer for objects not serializable by default."""
+    if isinstance(obj, datetime):
+        return obj.isoformat()
+    raise TypeError("Type not serializable")
