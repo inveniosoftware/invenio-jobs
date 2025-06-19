@@ -11,6 +11,7 @@ import traceback
 from datetime import datetime
 
 from celery import shared_task
+from flask import g
 from invenio_db import db
 
 from invenio_jobs.errors import TaskExecutionError, TaskExecutionPartialError
@@ -37,26 +38,43 @@ def execute_run(self, run_id, kwargs=None):
     try:
         result = task.apply(kwargs=run.args, throw=True)
     except SystemExit as e:
+        sentry_event_id = getattr(g, "sentry_event_id", None)
+        message = (
+            f"{e.message} Sentry Event ID: {sentry_event_id}"
+            if sentry_event_id
+            else e.message
+        )
         update_run(
             run,
             status=RunStatusEnum.CANCELLED,
             finished_at=datetime.utcnow(),
+            message=message,
         )
         raise e
     except (TaskExecutionPartialError, TaskExecutionError) as e:
+        sentry_event_id = getattr(g, "sentry_event_id", None)
+        message = (
+            f"{e.message} Sentry Event ID: {sentry_event_id}"
+            if sentry_event_id
+            else e.message
+        )
         update_run(
             run,
             status=RunStatusEnum.PARTIAL_SUCCESS,
             finished_at=datetime.utcnow(),
-            message=e.message,
+            message=message,
         )
         return
     except Exception as e:
+        sentry_event_id = getattr(g, "sentry_event_id", None)
+        message = f"{e.__class__.__name__}: {str(e)}\n{traceback.format_exc()}"
+        if sentry_event_id:
+            message += f" Sentry Event ID: {sentry_event_id}"
         update_run(
             run,
             status=RunStatusEnum.FAILED,
             finished_at=datetime.utcnow(),
-            message=f"{e.__class__.__name__}: {str(e)}\n{traceback.format_exc()}",
+            message=message,
         )
         return
 
