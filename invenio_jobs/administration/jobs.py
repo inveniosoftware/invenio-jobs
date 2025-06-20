@@ -75,11 +75,6 @@ class JobsListView(JobsAdminMixin, AdminResourceListView):
         "next_run": {"text": _("Next run"), "order": 5, "width": 3},
     }
 
-    @staticmethod
-    def disabled():
-        """Disable the view on demand."""
-        return not current_app.config["JOBS_ADMINISTRATION_ENABLED"]
-
 
 class JobsDetailsView(JobsAdminMixin, AdminResourceListView):
     """Configuration for Jobs detail view which shows runs."""

@@ -28,9 +28,6 @@ JOBS_RUNS_PERMISSION_POLICY = RunPermissionPolicy
 APP_LOGS_PERMISSION_POLICY = JobLogsPermissionPolicy
 """Permission policy for job logs."""
 
-JOBS_ADMINISTRATION_ENABLED = False
-"""Disable Jobs administration views if ``True``."""
-
 JOBS_FACETS = {}
 """Facets/aggregations for Jobs results."""
 
