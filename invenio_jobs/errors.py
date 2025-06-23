@@ -7,11 +7,28 @@
 
 """Errors for logging."""
 
+import warnings
 
-class TaskExecutionError(Exception):
+
+class TaskExecutionPartialError(Exception):
     """Exception raised when the task is executed with errors."""
 
     def __init__(self, message="The task was executed with errors."):
+        """Constructor for the TaskExecutionPartialError class."""
+        self.message = message
+        super().__init__(message)
+
+
+class TaskExecutionError(Exception):
+    """[DEPRECATED] Exception raised when the task is executed with errors."""
+
+    def __init__(self, message="The task was executed with errors."):
         """Constructor for the TaskExecutionError class."""
+        warnings.warn(
+            "TaskExecutionError is deprecated and will be removed in a future version. "
+            "Use TaskExecutionPartialError instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         self.message = message
         super().__init__(message)
