@@ -14,7 +14,12 @@
     class="ten wide mobile twelve wide tablet thirteen wide computer fourteen wide widescreen column"
   >
     <div class="ui container fluid pl-10 pr-10 pt-10 pb-10">
-      {{ go_back() }}
+      <div class="rel-mb-2">
+        <a href="/administration/jobs" class="ui mini button labeled icon rel-mr-1">
+            <i class="ui icon left arrow" aria-hidden="true"></i>
+            {{ _('Back')}}
+        </a>
+      </div>
       {% block admin_page_content %}
         <div class="ui divider" aria-hidden="true"></div>
 
