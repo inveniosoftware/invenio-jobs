@@ -8,6 +8,13 @@
 Changes
 =======
 
+Version v4.1.0 (released 2025-07-02)
+
+- admin: remove flag to always show the admin panel
+- services: simplify search filtering logic
+- fix: LegacyAPIWarning
+- fix: SADeprecationWarning
+
 Version v4.0.0 (released 2025-06-03)
 
 - setup: bump major dependencies
