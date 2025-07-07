@@ -39,7 +39,7 @@ class PredefinedArgsSchema(Schema):
         format="iso",
         metadata={
             "description": _(
-                "YYYY-MM-DD HH:mm format. "
+                "ISO 8601 format."
                 "Leave empty to continue since last successful run."
             )
         },

@@ -11,7 +11,7 @@ import enum
 import json
 import uuid
 from copy import deepcopy
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 import sqlalchemy as sa
 from celery.schedules import crontab
@@ -157,8 +157,16 @@ class Run(db.Model, Timestamp):
         args = Task.get(job.task)._build_task_arguments(
             job_obj=job, **task_arguments or {}
         )
-        args = json.dumps(args, indent=4, sort_keys=True, default=str)
+
+        def custom_json(obj):
+            if isinstance(obj, datetime):
+                return obj.isoformat()
+
+            return obj
+
+        args = json.dumps(args, default=custom_json)
         args = json.loads(args)
+
         return args
 
     def dump(self):
