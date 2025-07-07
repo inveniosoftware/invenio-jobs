@@ -39,8 +39,7 @@ class PredefinedArgsSchema(Schema):
         format="iso",
         metadata={
             "description": _(
-                "ISO 8601 format."
-                "Leave empty to continue since last successful run."
+                "ISO 8601 format." "Leave empty to continue since last successful run."
             )
         },
     )
