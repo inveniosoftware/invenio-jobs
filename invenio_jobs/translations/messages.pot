@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: invenio-jobs 4.1.0\n"
 "Report-Msgid-Bugs-To: info@inveniosoftware.org\n"
-"POT-Creation-Date: 2025-07-08 11:19+0200\n"
+"POT-Creation-Date: 2025-07-08 19:01+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -55,6 +55,18 @@ msgstr ""
 msgid ""
 "YYYY-MM-DD HH:mm format. Leave empty to continue since last successful "
 "run."
+msgstr ""
+
+#: invenio_jobs/administration/jobs.py:43
+msgid "Schedule"
+msgstr ""
+
+#: invenio_jobs/administration/jobs.py:49
+msgid "Configure and run"
+msgstr ""
+
+#: invenio_jobs/administration/jobs.py:50
+msgid "Run now"
 msgstr ""
 
 #: invenio_jobs/administration/jobs.py:72
