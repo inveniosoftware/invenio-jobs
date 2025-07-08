@@ -101,5 +101,10 @@ class JobType(ABC):
             return custom_args
 
         if since is None and job_obj.last_runs["success"]:
-            since = job_obj.last_runs["success"].started_at
+            """
+            We can add the UTC time zone as we store all dates as UTC in the database.
+            For comparison with other dates in job implementors, it's useful to have TZ info in the timestamp.
+            """
+            since = job_obj.last_runs["success"].started_at.replace(tzinfo=timezone.utc)
+
         return {**cls.build_task_arguments(job_obj, since=since, **kwargs)}
