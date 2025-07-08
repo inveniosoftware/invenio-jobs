@@ -1,5 +1,6 @@
 // This file is part of InvenioRDM
 // Copyright (C) 2024 CERN
+// Copyright (C) 2025 KTH Royal Institute of Technology.
 //
 // Invenio RDM Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
@@ -58,7 +59,7 @@ export class RunActionForm extends Component {
     return (
       <Formik initialValues={formData} onSubmit={onSubmit}>
         {(props) => {
-          const actions_errors = props?.errors
+          const actions_errors = props?.errors;
           return (
             <>
               <Modal.Content>
@@ -169,7 +170,8 @@ export class RunActionForm extends Component {
                   form="action-form"
                   loading={loading}
                 >
-                  {i18next.t(actionConfig.modal_text) || i18next.t(actionConfig.text)}
+                  {i18next.t(actionConfig.modal_text) ||
+                    i18next.t(actionConfig.text)}
                 </Button>
                 <Button
                   onClick={actionCancelCallback}
