@@ -59,7 +59,7 @@ export class RunActionForm extends Component {
     return (
       <Formik initialValues={formData} onSubmit={onSubmit}>
         {(props) => {
-          const actions_errors = props?.errors;
+          const actionsErrors = props?.errors;
           return (
             <>
               <Modal.Content>
@@ -154,8 +154,8 @@ export class RunActionForm extends Component {
                     <ErrorMessage
                       {...error}
                       content={
-                        actions_errors && Object.keys(actions_errors).length > 0
-                          ? Object.values(actions_errors)[0]
+                        actionsErrors && Object.keys(actionsErrors).length > 0
+                          ? Object.values(actionsErrors)[0]
                           : error.content
                       }
                       removeNotification={this.resetErrorState}
@@ -199,9 +199,17 @@ RunActionForm.propTypes = {
   actionConfig: PropTypes.object.isRequired,
   actionPayload: PropTypes.object,
   onSubmit: PropTypes.func.isRequired,
+  loading: PropTypes.bool,
+  formData: PropTypes.object,
+  error: PropTypes.shape({
+    content: PropTypes.string,
+  }),
 };
 
 RunActionForm.defaultProps = {
   formFields: {},
   actionPayload: {},
+  loading: false,
+  formData: {},
+  error: null,
 };
