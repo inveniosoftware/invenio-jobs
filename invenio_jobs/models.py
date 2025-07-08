@@ -11,7 +11,7 @@ import enum
 import json
 import uuid
 from copy import deepcopy
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 import sqlalchemy as sa
 from celery.schedules import crontab
