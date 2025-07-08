@@ -98,12 +98,15 @@ class SearchResultItemComponent extends Component {
           data-label={i18next.t("Message")}
           className=""
         >
-          {msgLinesShown.map((line, index) => (
-            <React.Fragment key={index}>
-              {line}
-              <br />
-            </React.Fragment>
-          ))}
+          {msgLinesShown.map((line) => {
+            const lineIndex = msgLines.indexOf(line);
+            return (
+              <React.Fragment key={`msg-line-${lineIndex}-${line.length}`}>
+                {line}
+                <br />
+              </React.Fragment>
+            );
+          })}
           {msgHasMoreThanMaxLines && (
             <React.Fragment>
               {!msgShowAll && <div>...</div>}
