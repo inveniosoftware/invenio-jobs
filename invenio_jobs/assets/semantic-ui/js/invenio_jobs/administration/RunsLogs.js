@@ -1,6 +1,16 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { Label, Container, Divider, Grid, Header, Icon, List, Message, Segment } from "semantic-ui-react";
+import {
+  Label,
+  Container,
+  Divider,
+  Grid,
+  Header,
+  Icon,
+  List,
+  Message,
+  Segment,
+} from "semantic-ui-react";
 import { http } from "react-invenio-forms";
 import { withCancel, ErrorMessage } from "react-invenio-forms";
 import { DateTime } from "luxon";
@@ -12,7 +22,9 @@ export class RunsLogs extends Component {
       error: null,
       logs: this.props.logs.map((log) => ({
         ...log,
-        formatted_timestamp: DateTime.fromISO(log.timestamp).toFormat("yyyy-MM-dd HH:mm"),
+        formatted_timestamp: DateTime.fromISO(log.timestamp).toFormat(
+          "yyyy-MM-dd HH:mm"
+        ),
       })),
       run: this.props.run,
       sort: this.props.sort,
@@ -23,7 +35,9 @@ export class RunsLogs extends Component {
 
   fetchLogs = async (runId, sort) => {
     try {
-      const searchAfterParams = (sort || []).map((value) => `search_after=${value}`).join("&");
+      const searchAfterParams = (sort || [])
+        .map((value) => `search_after=${value}`)
+        .join("&");
       this.cancellableFetch = withCancel(
         http.get(`/api/logs/jobs?q=${runId}&${searchAfterParams}`)
       );
@@ -34,7 +48,9 @@ export class RunsLogs extends Component {
 
       const formattedLogs = response.data.hits.hits.map((log) => ({
         ...log,
-        formatted_timestamp: DateTime.fromISO(log.timestamp).toFormat("yyyy-MM-dd HH:mm"),
+        formatted_timestamp: DateTime.fromISO(log.timestamp).toFormat(
+          "yyyy-MM-dd HH:mm"
+        ),
       }));
       const newSort = response.data.hits.sort;
 
@@ -53,9 +69,7 @@ export class RunsLogs extends Component {
     if (!startedAt) return 0;
 
     const start = DateTime.fromISO(startedAt);
-    const end = finishedAt
-      ? DateTime.fromISO(finishedAt)
-      : DateTime.now();
+    const end = finishedAt ? DateTime.fromISO(finishedAt) : DateTime.now();
 
     const duration = end.diff(start, "minutes").minutes;
 
@@ -80,9 +94,20 @@ export class RunsLogs extends Component {
 
       const run = response.data;
       const formatted_started_at = this.formatDatetime(run.started_at);
-      const runDuration = this.getDurationInMinutes(run.started_at, run.finished_at);
-      this.setState({ run: run, runDuration: runDuration, formatted_started_at: formatted_started_at });
-      if (run.status === "SUCCESS" || run.status === "FAILED" || run.status === "PARTIAL_SUCCESS") {
+      const runDuration = this.getDurationInMinutes(
+        run.started_at,
+        run.finished_at
+      );
+      this.setState({
+        run: run,
+        runDuration: runDuration,
+        formatted_started_at: formatted_started_at,
+      });
+      if (
+        run.status === "SUCCESS" ||
+        run.status === "FAILED" ||
+        run.status === "PARTIAL_SUCCESS"
+      ) {
         clearInterval(this.logsInterval); // Stop fetching logs if run finished
       }
     } catch (err) {
@@ -94,8 +119,14 @@ export class RunsLogs extends Component {
   componentDidMount() {
     const { run } = this.props;
     const formatted_started_at = this.formatDatetime(run.started_at);
-    const runDuration = this.getDurationInMinutes(run.started_at, run.finished_at);
-    this.setState({ runDuration: runDuration, formatted_started_at: formatted_started_at });
+    const runDuration = this.getDurationInMinutes(
+      run.started_at,
+      run.finished_at
+    );
+    this.setState({
+      runDuration: runDuration,
+      formatted_started_at: formatted_started_at,
+    });
 
     this.logsInterval = setInterval(async () => {
       const { run, sort } = this.state;
@@ -138,8 +169,12 @@ export class RunsLogs extends Component {
             <Message.Header className="mb-5">No logs to display</Message.Header>
             Possible reasons include:
             <Message.List>
-              <Message.Item>The job has not produced any logs yet.</Message.Item>
-              <Message.Item>Logs were deleted due to the retention policy.</Message.Item>
+              <Message.Item>
+                The job has not produced any logs yet.
+              </Message.Item>
+              <Message.Item>
+                Logs were deleted due to the retention policy.
+              </Message.Item>
             </Message.List>
           </Message>
         )}
@@ -187,9 +222,16 @@ export class RunsLogs extends Component {
                 <Grid.Column className="log-table" width={13}>
                   <Segment>
                     {logs.map((log, index) => (
-                      <div key={index} className={`log-line ${log.level.toLowerCase()}`}>
-                        <span className="log-timestamp">[{log.formatted_timestamp}]</span>{" "}
-                        <span className={getClassForLogLevel(log.level)}>{log.level}</span>{" "}
+                      <div
+                        key={index}
+                        className={`log-line ${log.level.toLowerCase()}`}
+                      >
+                        <span className="log-timestamp">
+                          [{log.formatted_timestamp}]
+                        </span>{" "}
+                        <span className={getClassForLogLevel(log.level)}>
+                          {log.level}
+                        </span>{" "}
                         <span className="log-message">{log.message}</span>
                       </div>
                     ))}
