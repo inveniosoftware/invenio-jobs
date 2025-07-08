@@ -1,5 +1,6 @@
 // This file is part of Invenio
 // Copyright (C) 2024 CERN.
+// Copyright (C) 2025 KTH Royal Institute of Technology.
 //
 // Invenio RDM is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
@@ -8,7 +9,7 @@ import {
   NotificationContext,
   Loader,
   ErrorPage,
-  Actions
+  Actions,
 } from "@js/invenio_administration";
 import { i18next } from "@translations/invenio_jobs/i18next";
 import _isEmpty from "lodash/isEmpty";
@@ -18,17 +19,6 @@ import { Divider, Button, Grid, Header } from "semantic-ui-react";
 import { AdminUIRoutes } from "@js/invenio_administration";
 
 export class JobRunsHeader extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      title: i18next.t("Job Details"),
-      description: "",
-      config: {},
-      loading: true,
-    };
-  }
-
   static contextType = NotificationContext;
 
   onError = (e) => {
@@ -47,7 +37,6 @@ export class JobRunsHeader extends Component {
       window.location = data.links.self_admin_html;
     }, 1500);
   };
-
 
   render() {
     const {
@@ -110,5 +99,38 @@ export class JobRunsHeader extends Component {
 }
 
 JobRunsHeader.propTypes = {
-  jobId: PropTypes.string.isRequired,
+  actions: PropTypes.array,
+  apiEndpoint: PropTypes.string,
+  idKeyPath: PropTypes.string,
+  listUIEndpoint: PropTypes.string,
+  resourceName: PropTypes.string,
+  displayDelete: PropTypes.bool,
+  displayEdit: PropTypes.bool,
+  data: PropTypes.shape({
+    title: PropTypes.string,
+    description: PropTypes.string,
+    links: PropTypes.shape({
+      self_admin_html: PropTypes.string,
+    }),
+  }),
+  error: PropTypes.shape({
+    response: PropTypes.shape({
+      status: PropTypes.number,
+      data: PropTypes.any,
+    }),
+  }),
+  loading: PropTypes.bool,
+};
+
+JobRunsHeader.defaultProps = {
+  actions: [],
+  apiEndpoint: "",
+  idKeyPath: "",
+  listUIEndpoint: "",
+  resourceName: "",
+  displayDelete: false,
+  displayEdit: false,
+  data: null,
+  error: null,
+  loading: false,
 };
