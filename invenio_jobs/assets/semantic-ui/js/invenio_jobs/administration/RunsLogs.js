@@ -1,3 +1,10 @@
+// This file is part of InvenioRDM
+// Copyright (C) 2024 CERN
+// Copyright (C) 2025 KTH Royal Institute of Technology.
+//
+// Invenio RDM Records is free software; you can redistribute it and/or modify it
+// under the terms of the MIT License; see LICENSE file for more details.
+
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import {
@@ -11,26 +18,55 @@ import {
   Message,
   Segment,
 } from "semantic-ui-react";
-import { http } from "react-invenio-forms";
-import { withCancel, ErrorMessage } from "react-invenio-forms";
+import { http, withCancel } from "react-invenio-forms";
 import { DateTime } from "luxon";
 
 export class RunsLogs extends Component {
   constructor(props) {
     super(props);
+
+    const { logs, run, sort } = props;
+
     this.state = {
       error: null,
-      logs: this.props.logs.map((log) => ({
+      logs: logs.map((log) => ({
         ...log,
         formatted_timestamp: DateTime.fromISO(log.timestamp).toFormat(
           "yyyy-MM-dd HH:mm"
         ),
       })),
-      run: this.props.run,
-      sort: this.props.sort,
-      runDuration: null,
-      formatted_started_at: null,
+      run,
+      sort,
+      runDuration: this.getDurationInMinutes(run.started_at, run.finished_at),
+      formatted_started_at: this.formatDatetime(run.started_at),
     };
+  }
+
+  componentDidMount() {
+    this.logsInterval = setInterval(async () => {
+      const { run, sort } = this.state;
+      if (run.status === "RUNNING") {
+        await this.fetchLogs(run.id, sort);
+        await this.checkRunStatus(run.id, run.job_id);
+      }
+    }, 2000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.logsInterval);
+    this.logsFetchCancel?.cancel();
+    this.statusFetchCancel?.cancel();
+  }
+
+  getDurationInMinutes(startedAt, finishedAt) {
+    if (!startedAt) return 0;
+    const start = DateTime.fromISO(startedAt);
+    const end = finishedAt ? DateTime.fromISO(finishedAt) : DateTime.now();
+    return Math.floor(end.diff(start, "minutes").minutes);
+  }
+
+  formatDatetime(ts) {
+    return ts ? DateTime.fromISO(ts).toFormat("yyyy-MM-dd HH:mm") : null;
   }
 
   fetchLogs = async (runId, sort) => {
@@ -38,77 +74,67 @@ export class RunsLogs extends Component {
       const searchAfterParams = (sort || [])
         .map((value) => `search_after=${value}`)
         .join("&");
-      this.cancellableFetch = withCancel(
+
+      // own cancel token for this request
+      const cancellableFetch = withCancel(
         http.get(`/api/logs/jobs?q=${runId}&${searchAfterParams}`)
       );
-      const response = await this.cancellableFetch.promise;
-      if (response.status !== 200) {
-        throw new Error(`Failed to fetch logs: ${response.statusText}`);
-      }
+      this.logsFetchCancel = cancellableFetch;
 
-      const formattedLogs = response.data.hits.hits.map((log) => ({
+      const res = await cancellableFetch.promise;
+      if (res.status !== 200)
+        throw new Error(`Failed to fetch logs: ${res.statusText}`);
+
+      const incoming = res.data.hits.hits.map((log) => ({
         ...log,
         formatted_timestamp: DateTime.fromISO(log.timestamp).toFormat(
           "yyyy-MM-dd HH:mm"
         ),
       }));
-      const newSort = response.data.hits.sort;
+      const newSort = res.data.hits.sort;
 
-      this.setState((prevState) => ({
-        logs: [...prevState.logs, ...formattedLogs],
-        error: null,
-        sort: newSort || prevState.sort, // Update sort only if newSort exists
-      })); // Append logs and clear error
+      /* dedup by timestamp|level|msg combo */
+      this.setState((prev) => {
+        const seen = new Set(
+          prev.logs.map((l) => `${l.timestamp}|${l.level}|${l.message ?? ""}`)
+        );
+        const unique = incoming.filter(
+          (l) => !seen.has(`${l.timestamp}|${l.level}|${l.message ?? ""}`)
+        );
+        return {
+          logs: [...prev.logs, ...unique],
+          error: null,
+          sort: newSort || prev.sort,
+        };
+      });
     } catch (err) {
       console.error("Error fetching logs:", err);
       this.setState({ error: err.message });
     }
   };
 
-  getDurationInMinutes(startedAt, finishedAt) {
-    if (!startedAt) return 0;
-
-    const start = DateTime.fromISO(startedAt);
-    const end = finishedAt ? DateTime.fromISO(finishedAt) : DateTime.now();
-
-    const duration = end.diff(start, "minutes").minutes;
-
-    return Math.floor(duration);
-  }
-
-  formatDatetime(timestamp) {
-    if (!timestamp) return null;
-
-    return DateTime.fromISO(timestamp).toFormat("yyyy-MM-dd HH:mm");
-  }
-
   checkRunStatus = async (runId, jobId) => {
     try {
-      this.cancellableFetch = withCancel(
+      // own cancel token for this request
+      const cancellable = withCancel(
         http.get(`/api/jobs/${jobId}/runs/${runId}`)
       );
-      const response = await this.cancellableFetch.promise;
-      if (response.status !== 200) {
-        throw new Error(`Failed to fetch run status: ${response.statusText}`);
-      }
+      this.statusFetchCancel = cancellable;
 
-      const run = response.data;
-      const formatted_started_at = this.formatDatetime(run.started_at);
-      const runDuration = this.getDurationInMinutes(
-        run.started_at,
-        run.finished_at
-      );
+      const res = await cancellable.promise;
+      if (res.status !== 200)
+        throw new Error(`Failed to fetch run status: ${res.statusText}`);
+
+      const run = res.data;
+
       this.setState({
-        run: run,
-        runDuration: runDuration,
-        formatted_started_at: formatted_started_at,
+        run,
+        runDuration: this.getDurationInMinutes(run.started_at, run.finished_at),
+        formatted_started_at: this.formatDatetime(run.started_at),
       });
-      if (
-        run.status === "SUCCESS" ||
-        run.status === "FAILED" ||
-        run.status === "PARTIAL_SUCCESS"
-      ) {
-        clearInterval(this.logsInterval); // Stop fetching logs if run finished
+
+      if (["SUCCESS", "FAILED", "PARTIAL_SUCCESS"].includes(run.status)) {
+        clearInterval(this.logsInterval);
       }
     } catch (err) {
       console.error("Error checking run status:", err);
@@ -116,34 +142,15 @@ export class RunsLogs extends Component {
     }
   };
 
-  componentDidMount() {
-    const { run } = this.props;
-    const formatted_started_at = this.formatDatetime(run.started_at);
-    const runDuration = this.getDurationInMinutes(
-      run.started_at,
-      run.finished_at
-    );
-    this.setState({
-      runDuration: runDuration,
-      formatted_started_at: formatted_started_at,
-    });
-
-    this.logsInterval = setInterval(async () => {
-      const { run, sort } = this.state;
-      if (run.status === "RUNNING") {
-        await this.fetchLogs(run.id, sort); // Fetch logs only if the run is running
-        await this.checkRunStatus(run.id, run.job_id); // Check the run status
-      }
-    }, 2000);
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.logsInterval);
-  }
-
   render() {
-    const { error, logs, run, runDuration, formatted_started_at } = this.state;
-    const levelClassMapping = {
+    const {
+      error,
+      logs,
+      run,
+      runDuration,
+      formatted_started_at: formattedStartedAt,
+    } = this.state;
+    const levelClass = {
       DEBUG: "",
       INFO: "primary",
       WARNING: "warning",
@@ -151,17 +158,18 @@ export class RunsLogs extends Component {
       CRITICAL: "negative",
     };
 
-    const getClassForLogLevel = (level) => levelClassMapping[level] || "";
-
-    const statusIconMapping = {
+    const statusIcon = {
       SUCCESS: { name: "check circle", color: "green" },
       FAILED: { name: "times circle", color: "red" },
       RUNNING: { name: "spinner", color: "blue" },
       PARTIAL_SUCCESS: { name: "exclamation circle", color: "orange" },
     };
 
-    const defaultStatusIcon = { name: "clock outline", color: "grey" };
-    const iconProps = statusIconMapping[run.status] || defaultStatusIcon;
+    const iconProps = statusIcon[run.status] || {
+      name: "clock outline",
+      color: "grey",
+    };
+
     return (
       <Container>
         {logs.length === 0 && (
@@ -200,10 +208,10 @@ export class RunsLogs extends Component {
                     <List.Item>
                       <Icon name={iconProps.name} color={iconProps.color} />
                       <List.Content>
-                        {formatted_started_at ? (
+                        {formattedStartedAt ? (
                           <>
                             <p>
-                              <strong>{formatted_started_at}</strong>
+                              <strong>{formattedStartedAt}</strong>
                             </p>
                             <p className="description">{runDuration} mins</p>
                           </>
@@ -221,15 +229,15 @@ export class RunsLogs extends Component {
                 </Grid.Column>
                 <Grid.Column className="log-table" width={13}>
                   <Segment>
-                    {logs.map((log, index) => (
+                    {logs.map((log) => (
                       <div
-                        key={index}
+                        key={`${log.timestamp}-${log.level}-${log.message}`}
                         className={`log-line ${log.level.toLowerCase()}`}
                       >
                         <span className="log-timestamp">
                           [{log.formatted_timestamp}]
                         </span>{" "}
-                        <span className={getClassForLogLevel(log.level)}>
+                        <span className={levelClass[log.level] || ""}>
                           {log.level}
                         </span>{" "}
                         <span className="log-message">{log.message}</span>
