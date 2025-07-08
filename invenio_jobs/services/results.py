@@ -12,10 +12,11 @@ import json
 from collections.abc import Iterable, Sized
 
 from invenio_records_resources.services.records.results import (
-    ExpandableField,
     RecordItem,
     RecordList,
 )
+
+from invenio_jobs.utils import job_arg_json_dumper
 
 from ..api import AttrDict
 
@@ -50,7 +51,7 @@ class JobItem(Item):
             job_dict["last_run"] = self._obj.last_run.dump()
             job_dict["last_runs"] = self._obj.last_runs
         job_dict["default_args"] = json.dumps(
-            self._obj.default_args, indent=4, sort_keys=True, default=str
+            self._obj.default_args, default=job_arg_json_dumper
         )
         job_record = AttrDict(job_dict)
 
@@ -132,7 +133,7 @@ class JobList(List):
             job_dict["last_run"] = hit.last_run
             job_dict["last_runs"] = hit.last_runs
             job_dict["default_args"] = json.dumps(
-                hit.default_args, indent=4, sort_keys=True, default=str
+                hit.default_args, default=job_arg_json_dumper
             )
             job_record = AttrDict(job_dict)
             projection = self._schema.dump(
