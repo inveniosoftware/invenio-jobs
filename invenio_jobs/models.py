@@ -24,6 +24,7 @@ from sqlalchemy_utils.types import ChoiceType, JSONType, UUIDType
 from werkzeug.utils import cached_property
 
 from invenio_jobs.proxies import current_jobs
+from invenio_jobs.utils import job_arg_json_dumper
 
 JSON = (
     db.JSON()
@@ -158,13 +159,7 @@ class Run(db.Model, Timestamp):
             job_obj=job, **task_arguments or {}
         )
 
-        def custom_json(obj):
-            if isinstance(obj, datetime):
-                return obj.isoformat()
-
-            return obj
-
-        args = json.dumps(args, default=custom_json)
+        args = json.dumps(args, default=job_arg_json_dumper)
         args = json.loads(args)
 
         return args
