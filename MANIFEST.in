@@ -22,6 +22,7 @@ recursive-include docs Makefile
 recursive-include invenio_jobs *.html
 recursive-include invenio_jobs *.js
 recursive-include invenio_jobs/translations *.po *.pot *.mo
+recursive-include invenio_jobs *.po
 recursive-include tests *.py
 recursive-include invenio_jobs *.py
 recursive-include invenio_jobs *.json
