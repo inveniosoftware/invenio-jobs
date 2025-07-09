@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-07-08T19:01:15.884Z\n"
-"PO-Revision-Date: 2025-07-08T19:01:15.884Z\n"
+"POT-Creation-Date: 2025-07-09T07:46:19.258Z\n"
+"PO-Revision-Date: 2025-07-09T07:46:19.259Z\n"
 "Language: en\n"
 
 msgid "Schedule Job"
@@ -108,3 +108,27 @@ msgstr "Partial Success"
 
 msgid "Stop"
 msgstr "Stop"
+
+msgid "No logs to display"
+msgstr "No logs to display"
+
+msgid "Possible reasons include:"
+msgstr "Possible reasons include:"
+
+msgid "The job has not produced any logs yet."
+msgstr "The job has not produced any logs yet."
+
+msgid "Logs were deleted due to the retention policy."
+msgstr "Logs were deleted due to the retention policy."
+
+msgid "Error Fetching Logs"
+msgstr "Error Fetching Logs"
+
+msgid "Job run"
+msgstr "Job run"
+
+msgid "mins"
+msgstr "mins"
+
+msgid "Not yet started"
+msgstr "Not yet started"

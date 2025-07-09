@@ -30,5 +30,13 @@
   "Cancelling": "Cancelling",
   "Cancelled": "Cancelled",
   "Partial Success": "Partial Success",
-  "Stop": "Stop"
+  "Stop": "Stop",
+  "No logs to display": "No logs to display",
+  "Possible reasons include:": "Possible reasons include:",
+  "The job has not produced any logs yet.": "The job has not produced any logs yet.",
+  "Logs were deleted due to the retention policy.": "Logs were deleted due to the retention policy.",
+  "Error Fetching Logs": "Error Fetching Logs",
+  "Job run": "Job run",
+  "mins": "mins",
+  "Not yet started": "Not yet started"
 }
