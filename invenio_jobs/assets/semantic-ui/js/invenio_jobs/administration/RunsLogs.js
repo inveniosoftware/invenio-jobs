@@ -20,6 +20,7 @@ import {
 } from "semantic-ui-react";
 import { http, withCancel } from "react-invenio-forms";
 import { DateTime } from "luxon";
+import { i18next } from "@translations/invenio_jobs/i18next";
 
 export class RunsLogs extends Component {
   constructor(props) {
@@ -174,14 +175,16 @@ export class RunsLogs extends Component {
       <Container>
         {logs.length === 0 && (
           <Message info>
-            <Message.Header className="mb-5">No logs to display</Message.Header>
-            Possible reasons include:
+            <Message.Header className="mb-5">
+              {i18next.t("No logs to display")}
+            </Message.Header>
+            {i18next.t("Possible reasons include:")}
             <Message.List>
               <Message.Item>
-                The job has not produced any logs yet.
+                {i18next.t("The job has not produced any logs yet.")}
               </Message.Item>
               <Message.Item>
-                Logs were deleted due to the retention policy.
+                {i18next.t("Logs were deleted due to the retention policy.")}
               </Message.Item>
             </Message.List>
           </Message>
@@ -194,7 +197,9 @@ export class RunsLogs extends Component {
             <Divider />
             {error && (
               <Message negative>
-                <Message.Header>Error Fetching Logs</Message.Header>
+                <Message.Header>
+                  {i18next.t("Error Fetching Logs")}
+                </Message.Header>
                 <p>{error}</p>
               </Message>
             )}
@@ -202,7 +207,7 @@ export class RunsLogs extends Component {
               <Grid.Row>
                 <Grid.Column width={3}>
                   <Header as="h4" color="grey">
-                    Job run
+                    {i18next.t("Job run")}
                   </Header>
                   <List>
                     <List.Item>
@@ -213,10 +218,14 @@ export class RunsLogs extends Component {
                             <p>
                               <strong>{formattedStartedAt}</strong>
                             </p>
-                            <p className="description">{runDuration} mins</p>
+                            <p className="description">
+                              {runDuration} {i18next.t("mins")}
+                            </p>
                           </>
                         ) : (
-                          <p className="description">Not yet started</p>
+                          <p className="description">
+                            {i18next.t("Not yet started")}
+                          </p>
                         )}
                         {run.message && (
                           <Label basic color={iconProps.color}>
