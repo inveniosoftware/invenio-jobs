@@ -8,10 +8,10 @@
 """Errors for logging."""
 
 
-class TaskExecutionError(Exception):
+class TaskExecutionPartialError(Exception):
     """Exception raised when the task is executed with errors."""
 
     def __init__(self, message="The task was executed with errors."):
-        """Constructor for the TaskExecutionError class."""
+        """Constructor for the TaskExecutionPartialError class."""
         self.message = message
         super().__init__(message)
