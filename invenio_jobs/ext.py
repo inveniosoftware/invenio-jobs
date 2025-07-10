@@ -8,13 +8,11 @@
 
 """Jobs extension."""
 
-import importlib_metadata
 from celery import current_app as current_celery_app
 from flask import current_app
-from invenio_i18n import gettext as _
+from invenio_base.utils import entry_points
 
 from . import config
-from .models import Task
 from .registry import JobsRegistry
 from .resources import (
     JobLogResource,
@@ -83,7 +81,7 @@ class InvenioJobs:
 
     def load_entry_point_group(self):
         """Load actions from an entry point group."""
-        entrypoints = set(importlib_metadata.entry_points(group=self.entry_point_group))
+        entrypoints = entry_points(group=self.entry_point_group)
         for ep in entrypoints:
             entry_point = ep.load()
             yield entry_point
