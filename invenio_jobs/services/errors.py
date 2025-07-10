@@ -65,3 +65,15 @@ class RunTooManyResults(JobsError):
                 f"Too many log results returned ({total}). The maximum allowed is {max_docs}. Please refine your search criteria to reduce the result size."
             )
         )
+
+
+class InvalidDate(JobsError):
+    """Run too many results error."""
+
+    def __init__(self, date_string):
+        """Initialise error."""
+        super().__init__(
+            description=_(
+                f"Provided value `{date_string}` is not a valid ISO timestamp. Please use the format YYYY-MM-DDThh:mm:ss+00:00."
+            )
+        )
