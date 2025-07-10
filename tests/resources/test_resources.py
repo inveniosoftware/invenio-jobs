@@ -7,12 +7,14 @@
 
 """Resource tests."""
 from copy import deepcopy
+from datetime import datetime, timedelta, timezone
 from time import sleep
 from unittest.mock import patch
 
 import pytest
 
 from invenio_jobs.logging.jobs import job_context
+from invenio_jobs.services.errors import InvalidDate
 from invenio_jobs.tasks import execute_run
 
 
@@ -20,7 +22,7 @@ from invenio_jobs.tasks import execute_run
 def test_simple_flow(mock_apply_async, app, db, client, user):
     """Test simple flow."""
     client = user.login(client)
-    job_paylod = {
+    job_payload = {
         "title": "Test job",
         "task": "update_expired_embargos",
         "description": "Test description",
@@ -30,7 +32,7 @@ def test_simple_flow(mock_apply_async, app, db, client, user):
     }
 
     # Create a job
-    res = client.post("/jobs", json=job_paylod)
+    res = client.post("/jobs", json=job_payload)
     assert res.status_code == 201
     job_id = res.json["id"]
     expected_job = {
@@ -40,7 +42,7 @@ def test_simple_flow(mock_apply_async, app, db, client, user):
         "active": False,
         "task": "update_expired_embargos",
         "default_queue": "low",
-        "default_args": "{}",
+        "default_args": '{"since": null}',
         "schedule": {"type": "interval", "hours": 4},
         "created": res.json["created"],
         "updated": res.json["updated"],
@@ -54,7 +56,7 @@ def test_simple_flow(mock_apply_async, app, db, client, user):
     assert res.json == expected_job
 
     # Activate the job (i.e. update)
-    res = client.put(f"/jobs/{job_id}", json={**job_paylod, "active": True})
+    res = client.put(f"/jobs/{job_id}", json={**job_payload, "active": True})
     assert res.status_code == 200
     expected_job["active"] = True
     expected_job["updated"] = res.json["updated"]
@@ -90,12 +92,26 @@ def test_simple_flow(mock_apply_async, app, db, client, user):
     assert res.status_code == 200
     assert res.json == expected_job
 
-    # Create/trigger a run
+    # Create/trigger a run with invalid `since` to test correct failure
+    invalid_since_arg = "2025-05-20T00:00:00+aa:bb"  # slightly invalid ISO timestamp
     res = client.post(
         f"/jobs/{job_id}/runs",
         json={
             "title": "Manually triggered run",
-            "args": {},
+            "args": {"since": invalid_since_arg},
+            "queue": "celery",
+        },
+    )
+    assert res.status_code == 400
+    assert res.json["message"] == InvalidDate(invalid_since_arg).description
+
+    # Create/trigger a run with valid inputs
+    since_arg = (datetime.now(timezone.utc) - timedelta(days=2)).isoformat()
+    res = client.post(
+        f"/jobs/{job_id}/runs",
+        json={
+            "title": "Manually triggered run",
+            "args": {"since": since_arg},
             "queue": "celery",
         },
     )
@@ -138,7 +154,10 @@ def test_simple_flow(mock_apply_async, app, db, client, user):
 
     list_expected_run = deepcopy(expected_run)
     list_expected_run.pop("started_by")
-    list_expected_run["args"] = {"args": {}, "job_arg_schema": "custom"}
+    list_expected_run["args"] = {
+        "args": {"since": since_arg},
+        "job_arg_schema": "custom",
+    }
     # List runs
     res = client.get(f"/jobs/{job_id}/runs")
     assert res.status_code == 200
@@ -234,7 +253,7 @@ def test_jobs_create(db, client):
         "active": True,
         "task": "update_expired_embargos",
         "default_queue": "celery",
-        "default_args": "{}",
+        "default_args": '{"since": null}',
         "schedule": None,
         "created": res.json["created"],
         "updated": res.json["updated"],
@@ -266,7 +285,7 @@ def test_jobs_create(db, client):
         "active": False,
         "task": "update_expired_embargos",
         "default_queue": "low",
-        "default_args": "{}",
+        "default_args": '{"since": null}',
         "schedule": {"type": "interval", "hours": 4},
         "created": res.json["created"],
         "updated": res.json["updated"],
@@ -301,7 +320,7 @@ def test_jobs_update(db, client, jobs):
         "active": False,
         "task": "update_expired_embargos",
         "default_queue": "celery",
-        "default_args": "{}",
+        "default_args": '{"since": null}',
         "schedule": {"type": "interval", "hours": 2},
         "created": jobs.simple["created"],
         "updated": res.json["updated"],
@@ -335,7 +354,7 @@ def test_jobs_search(client, jobs):
         "active": True,
         "task": "update_expired_embargos",
         "default_queue": "low",
-        "default_args": "{}",
+        "default_args": '{"since": null}',
         "schedule": {
             "type": "interval",
             "hours": 4,
@@ -368,7 +387,7 @@ def test_jobs_search(client, jobs):
         "active": True,
         "task": "update_expired_embargos",
         "default_queue": "low",
-        "default_args": "{}",
+        "default_args": '{"since": null}',
         "schedule": {
             "type": "crontab",
             "minute": "0",
@@ -405,7 +424,7 @@ def test_jobs_search(client, jobs):
         "active": True,
         "task": "update_expired_embargos",
         "default_queue": "low",
-        "default_args": "{}",
+        "default_args": '{"since": null}',
         "schedule": None,
         "last_run": {"title": "Manual run"},
         "last_runs": {

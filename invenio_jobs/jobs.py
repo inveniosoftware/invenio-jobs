@@ -8,11 +8,13 @@
 """Jobs module."""
 
 from abc import ABC
-from datetime import timezone
+from datetime import datetime, timezone
 
 from invenio_i18n import gettext as _
 from marshmallow import Schema, fields
 from marshmallow_utils.fields import TZDateTime
+
+from invenio_jobs.services.errors import InvalidDate
 
 
 class PredefinedArgsSchema(Schema):
@@ -102,9 +104,34 @@ class JobType(ABC):
 
         if since is None and job_obj.last_runs["success"]:
             """
+            The most common case: `since` has not been manually specified by the user, so we
+            set it to the start time of the last successful job.
+
             We can add the UTC time zone as we store all dates as UTC in the database.
             For comparison with other dates in job implementors, it's useful to have TZ info in the timestamp.
             """
+
             since = job_obj.last_runs["success"].started_at.replace(tzinfo=timezone.utc)
+        elif since is not None:
+            """
+            The user has manually specified `since` as an ISO-format string. If they gave a timezone, we should ensure
+            we translate the timestamp to UTC. If they have not specified a timezone, we assume they meant UTC.
+            """
+            if isinstance(since, str):
+                try:
+                    """
+                    In Python <3.10, `fromisoformat` does not support the `Z` suffix which is a part of ISO 8601 and is commonly used.
+                    We replace the Z with the compatible and equivalent +00:00 suffix instead to avoid unexpected user-facing behaviours.
+                    """
+                    since = datetime.fromisoformat(since.replace("Z", "+00:00"))
+                except:
+                    raise InvalidDate(since)
+
+                if since.tzinfo is None:
+                    since = since.replace(tzinfo=timezone.utc)
+                else:
+                    since = since.astimezone(timezone.utc)
+            else:
+                raise InvalidDate(str(since))
 
         return {**cls.build_task_arguments(job_obj, since=since, **kwargs)}
