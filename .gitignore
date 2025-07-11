@@ -64,5 +64,8 @@ target/
 # Vim swapfiles
 .*.sw?
 
+# Testing specific versions of Python locally with pyenv
+.python-version
+
 # ignore node_modules in subdirectories
 **/node_modules/**
