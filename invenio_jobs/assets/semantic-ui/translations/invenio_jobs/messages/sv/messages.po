@@ -5,106 +5,107 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-07-08T19:01:15.884Z\n"
-"PO-Revision-Date: 2025-07-08T19:01:15.884Z\n"
-"Language: en\n"
+"POT-Creation-Date: 2025-07-08T09:41:46.913Z\n"
+"PO-Revision-Date: 2025-07-08T09:41:46.914Z\n"
+"Language: sv\n"
 
 msgid "Schedule Job"
-msgstr "Schedule Job"
+msgstr "Schemalägg Jobb"
 
 msgid "Job Details"
-msgstr "Job Details"
+msgstr "Jobb Detaljer"
 
 msgid "Status "
 msgstr "Status "
 
 msgid "Name"
-msgstr "Name"
+msgstr "Namn"
 
 msgid "Active"
-msgstr "Active"
+msgstr "Aktiv"
 
 msgid "Inactive"
-msgstr "Inactive"
+msgstr "Inaktiv"
 
 msgid "Last run"
-msgstr "Last run"
+msgstr "Senaste körning"
 
 msgid "Started by"
-msgstr "Started by"
+msgstr "Startad av"
 
 msgid "System"
 msgstr "System"
 
 msgid "Next run"
-msgstr "Next run"
+msgstr "Nästa körning"
 
 msgid "Advanced configuration"
-msgstr "Advanced configuration"
+msgstr "Avancerad konfiguration"
 
 msgid "Reference configuration of this job:"
-msgstr "Reference configuration of this job:"
+msgstr "Referenskonfiguration för detta jobb:"
 
 msgid "Cancel"
-msgstr "Cancel"
+msgstr "Avbryt"
 
 msgid ""
 "<0>Custom args:</0> when provided, the input below will override any "
 "arguments specified above."
 msgstr ""
-"<0>Custom args:</0> when provided, the input below will override any "
-"arguments specified above."
+"<0>Anpassade argument:</0> om angivna, kommer inmatningen nedan att åsidosätta alla "
+"argument som anges ovan."
 
 msgid "Run"
-msgstr "Run"
+msgstr "Kör"
 
 msgid "Duration"
-msgstr "Duration"
+msgstr "Varaktighet"
 
 msgid "Waiting"
-msgstr "Waiting"
+msgstr "Väntar"
 
 msgid "Message"
-msgstr "Message"
+msgstr "Meddelande"
 
 msgid "Show less"
-msgstr "Show less"
+msgstr "Visa mindre"
 
 msgid "Show all"
-msgstr "Show all"
+msgstr "Visa alla"
 
 msgid "Success"
-msgstr "Success"
+msgstr "Lyckades"
 
 msgid "Job {{title}} has been scheduled."
-msgstr "Job {{title}} has been scheduled."
+msgstr "Jobbet {{title}} har schemalagts."
 
 msgid "Unable to set schedule."
-msgstr "Unable to set schedule."
+msgstr "Det gick inte att ställa in schemat."
 
 msgid "Save"
-msgstr "Save"
+msgstr "Spara"
 
 msgid "Queued"
-msgstr "Queued"
+msgstr "Köad"
 
 msgid "Running"
-msgstr "Running"
+msgstr "Körs"
 
 msgid "Failed"
-msgstr "Failed"
+msgstr "Misslyckades"
 
 msgid "Warning"
-msgstr "Warning"
+msgstr "Varning"
 
 msgid "Cancelling"
-msgstr "Cancelling"
+msgstr "Avbryter"
 
 msgid "Cancelled"
-msgstr "Cancelled"
+msgstr "Avbruten"
 
 msgid "Partial Success"
-msgstr "Partial Success"
+msgstr "Delvis lyckad"
 
 msgid "Stop"
-msgstr "Stop"
+msgstr "Stoppa"
+

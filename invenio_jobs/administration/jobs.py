@@ -40,14 +40,14 @@ class JobsAdminMixin:
 
     actions = {
         "schedule": {
-            "text": "Schedule",
+            "text": _("Schedule"),
             "payload_schema": ScheduleUISchema,
             "order": 1,
             "icon": "calendar",
         },
         "runs": {
-            "text": "Configure and run",
-            "modal_text": "Run now",
+            "text": _("Configure and run"),
+            "modal_text": _("Run now"),
             "payload_schema": RunSchema,
             "order": 2,
             "icon": "play",
