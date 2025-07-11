@@ -12,7 +12,7 @@ import { initReactI18next } from "react-i18next";
 const options = {
   fallbackLng: "en", // fallback keys
   returnEmptyString: false,
-  debug: process.env.NODE_ENV === "development",
+  debug: false,
   resources: translations,
   keySeparator: false,
   nsSeparator: false,
