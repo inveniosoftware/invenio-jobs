@@ -8,6 +8,24 @@
 Changes
 =======
 
+Version v4.2.0 (released 2025-07-14)
+
+- chores: replaced importlib_xyz with importlib
+- i18n: push translations
+- i18n: update frontend package path in workflow
+- i18n: include additional .po files in MANIFEST.in
+- i18n: update action texts to use lazy_gettext
+- i18n: test sv language
+- i18n: run js compile catalog
+- i18n: run js extract msgs
+- i18n: Remove unused translation files
+- i18n: refactor compile catalog
+- i18n: run py extract msgs
+- fix: update transifex config
+- workflow: add i18n pull and push translation jobs
+- templates: job-details: Use invenio_url_for
+- templates: job-details: Fix back button not navigating to job search
+
 Version v4.1.0 (released 2025-07-02)
 
 - admin: remove flag to always show the admin panel
