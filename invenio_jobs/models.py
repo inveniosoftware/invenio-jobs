@@ -146,7 +146,7 @@ class Run(db.Model, Timestamp):
         if "args" not in kwargs:
             kwargs["args"] = cls.generate_args(job)
         else:
-            task_arguments = deepcopy(kwargs["args"].get("args", {}))
+            task_arguments = deepcopy(kwargs["args"])
             kwargs["args"] = cls.generate_args(job, task_arguments=task_arguments)
         if "queue" not in kwargs:
             kwargs["queue"] = job.default_queue

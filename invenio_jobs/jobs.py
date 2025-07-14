@@ -14,8 +14,6 @@ from invenio_i18n import gettext as _
 from marshmallow import Schema, fields
 from marshmallow_utils.fields import TZDateTime
 
-from invenio_jobs.services.errors import InvalidDate
-
 
 class PredefinedArgsSchema(Schema):
     """Base schema of predefined task input arguments.
@@ -44,6 +42,7 @@ class PredefinedArgsSchema(Schema):
                 "YYYY-MM-DDThh:mm:ss+00:00 format (ISO 8601 in UTC). Leave empty to continue since last successful run."
             )
         },
+        allow_none=True,
     )
 
 
@@ -112,26 +111,9 @@ class JobType(ABC):
             """
 
             since = job_obj.last_runs["success"].started_at.replace(tzinfo=timezone.utc)
-        elif since is not None:
-            """
-            The user has manually specified `since` as an ISO-format string. If they gave a timezone, we should ensure
-            we translate the timestamp to UTC. If they have not specified a timezone, we assume they meant UTC.
-            """
-            if isinstance(since, str):
-                try:
-                    """
-                    In Python <3.10, `fromisoformat` does not support the `Z` suffix which is a part of ISO 8601 and is commonly used.
-                    We replace the Z with the compatible and equivalent +00:00 suffix instead to avoid unexpected user-facing behaviours.
-                    """
-                    since = datetime.fromisoformat(since.replace("Z", "+00:00"))
-                except:
-                    raise InvalidDate(since)
 
-                if since.tzinfo is None:
-                    since = since.replace(tzinfo=timezone.utc)
-                else:
-                    since = since.astimezone(timezone.utc)
-            else:
-                raise InvalidDate(str(since))
-
+        """
+        Otherwise, since is already specified as a datetime with a timezone (see PredefinedArgsSchema) or we have never
+        run the job before so there is no logical value.
+        """
         return {**cls.build_task_arguments(job_obj, since=since, **kwargs)}

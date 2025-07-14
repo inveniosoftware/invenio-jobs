@@ -14,7 +14,6 @@ from unittest.mock import patch
 import pytest
 
 from invenio_jobs.logging.jobs import job_context
-from invenio_jobs.services.errors import InvalidDate
 from invenio_jobs.tasks import execute_run
 
 
@@ -98,12 +97,14 @@ def test_simple_flow(mock_apply_async, app, db, client, user):
         f"/jobs/{job_id}/runs",
         json={
             "title": "Manually triggered run",
-            "args": {"since": invalid_since_arg},
+            "args": {
+                "since": invalid_since_arg,
+                "job_arg_schema": "PredefinedArgsSchema",
+            },
             "queue": "celery",
         },
     )
     assert res.status_code == 400
-    assert res.json["message"] == InvalidDate(invalid_since_arg).description
 
     # Create/trigger a run with valid inputs
     since_arg = (datetime.now(timezone.utc) - timedelta(days=2)).isoformat()
@@ -111,11 +112,12 @@ def test_simple_flow(mock_apply_async, app, db, client, user):
         f"/jobs/{job_id}/runs",
         json={
             "title": "Manually triggered run",
-            "args": {"since": since_arg},
+            "args": {"since": since_arg, "job_arg_schema": "PredefinedArgsSchema"},
             "queue": "celery",
         },
     )
     assert res.status_code == 201
+
     run_id = res.json["id"]
     expected_run = {
         "id": run_id,
