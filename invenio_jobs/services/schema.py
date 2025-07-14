@@ -138,6 +138,8 @@ class JobArgumentsSchema(OneOfSchema):
         data_type = super().get_data_type(data)
         if data_type is None:
             return "custom"
+        else:
+            return data_type
 
 
 class JobSchema(Schema, FieldPermissionsMixin):
@@ -243,13 +245,6 @@ class RunSchema(Schema, FieldPermissionsMixin):
     queue = fields.String(
         validate=LazyOneOf(choices=lambda: current_jobs.queues.keys()),
     )
-
-    @pre_load
-    def wrap_args(self, obj, many, **kwargs):
-        """Workaround for nested args."""
-        # it is possible job has no arguments, that's why we use .get
-        obj["args"] = {"args": obj.get("args", {})}
-        return obj
 
     @post_load
     def pick_args(self, obj, many, **kwargs):
