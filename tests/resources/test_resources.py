@@ -82,8 +82,6 @@ def test_simple_flow(mock_apply_async, app, db, client, user):
     res = client.get("/jobs")
     assert res.status_code == 200
     assert res.json["hits"]["total"] == 1
-    print(res.json["hits"]["hits"][0])
-    print(list_repr)
     assert res.json["hits"]["hits"][0] == list_repr
 
     # Get job
@@ -106,6 +104,49 @@ def test_simple_flow(mock_apply_async, app, db, client, user):
     )
     assert res.status_code == 400
 
+    # Create/trigger a run with no inputs, expecting it to rely on a default value for `since`
+    res = client.post(
+        f"/jobs/{job_id}/runs",
+        json={
+            "title": "Manually triggered run",
+            "args": {},
+            "queue": "celery",
+        },
+    )
+    assert res.status_code == 201
+
+    run_id = res.json["id"]
+    expected_run = {
+        "id": run_id,
+        "job_id": job_id,
+        "created": res.json["created"],
+        "updated": res.json["updated"],
+        "started_by_id": int(user.id),
+        "started_by": {
+            "id": str(user.id),
+            "username": user.username,
+            "profile": user._user_profile,
+            "identities": {},
+            "is_current_user": True,
+            "type": "user",
+            "links": {},
+        },
+        "started_at": res.json["started_at"],
+        "finished_at": res.json["finished_at"],
+        "status": "QUEUED",
+        "message": None,
+        "task_id": "ce6d9e62-aee1-4f52-b9fd-20ec61fbf55a",
+        "title": "Manually triggered run",
+        # No schema assigned as the required `job_arg_schema` was not specified in the request
+        "args": {"job_arg_schema": "custom"},
+        "queue": "celery",
+        "links": {
+            "self": f"https://127.0.0.1:5000/api/jobs/{job_id}/runs/{run_id}",
+            "logs": f"https://127.0.0.1:5000/api/logs/jobs?q={run_id}",
+            "stop": f"https://127.0.0.1:5000/api/jobs/{job_id}/runs/{run_id}/actions/stop",
+        },
+    }
+
     # Create/trigger a run with valid inputs
     since_arg = (datetime.now(timezone.utc) - timedelta(days=2)).isoformat()
     res = client.post(
@@ -127,12 +168,10 @@ def test_simple_flow(mock_apply_async, app, db, client, user):
             "id": str(user.id),
             "username": user.username,
             "profile": user._user_profile,
-            "links": {
-                # "self": f"https://127.0.0.1:5000/api/users/{user.id}",
-            },
             "identities": {},
             "is_current_user": True,
             "type": "user",
+            "links": {},
         },
         "started_at": res.json["started_at"],
         "finished_at": res.json["finished_at"],
@@ -163,7 +202,9 @@ def test_simple_flow(mock_apply_async, app, db, client, user):
     # List runs
     res = client.get(f"/jobs/{job_id}/runs")
     assert res.status_code == 200
-    assert res.json["hits"]["total"] == 1
+    assert (
+        res.json["hits"]["total"] == 2
+    )  # We expect to have created 2 non-error runs so far
     assert res.json["hits"]["hits"][0] == list_expected_run
 
     # Get run
