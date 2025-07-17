@@ -8,7 +8,7 @@
 """Jobs module."""
 
 from abc import ABC
-from datetime import timezone
+from datetime import datetime, timezone
 
 from invenio_i18n import gettext as _
 from marshmallow import Schema, fields
@@ -39,10 +39,10 @@ class PredefinedArgsSchema(Schema):
         format="iso",
         metadata={
             "description": _(
-                "YYYY-MM-DD HH:mm format. "
-                "Leave empty to continue since last successful run."
+                "YYYY-MM-DDThh:mm:ss+00:00 format (ISO 8601 in UTC). Leave empty to continue since last successful run."
             )
         },
+        allow_none=True,
     )
 
 
@@ -102,5 +102,18 @@ class JobType(ABC):
             return custom_args
 
         if since is None and job_obj.last_runs["success"]:
-            since = job_obj.last_runs["success"].started_at
+            """
+            The most common case: `since` has not been manually specified by the user, so we
+            set it to the start time of the last successful job.
+
+            We can add the UTC time zone as we store all dates as UTC in the database.
+            For comparison with other dates in job implementors, it's useful to have TZ info in the timestamp.
+            """
+
+            since = job_obj.last_runs["success"].started_at.replace(tzinfo=timezone.utc)
+
+        """
+        Otherwise, since is already specified as a datetime with a timezone (see PredefinedArgsSchema) or we have never
+        run the job before so there is no logical value.
+        """
         return {**cls.build_task_arguments(job_obj, since=since, **kwargs)}

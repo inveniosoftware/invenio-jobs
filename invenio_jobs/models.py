@@ -24,6 +24,7 @@ from sqlalchemy_utils.types import ChoiceType, JSONType, UUIDType
 from werkzeug.utils import cached_property
 
 from invenio_jobs.proxies import current_jobs
+from invenio_jobs.utils import job_arg_json_dumper
 
 JSON = (
     db.JSON()
@@ -145,7 +146,7 @@ class Run(db.Model, Timestamp):
         if "args" not in kwargs:
             kwargs["args"] = cls.generate_args(job)
         else:
-            task_arguments = deepcopy(kwargs["args"].get("args", {}))
+            task_arguments = deepcopy(kwargs["args"])
             kwargs["args"] = cls.generate_args(job, task_arguments=task_arguments)
         if "queue" not in kwargs:
             kwargs["queue"] = job.default_queue
@@ -157,8 +158,10 @@ class Run(db.Model, Timestamp):
         args = Task.get(job.task)._build_task_arguments(
             job_obj=job, **task_arguments or {}
         )
-        args = json.dumps(args, indent=4, sort_keys=True, default=str)
+
+        args = json.dumps(args, default=job_arg_json_dumper)
         args = json.loads(args)
+
         return args
 
     def dump(self):
