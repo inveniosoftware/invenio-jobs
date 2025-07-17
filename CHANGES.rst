@@ -8,6 +8,21 @@
 Changes
 =======
 
+Version v4.3.0 (released 2025-07-17)
+
+- tasks: adds sentry id to job message
+- i18n: pulled translations
+- errors: deprecate TaskExecutionError
+- i18n: run js extract msgs
+- i18n: add translations for logs display messages
+- fix: improve key generation for message lines
+- style: remove unused import
+- refactor: fix potential memory leak in RunsLogs
+- fix: fix linting errors
+- fix: run auto linter
+- refactor: clean up JobRunsHeader component
+- ci: add JS testing workflow and update gitignore
+
 Version v4.2.0 (released 2025-07-14)
 
 - chores: replaced importlib_xyz with importlib
