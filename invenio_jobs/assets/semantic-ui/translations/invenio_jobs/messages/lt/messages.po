@@ -1,119 +1,114 @@
 # 
 # Translators:
-# Rim Sharif, 2025
-# Mattias Vesterlund, 2025
 # Tibor Simko <tibor.simko@cern.ch>, 2025
-# Sam Arbid, 2025
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
 "POT-Creation-Date: 2025-07-08T19:01:15.884Z\n"
 "PO-Revision-Date: 2025-07-08 19:01+0000\n"
-"Last-Translator: Sam Arbid, 2025\n"
-"Language-Team: Swedish (https://app.transifex.com/inveniosoftware/teams/23537/sv/)\n"
+"Last-Translator: Tibor Simko <tibor.simko@cern.ch>, 2025\n"
+"Language-Team: Lithuanian (https://app.transifex.com/inveniosoftware/teams/23537/lt/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: sv\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: lt\n"
+"Plural-Forms: nplurals=4; plural=(n % 10 == 1 && (n % 100 > 19 || n % 100 < 11) ? 0 : (n % 10 >= 2 && n % 10 <=9) && (n % 100 > 19 || n % 100 < 11) ? 1 : n % 1 != 0 ? 2: 3);\n"
 "mime-version: 1.0\n"
 
 msgid "Schedule Job"
-msgstr "Schemalägg jobb"
+msgstr ""
 
 msgid "Job Details"
-msgstr "Jobbdetaljer"
+msgstr ""
 
 msgid "Status "
-msgstr "Status"
+msgstr ""
 
 msgid "Name"
-msgstr "Namn"
+msgstr "Pavadinimas"
 
 msgid "Active"
-msgstr "Aktiv"
+msgstr ""
 
 msgid "Inactive"
-msgstr "Inaktiv"
+msgstr ""
 
 msgid "Last run"
-msgstr "Senaste körning"
+msgstr "Paskutinis paleidimas"
 
 msgid "Started by"
-msgstr "Startad av"
+msgstr ""
 
 msgid "System"
-msgstr "System"
+msgstr ""
 
 msgid "Next run"
-msgstr "Nästa körning"
+msgstr ""
 
 msgid "Advanced configuration"
-msgstr "Avancerad konfiguration"
+msgstr ""
 
 msgid "Reference configuration of this job:"
-msgstr "Referenskonfiguration för detta jobb:"
+msgstr ""
 
 msgid "Cancel"
-msgstr "Avbryt"
+msgstr "Atšaukti"
 
 msgid ""
 "<0>Custom args:</0> when provided, the input below will override any "
 "arguments specified above."
 msgstr ""
-"<0>Anpassade argument:</0> om angivet, kommer inmatningen nedan att "
-"åsidosätta alla argument som anges ovan."
 
 msgid "Run"
-msgstr "Kör"
+msgstr "Paleisti"
 
 msgid "Duration"
-msgstr "Varaktighet"
+msgstr ""
 
 msgid "Waiting"
-msgstr "Väntar"
+msgstr ""
 
 msgid "Message"
-msgstr "Meddelande"
+msgstr "Žinutė"
 
 msgid "Show less"
-msgstr "Visa mindre"
+msgstr ""
 
 msgid "Show all"
-msgstr "Visa alla"
+msgstr ""
 
 msgid "Success"
-msgstr "Lyckades"
+msgstr ""
 
 msgid "Job {{title}} has been scheduled."
-msgstr "Jobbet {{title}} har schemalagts."
+msgstr ""
 
 msgid "Unable to set schedule."
-msgstr "Kunde inte ställa in schema."
+msgstr ""
 
 msgid "Save"
-msgstr "Spara"
+msgstr "Išsaugoti"
 
 msgid "Queued"
-msgstr "I kö"
+msgstr ""
 
 msgid "Running"
-msgstr "Körs"
+msgstr ""
 
 msgid "Failed"
-msgstr "Misslyckades"
+msgstr ""
 
 msgid "Warning"
-msgstr "Varning"
+msgstr "Įspėjimas"
 
 msgid "Cancelling"
-msgstr "Avbryter"
+msgstr ""
 
 msgid "Cancelled"
-msgstr "Avbruten"
+msgstr "Atšauktas"
 
 msgid "Partial Success"
-msgstr "Delvis lyckades"
+msgstr ""
 
 msgid "Stop"
-msgstr "Stoppa"
+msgstr ""
