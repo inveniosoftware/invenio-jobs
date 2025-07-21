@@ -8,6 +8,10 @@
 Changes
 =======
 
+Version v4.3.1 (released 2025-07-21)
+
+- fix: serialisation of since datetime
+
 Version v4.3.0 (released 2025-07-17)
 
 - tasks: adds sentry id to job message
