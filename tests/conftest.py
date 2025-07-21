@@ -29,7 +29,7 @@ def extra_entry_points():
     # __import__("ipdb").set_trace()
     return {
         "invenio_jobs.jobs": [
-            "mock_module = mock_module.jobs:mock_job",
+            "mock_module = mock_module.jobs:MockJob",
         ],
         "invenio_celery.tasks": [
             "mock_module = mock_module.tasks",

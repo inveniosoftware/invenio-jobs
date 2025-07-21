@@ -8,6 +8,7 @@
 """Utilities."""
 
 import ast
+from datetime import datetime
 
 from jinja2.sandbox import SandboxedEnvironment
 
@@ -44,3 +45,11 @@ def walk_values(obj, transform_fn):
             walk_values(val, transform_fn)
         else:
             obj[key] = transform_fn(val)
+
+
+def job_arg_json_dumper(obj):
+    """Handle non-serializable values such as datetimes when dumping the arguments of a job run."""
+    if isinstance(obj, datetime):
+        return obj.isoformat()
+
+    return obj

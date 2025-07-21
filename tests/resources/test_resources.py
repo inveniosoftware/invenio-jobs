@@ -7,6 +7,7 @@
 
 """Resource tests."""
 from copy import deepcopy
+from datetime import datetime, timedelta, timezone
 from time import sleep
 from unittest.mock import patch
 
@@ -20,7 +21,7 @@ from invenio_jobs.tasks import execute_run
 def test_simple_flow(mock_apply_async, app, db, client, user):
     """Test simple flow."""
     client = user.login(client)
-    job_paylod = {
+    job_payload = {
         "title": "Test job",
         "task": "update_expired_embargos",
         "description": "Test description",
@@ -30,7 +31,7 @@ def test_simple_flow(mock_apply_async, app, db, client, user):
     }
 
     # Create a job
-    res = client.post("/jobs", json=job_paylod)
+    res = client.post("/jobs", json=job_payload)
     assert res.status_code == 201
     job_id = res.json["id"]
     expected_job = {
@@ -40,7 +41,7 @@ def test_simple_flow(mock_apply_async, app, db, client, user):
         "active": False,
         "task": "update_expired_embargos",
         "default_queue": "low",
-        "default_args": "{}",
+        "default_args": '{"since": null}',
         "schedule": {"type": "interval", "hours": 4},
         "created": res.json["created"],
         "updated": res.json["updated"],
@@ -54,7 +55,7 @@ def test_simple_flow(mock_apply_async, app, db, client, user):
     assert res.json == expected_job
 
     # Activate the job (i.e. update)
-    res = client.put(f"/jobs/{job_id}", json={**job_paylod, "active": True})
+    res = client.put(f"/jobs/{job_id}", json={**job_payload, "active": True})
     assert res.status_code == 200
     expected_job["active"] = True
     expected_job["updated"] = res.json["updated"]
@@ -81,8 +82,6 @@ def test_simple_flow(mock_apply_async, app, db, client, user):
     res = client.get("/jobs")
     assert res.status_code == 200
     assert res.json["hits"]["total"] == 1
-    print(res.json["hits"]["hits"][0])
-    print(list_repr)
     assert res.json["hits"]["hits"][0] == list_repr
 
     # Get job
@@ -90,7 +89,22 @@ def test_simple_flow(mock_apply_async, app, db, client, user):
     assert res.status_code == 200
     assert res.json == expected_job
 
-    # Create/trigger a run
+    # Create/trigger a run with invalid `since` to test correct failure
+    invalid_since_arg = "2025-05-20T00:00:00+aa:bb"  # slightly invalid ISO timestamp
+    res = client.post(
+        f"/jobs/{job_id}/runs",
+        json={
+            "title": "Manually triggered run",
+            "args": {
+                "since": invalid_since_arg,
+                "job_arg_schema": "PredefinedArgsSchema",
+            },
+            "queue": "celery",
+        },
+    )
+    assert res.status_code == 400
+
+    # Create/trigger a run with no inputs, expecting it to rely on a default value for `since`
     res = client.post(
         f"/jobs/{job_id}/runs",
         json={
@@ -100,6 +114,51 @@ def test_simple_flow(mock_apply_async, app, db, client, user):
         },
     )
     assert res.status_code == 201
+
+    run_id = res.json["id"]
+    expected_run = {
+        "id": run_id,
+        "job_id": job_id,
+        "created": res.json["created"],
+        "updated": res.json["updated"],
+        "started_by_id": int(user.id),
+        "started_by": {
+            "id": str(user.id),
+            "username": user.username,
+            "profile": user._user_profile,
+            "identities": {},
+            "is_current_user": True,
+            "type": "user",
+            "links": {},
+        },
+        "started_at": res.json["started_at"],
+        "finished_at": res.json["finished_at"],
+        "status": "QUEUED",
+        "message": None,
+        "task_id": "ce6d9e62-aee1-4f52-b9fd-20ec61fbf55a",
+        "title": "Manually triggered run",
+        # No schema assigned as the required `job_arg_schema` was not specified in the request
+        "args": {"job_arg_schema": "custom"},
+        "queue": "celery",
+        "links": {
+            "self": f"https://127.0.0.1:5000/api/jobs/{job_id}/runs/{run_id}",
+            "logs": f"https://127.0.0.1:5000/api/logs/jobs?q={run_id}",
+            "stop": f"https://127.0.0.1:5000/api/jobs/{job_id}/runs/{run_id}/actions/stop",
+        },
+    }
+
+    # Create/trigger a run with valid inputs
+    since_arg = (datetime.now(timezone.utc) - timedelta(days=2)).isoformat()
+    res = client.post(
+        f"/jobs/{job_id}/runs",
+        json={
+            "title": "Manually triggered run",
+            "args": {"since": since_arg, "job_arg_schema": "PredefinedArgsSchema"},
+            "queue": "celery",
+        },
+    )
+    assert res.status_code == 201
+
     run_id = res.json["id"]
     expected_run = {
         "id": run_id,
@@ -109,12 +168,10 @@ def test_simple_flow(mock_apply_async, app, db, client, user):
             "id": str(user.id),
             "username": user.username,
             "profile": user._user_profile,
-            "links": {
-                # "self": f"https://127.0.0.1:5000/api/users/{user.id}",
-            },
             "identities": {},
             "is_current_user": True,
             "type": "user",
+            "links": {},
         },
         "started_at": res.json["started_at"],
         "finished_at": res.json["finished_at"],
@@ -138,11 +195,16 @@ def test_simple_flow(mock_apply_async, app, db, client, user):
 
     list_expected_run = deepcopy(expected_run)
     list_expected_run.pop("started_by")
-    list_expected_run["args"] = {"args": {}, "job_arg_schema": "custom"}
+    list_expected_run["args"] = {
+        "args": {"since": since_arg},
+        "job_arg_schema": "custom",
+    }
     # List runs
     res = client.get(f"/jobs/{job_id}/runs")
     assert res.status_code == 200
-    assert res.json["hits"]["total"] == 1
+    assert (
+        res.json["hits"]["total"] == 2
+    )  # We expect to have created 2 non-error runs so far
     assert res.json["hits"]["hits"][0] == list_expected_run
 
     # Get run
@@ -234,7 +296,7 @@ def test_jobs_create(db, client):
         "active": True,
         "task": "update_expired_embargos",
         "default_queue": "celery",
-        "default_args": "{}",
+        "default_args": '{"since": null}',
         "schedule": None,
         "created": res.json["created"],
         "updated": res.json["updated"],
@@ -266,7 +328,7 @@ def test_jobs_create(db, client):
         "active": False,
         "task": "update_expired_embargos",
         "default_queue": "low",
-        "default_args": "{}",
+        "default_args": '{"since": null}',
         "schedule": {"type": "interval", "hours": 4},
         "created": res.json["created"],
         "updated": res.json["updated"],
@@ -301,7 +363,7 @@ def test_jobs_update(db, client, jobs):
         "active": False,
         "task": "update_expired_embargos",
         "default_queue": "celery",
-        "default_args": "{}",
+        "default_args": '{"since": null}',
         "schedule": {"type": "interval", "hours": 2},
         "created": jobs.simple["created"],
         "updated": res.json["updated"],
@@ -335,7 +397,7 @@ def test_jobs_search(client, jobs):
         "active": True,
         "task": "update_expired_embargos",
         "default_queue": "low",
-        "default_args": "{}",
+        "default_args": '{"since": null}',
         "schedule": {
             "type": "interval",
             "hours": 4,
@@ -368,7 +430,7 @@ def test_jobs_search(client, jobs):
         "active": True,
         "task": "update_expired_embargos",
         "default_queue": "low",
-        "default_args": "{}",
+        "default_args": '{"since": null}',
         "schedule": {
             "type": "crontab",
             "minute": "0",
@@ -405,7 +467,7 @@ def test_jobs_search(client, jobs):
         "active": True,
         "task": "update_expired_embargos",
         "default_queue": "low",
-        "default_args": "{}",
+        "default_args": '{"since": null}',
         "schedule": None,
         "last_run": {"title": "Manual run"},
         "last_runs": {
