@@ -11,7 +11,7 @@ import traceback
 from datetime import datetime
 
 from celery import shared_task
-from flask import g
+from flask import current_app, g
 from invenio_db import db
 
 from invenio_jobs.errors import TaskExecutionError, TaskExecutionPartialError
@@ -23,6 +23,21 @@ from invenio_jobs.proxies import current_jobs
 def update_run(run, **kwargs):
     """Method to update and commit run updates."""
     if not run:
+        return
+    has_active_subtasks = (
+        run.subtasks.filter(
+            Run.status.in_([RunStatusEnum.RUNNING.value, RunStatusEnum.QUEUED.value])
+        ).count()
+        > 0
+    )
+    current_app.logger.info(
+        f"Updating run {run.id} with status {run.status} and active subtasks: {has_active_subtasks}"
+    )
+    if has_active_subtasks:
+        # If there are active subtasks, we keep the run status as RUNNING and simply update the errored entries, if present.
+        if errored_entries := kwargs.get("errored_entries", None):
+            run.errored_entries += errored_entries
+            db.session.commit()
         return
     for kw, value in kwargs.items():
         setattr(run, kw, value)
@@ -36,8 +51,17 @@ def execute_run(self, run_id, kwargs=None):
     task = current_jobs.registry.get(run.job.task).task
     update_run(run, status=RunStatusEnum.RUNNING, started_at=datetime.utcnow())
     try:
+        current_app.logger.debug(
+            f"Executing run {run.id} with task {task.name} and args {kwargs}"
+        )
         result = task.apply(kwargs=run.args, throw=True)
+        current_app.logger.debug(
+            f"Run {run.id} executed successfully with result: {result}"
+        )
     except SystemExit as e:
+        current_app.logger.error(
+            f"Run {run.id} was cancelled by a SystemExit exception: {e}"
+        )
         sentry_event_id = getattr(g, "sentry_event_id", None)
         message = (
             f"{e.message} Sentry Event ID: {sentry_event_id}"
@@ -52,6 +76,10 @@ def execute_run(self, run_id, kwargs=None):
         )
         raise e
     except (TaskExecutionPartialError, TaskExecutionError) as e:
+        current_app.logger.error(
+            f"Run {run.id} encountered an error: {e.message} with Sentry Event ID: {getattr(g, 'sentry_event_id', None)}"
+        )
+        errored_entries_count = getattr(e, "errored_entries_count", 0)
         sentry_event_id = getattr(g, "sentry_event_id", None)
         message = (
             f"{e.message} Sentry Event ID: {sentry_event_id}"
@@ -63,9 +91,13 @@ def execute_run(self, run_id, kwargs=None):
             status=RunStatusEnum.PARTIAL_SUCCESS,
             finished_at=datetime.utcnow(),
             message=message,
+            errored_entries=errored_entries_count,
         )
         return
     except Exception as e:
+        current_app.logger.error(
+            f"Run {run.id} encountered an unexpected error: {e} with Sentry Event ID: {getattr(g, 'sentry_event_id', None)}"
+        )
         sentry_event_id = getattr(g, "sentry_event_id", None)
         message = f"{e.__class__.__name__}: {str(e)}\n{traceback.format_exc()}"
         if sentry_event_id:
@@ -77,7 +109,6 @@ def execute_run(self, run_id, kwargs=None):
             message=message,
         )
         return
-
     update_run(
         run,
         status=RunStatusEnum.SUCCESS,

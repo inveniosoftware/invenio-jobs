@@ -10,6 +10,7 @@
 """Service definitions."""
 
 import uuid
+from datetime import datetime
 
 import sqlalchemy as sa
 from flask import current_app
@@ -84,6 +85,12 @@ def get_run(run_id=None, job_id=None):
 
 class JobsService(BaseService):
     """Jobs service."""
+
+    def get(self, identity, id_, params=None):
+        """Get a job by id."""
+        self.require_permission(identity, "read")
+        job = get_job(id_)
+        return self.result_item(self, identity, job, links_tpl=self.links_item_tpl)
 
     @unit_of_work()
     def create(self, identity, data, uow=None):
@@ -180,6 +187,12 @@ class JobsService(BaseService):
 class RunsService(BaseService):
     """Runs service."""
 
+    def get(self, identity, job_id, run_id):
+        """Get a run by id."""
+        self.require_permission(identity, "read")
+        run = get_run(job_id=job_id, run_id=run_id)
+        return self.result_item(self, identity, run, links_tpl=self.links_item_tpl)
+
     def search(self, identity, job_id, params):
         """Search for runs."""
         self.require_permission(identity, "search")
@@ -187,6 +200,11 @@ class RunsService(BaseService):
         filters = [
             Run.job_id == job_id,
         ]
+        include_subtasks = params.get("include_subtasks") in ("true", "1", True)
+
+        if not include_subtasks:
+            filters.append(Run.parent_run_id == None)
+
         search_params = map_search_params(self.config.search, params)
 
         query_param = search_params["q"]
@@ -266,9 +284,132 @@ class RunsService(BaseService):
         # Make sure this is the last operation in the unit of work
         # so tht the post_commit (that is resetting the job context)
         # is executed after the TaskOp post_commit.
-        uow.register(JobContextOp({"run_id": str(run.id), "job_id": str(job_id)}))
+        uow.register(
+            JobContextOp(
+                {
+                    "run_id": str(run.id),
+                    "job_id": str(job_id),
+                    "identity_id": identity.id,
+                }
+            )
+        )
         current_app.logger.debug("Run created")
 
+        return self.result_item(self, identity, run, links_tpl=self.links_item_tpl)
+
+    @unit_of_work()
+    def add_total_entries(self, identity, run_id, job_id, total_entries, uow=None):
+        """Increment the total entries of a run."""
+        self.require_permission(identity, "update")
+        run = get_run(run_id=run_id, job_id=job_id)
+
+        if not isinstance(total_entries, int):
+            raise ValueError("total_entries must be an integer")
+
+        if total_entries < 0:
+            raise ValueError("total_entries cannot be negative")
+
+        run.total_entries += total_entries
+        uow.register(ModelCommitOp(run))
+        return self.result_item(self, identity, run, links_tpl=self.links_item_tpl)
+
+    @unit_of_work()
+    def create_subtask_run(self, identity, parent_run_id, job_id, args=None, uow=None):
+        """Create a new subtask Run."""
+        self.require_permission(identity, "create")
+        parent_run = get_run(run_id=parent_run_id, job_id=job_id)
+        job = parent_run.job
+
+        subtask_run = Run.create(
+            job=job,
+            id=str(uuid.uuid4()),
+            task_id=str(uuid.uuid4()),
+            started_by_id=identity.id,
+            status=RunStatusEnum.QUEUED,
+            title=f"Run {parent_run_id} — Subtask",
+            args=args or {},
+        )
+
+        parent_run.total_subtasks += 1
+        subtask_run.parent_run_id = parent_run.id
+        uow.register(ModelCommitOp(subtask_run))
+        uow.register(ModelCommitOp(parent_run))
+        return self.result_item(
+            self, identity, subtask_run, links_tpl=self.links_item_tpl
+        )
+
+    @unit_of_work()
+    def start_processing_subtask(self, identity, run_id, job_id, uow=None):
+        """Start processing a subtask."""
+        self.require_permission(identity, "update")
+        run = get_run(run_id=run_id, job_id=job_id)
+
+        if run.status != RunStatusEnum.QUEUED:
+            raise RunStatusChangeError(run, RunStatusEnum.RUNNING)
+
+        run.status = RunStatusEnum.RUNNING
+        run.started_at = db.func.now()
+
+        uow.register(ModelCommitOp(run))
+        return self.result_item(self, identity, run, links_tpl=self.links_item_tpl)
+
+    @unit_of_work()
+    def finalize_subtask(
+        self,
+        identity,
+        run_id,
+        job_id,
+        errored_entries_count=0,
+        success=True,
+        message=None,
+        uow=None,
+    ):
+        """Finalize a subtask and update its parent."""
+        self.require_permission(identity, "update")
+        run = get_run(run_id=run_id, job_id=job_id)
+        # Lock parent row to prevent concurrent updates
+        parent = (
+            db.session.query(Run)
+            .filter(Run.id == run.parent_run_id)
+            .with_for_update()
+            .first()
+        )
+        run.status = RunStatusEnum.SUCCESS if success else RunStatusEnum.FAILED
+
+        parent.errored_entries += errored_entries_count
+        parent.completed_subtasks += 1
+        if not success:
+            parent.failed_subtasks += 1
+
+        completed = parent.completed_subtasks
+        total = parent.total_subtasks
+        failed = parent.failed_subtasks
+        total_entries = parent.total_entries
+
+        progress_msg = f"{completed}/{total} subtasks completed."
+        if failed:
+            progress_msg += f" {failed} subtasks failed."
+        if parent.errored_entries > 0:
+            progress_msg += (
+                f" {parent.errored_entries}/{total_entries} entries errored."
+            )
+
+        parent.message = progress_msg
+
+        if completed == total:
+            if failed == 0:
+                parent.status = RunStatusEnum.SUCCESS
+            elif failed < total:
+                parent.status = RunStatusEnum.PARTIAL_SUCCESS
+            else:
+                parent.status = RunStatusEnum.FAILED
+            parent.finished_at = (datetime.utcnow(),)
+
+        else:
+            parent.status = RunStatusEnum.RUNNING
+
+        uow.register(ModelCommitOp(run))
+        uow.register(ModelCommitOp(parent))
         return self.result_item(self, identity, run, links_tpl=self.links_item_tpl)
 
     @unit_of_work()
