@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2024 CERN.
+# Copyright (C) 2025 Graz University of Technology.
 #
 # Invenio-Jobs is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -245,6 +246,13 @@ class RunSchema(Schema, FieldPermissionsMixin):
     queue = fields.String(
         validate=LazyOneOf(choices=lambda: current_jobs.queues.keys()),
     )
+
+    @pre_load
+    def wrap_args(self, obj, many, **kwargs):
+        """Workaround for nested args."""
+        # it is possible job has no arguments, that's why we use .get
+        obj["args"] = {"args": obj.get("args", {})}
+        return obj
 
     @post_load
     def pick_args(self, obj, many, **kwargs):
