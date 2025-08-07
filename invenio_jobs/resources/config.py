@@ -97,6 +97,7 @@ class RunsSearchRequestArgsSchema(SearchRequestArgsSchema):
     """Runs search request parameters."""
 
     status = ma.fields.Enum(RunStatusEnum)
+    include_subtasks = ma.fields.Boolean()
 
 
 class JobsSearchRequestArgsSchema(SearchRequestArgsSchema):

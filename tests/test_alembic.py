@@ -38,7 +38,7 @@ def test_alembic(base_app, database):
 
     # Try to upgrade and downgrade
     ext.alembic.stamp()
-    ext.alembic.downgrade(target="1f896f6990b8")
+    ext.alembic.downgrade(target="1753948224")
     ext.alembic.upgrade()
     assert len(ext.alembic.compare_metadata()) == 0
 

@@ -13,9 +13,12 @@ import warnings
 class TaskExecutionPartialError(Exception):
     """Exception raised when the task is executed with errors."""
 
-    def __init__(self, message="The task was executed with errors."):
+    def __init__(
+        self, message="The task was executed with errors.", errored_entries_count=0
+    ):
         """Constructor for the TaskExecutionPartialError class."""
         self.message = message
+        self.errored_entries_count = errored_entries_count
         super().__init__(message)
 
 
