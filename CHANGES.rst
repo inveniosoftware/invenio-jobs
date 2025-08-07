@@ -8,6 +8,10 @@
 Changes
 =======
 
+Version v4.3.2 (released 2025-08-07)
+
+- fix: datetime not being correctly serialised in scheduled jobs
+
 Version v4.3.1 (released 2025-07-21)
 
 - fix: serialisation of since datetime
