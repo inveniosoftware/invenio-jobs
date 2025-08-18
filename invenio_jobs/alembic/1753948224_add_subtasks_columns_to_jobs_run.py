@@ -43,6 +43,12 @@ def upgrade():
     )
     op.add_column("jobs_run", sa.Column("total_entries", sa.Integer(), nullable=False))
     op.add_column(
+        "jobs_run", sa.Column("inserted_entries", sa.Integer(), nullable=False)
+    )
+    op.add_column(
+        "jobs_run", sa.Column("updated_entries", sa.Integer(), nullable=False)
+    )
+    op.add_column(
         "jobs_run",
         sa.Column(
             "subtasks_closed",
@@ -66,6 +72,8 @@ def downgrade():
         op.f("fk_jobs_run_parent_run_id_jobs_run"), "jobs_run", type_="foreignkey"
     )
     op.drop_index("ix_jobs_run_parent_run_id", table_name="jobs_run")
+    op.drop_column("jobs_run", "inserted_entries")
+    op.drop_column("jobs_run", "updated_entries")
     op.drop_column("jobs_run", "total_entries")
     op.drop_column("jobs_run", "errored_entries")
     op.drop_column("jobs_run", "failed_subtasks")

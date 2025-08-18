@@ -372,6 +372,8 @@ class RunsService(BaseService):
         job_id,
         errored_entries_count=0,
         success=True,
+        inserted_entries_count=0,
+        updated_entries_count=0,
         uow=None,
     ):
         """Finalize a subtask and update its parent."""
@@ -384,6 +386,8 @@ class RunsService(BaseService):
         # Compute increments
         fail_inc = 0 if success else 1
         err_inc = int(errored_entries_count or 0)
+        ins_inc = int(inserted_entries_count or 0)
+        upd_inc = int(updated_entries_count or 0)
 
         # Atomically increment parent counters and fetch the new values
         parent_counters_stmt = (
@@ -393,6 +397,8 @@ class RunsService(BaseService):
                 errored_entries=Run.errored_entries + sa.bindparam("err_inc"),
                 completed_subtasks=Run.completed_subtasks + 1,
                 failed_subtasks=Run.failed_subtasks + sa.bindparam("fail_inc"),
+                inserted_entries=Run.inserted_entries + sa.bindparam("ins_inc"),
+                updated_entries=Run.updated_entries + sa.bindparam("upd_inc"),
             )
             .returning(
                 Run.id,
@@ -402,10 +408,18 @@ class RunsService(BaseService):
                 Run.errored_entries,
                 Run.total_entries,
                 Run.subtasks_closed,
+                Run.inserted_entries,
+                Run.updated_entries,
             )
         )
         res = db.session.execute(
-            parent_counters_stmt, {"err_inc": err_inc, "fail_inc": fail_inc}
+            parent_counters_stmt,
+            {
+                "err_inc": err_inc,
+                "fail_inc": fail_inc,
+                "ins_inc": ins_inc,
+                "upd_inc": upd_inc,
+            },
         )
         row = res.first()
         if not row:
@@ -419,6 +433,8 @@ class RunsService(BaseService):
             parent_errored,
             total_entries,
             subtasks_closed,
+            parent_inserted,
+            parent_updated,
         ) = row
 
         parts = [f"{completed}/{total} subtasks completed."]
@@ -426,6 +442,8 @@ class RunsService(BaseService):
             parts.append(f" {failed} subtasks with errors.")
         if parent_errored > 0:
             parts.append(f" {parent_errored}/{total_entries} entries errored.")
+        if parent_inserted or parent_updated:
+            parts.append(f" {parent_inserted} inserted / {parent_updated} updated.")
         progress_msg = "".join(parts)
         # Only update parent status/finished_at if all subtasks are completed and them main job is not running.
         finished = completed == total
