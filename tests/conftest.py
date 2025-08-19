@@ -15,7 +15,10 @@ from types import SimpleNamespace
 
 import pytest
 from flask_principal import AnonymousIdentity
+from invenio_access.models import ActionRoles
 from invenio_access.permissions import any_user as any_user_need
+from invenio_accounts.models import Role
+from invenio_administration.permissions import administration_access_action
 from invenio_app.factory import create_api
 from invenio_records_permissions.generators import AnyUser
 from invenio_records_permissions.policies import BasePermissionPolicy
@@ -56,6 +59,8 @@ def app_config(app_config):
     app_config["JOBS_RUNS_PERMISSION_POLICY"] = MockPermissionPolicy
     app_config["APP_LOGS_PERMISSION_POLICY"] = MockPermissionPolicy
     app_config["THEME_FRONTPAGE"] = False
+    app_config["CELERY_TASK_ALWAYS_EAGER"] = True
+    app_config["CELERY_TASK_EAGER_PROPAGATES"] = True
     return app_config
 
 
@@ -68,10 +73,11 @@ def create_app(instance_path, entry_points):
 #
 # Users and identities
 #
-@pytest.fixture(scope="session")
-def anon_identity():
+@pytest.fixture()
+def anon_identity(user):
     """Anonymous user."""
     identity = AnonymousIdentity()
+    identity.id = user.id  # Mock it with the user id
     identity.provides.add(any_user_need)
     return identity
 
