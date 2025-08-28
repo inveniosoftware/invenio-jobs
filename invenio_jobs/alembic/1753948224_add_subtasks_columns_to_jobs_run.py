@@ -33,20 +33,26 @@ def upgrade():
     )
     op.add_column("jobs_run", sa.Column("total_subtasks", sa.Integer(), nullable=False))
     op.add_column(
-        "jobs_run", sa.Column("completed_subtasks", sa.Integer(), nullable=False)
+        "jobs_run", sa.Column("completed_subtasks", sa.Integer(), nullable=False,
+                              server_default=sa.text("0"))
     )
     op.add_column(
-        "jobs_run", sa.Column("failed_subtasks", sa.Integer(), nullable=False)
+        "jobs_run", sa.Column("failed_subtasks", sa.Integer(), nullable=False,
+                              server_default=sa.text("0"))
     )
     op.add_column(
-        "jobs_run", sa.Column("errored_entries", sa.Integer(), nullable=False)
+        "jobs_run", sa.Column("errored_entries", sa.Integer(), nullable=False,
+                              server_default=sa.text("0"))
     )
-    op.add_column("jobs_run", sa.Column("total_entries", sa.Integer(), nullable=False))
+    op.add_column("jobs_run", sa.Column("total_entries", sa.Integer(), nullable=False,
+                                        server_default=sa.text("0")))
     op.add_column(
-        "jobs_run", sa.Column("inserted_entries", sa.Integer(), nullable=False)
+        "jobs_run", sa.Column("inserted_entries", sa.Integer(), nullable=False,
+                              server_default=sa.text("0"))
     )
     op.add_column(
-        "jobs_run", sa.Column("updated_entries", sa.Integer(), nullable=False)
+        "jobs_run", sa.Column("updated_entries", sa.Integer(), nullable=False,
+                              server_default=sa.text("0"))
     )
     op.add_column(
         "jobs_run",
