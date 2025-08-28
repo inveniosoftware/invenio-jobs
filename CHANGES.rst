@@ -8,6 +8,10 @@
 Changes
 =======
 
+Version v5.0.0.dev0 (released 2025-08-28)
+
+- feature: add tracking of async subtasks
+
 Version v5.0.0 (released 2025-09-09)
 
 - setup: bump major version of invenio-users-resources
