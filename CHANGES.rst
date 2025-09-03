@@ -8,6 +8,10 @@
 Changes
 =======
 
+Version v5.0.0.dev0 (released 2025-08-28)
+
+- feature: add tracking of async subtasks
+
 Version v4.3.2 (released 2025-08-07)
 
 - fix: datetime not being correctly serialised in scheduled jobs
