@@ -15,6 +15,7 @@ import uuid
 from celery.beat import ScheduleEntry, Scheduler, logger
 from invenio_db import db
 
+from invenio_jobs.logging.jobs import set_job_context
 from invenio_jobs.models import Job, Run
 from invenio_jobs.tasks import execute_run
 from invenio_jobs.utils import job_arg_json_dumper
@@ -78,7 +79,11 @@ class RunScheduler(Scheduler):
                 run = self.create_run(entry)
                 entry.options["task_id"] = str(run.task_id)
                 entry.args = (str(run.id),)
-                result = self.apply_async(entry, producer=producer, advance=False)
+
+                with set_job_context(
+                    {"run_id": str(run.id), "job_id": str(entry.job.id)}
+                ):
+                    result = self.apply_async(entry, producer=producer, advance=False)
             except Exception as exc:
                 logger.error(
                     "Message Error: %s\n%s",
