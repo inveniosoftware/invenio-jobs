@@ -1,6 +1,7 @@
 /*
  * This file is part of Invenio.
  * Copyright (C) 2024 CERN.
+ * Copyright (C) 2025 KTH Royal Institute of Technology.
  *
  * Invenio is free software; you can redistribute it and/or modify it
  * under the terms of the MIT License; see LICENSE file for more details.
@@ -37,6 +38,12 @@ class SearchResultItemComponent extends Component {
       type: "error",
     });
     console.error(e);
+  };
+
+  handleSuccess = () => {
+    // Trigger a soft refresh of the table results
+    const { updateQueryState, currentQueryState } = this.props;
+    updateQueryState({ ...currentQueryState });
   };
 
   render() {
@@ -164,6 +171,7 @@ class SearchResultItemComponent extends Component {
               displayDelete={displayDelete}
               resource={result}
               idKeyPath={idKeyPath}
+              successCallback={this.handleSuccess}
               listUIEndpoint={listUIEndpoint}
             />
           </Button.Group>
@@ -183,11 +191,15 @@ SearchResultItemComponent.propTypes = {
   displayDelete: PropTypes.bool,
   actions: PropTypes.object.isRequired,
   apiEndpoint: PropTypes.string.isRequired,
+  updateQueryState: PropTypes.func,
+  currentQueryState: PropTypes.object,
 };
 
 SearchResultItemComponent.defaultProps = {
   displayEdit: false,
   displayDelete: false,
+  updateQueryState: () => {},
+  currentQueryState: {},
 };
 
 export const SearchResultItemLayout = withState(SearchResultItemComponent);
