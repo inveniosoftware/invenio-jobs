@@ -1,5 +1,5 @@
 ..
-    Copyright (C) 2024 CERN.
+    Copyright (C) 2024-2025 CERN.
     Copyright (C) 2024-2025 Graz University of Technology.
 
     Invenio-Jobs is free software; you can redistribute it and/or modify it
@@ -7,6 +7,10 @@
 
 Changes
 =======
+
+Version v5.0.0 (released 2025-09-09)
+
+- setup: bump major version of invenio-users-resources
 
 Version v4.3.2 (released 2025-08-07)
 
