@@ -13,6 +13,7 @@ import traceback
 import uuid
 
 from celery.beat import ScheduleEntry, Scheduler, logger
+from invenio_access.permissions import system_user_id
 from invenio_db import db
 
 from invenio_jobs.models import Job, Run
@@ -77,7 +78,7 @@ class RunScheduler(Scheduler):
                 # TODO Only create and send task if there is no "stale" run (status running, starttime > hour, Run pending for > 1 hr)
                 run = self.create_run(entry)
                 entry.options["task_id"] = str(run.task_id)
-                entry.args = (str(run.id),)
+                entry.args = (str(run.id), system_user_id)
                 result = self.apply_async(entry, producer=producer, advance=False)
             except Exception as exc:
                 logger.error(

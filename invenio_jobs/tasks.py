@@ -47,11 +47,17 @@ def update_run(run, **kwargs):
 
 
 @shared_task(bind=True, ignore_result=True)
-def execute_run(self, run_id, kwargs=None):
+def execute_run(self, run_id, identity_id, kwargs=None):
     """Execute and manage a run state and task."""
     run = Run.query.filter_by(id=run_id).one_or_none()
     task = current_jobs.registry.get(run.job.task).task
-    with set_job_context({"run_id": str(run_id), "job_id": str(run.job.id)}):
+    with set_job_context(
+        {
+            "run_id": str(run_id),
+            "job_id": str(run.job.id),
+            "identity_id": str(identity_id),
+        }
+    ):
         update_run(run, status=RunStatusEnum.RUNNING, started_at=datetime.utcnow())
         try:
             current_app.logger.debug(
