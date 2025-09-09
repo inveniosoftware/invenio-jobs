@@ -26,7 +26,6 @@ from invenio_records_resources.services.uow import (
 )
 
 from invenio_jobs.logging.jobs import EMPTY_JOB_CTX, with_job_context
-from invenio_jobs.services.uow import JobContextOp
 from invenio_jobs.tasks import execute_run
 
 from ..api import AttrDict
@@ -263,10 +262,6 @@ class RunsService(BaseService):
                 queue=run.queue,
             )
         )
-        # Make sure this is the last operation in the unit of work
-        # so tht the post_commit (that is resetting the job context)
-        # is executed after the TaskOp post_commit.
-        uow.register(JobContextOp({"run_id": str(run.id), "job_id": str(job_id)}))
         current_app.logger.debug("Run created")
 
         return self.result_item(self, identity, run, links_tpl=self.links_item_tpl)
