@@ -294,7 +294,7 @@ class LogContextSchema(Schema):
 
     job_id = fields.Str(required=True)
     run_id = fields.Str(required=True)
-    identity_id = fields.Int(required=True)
+    identity_id = fields.Str(required=True)
 
 
 class JobLogEntrySchema(Schema):
