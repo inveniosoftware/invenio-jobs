@@ -241,7 +241,7 @@ def test_simple_flow(mock_apply_async, app, db, client, user):
 
     # Search for log jobs, first set the logger level to INFO
     # and log a message by setting the job context
-    job_context.set(dict(job_id=job_id, run_id=run_id, identity_id=user.id))
+    job_context.set(dict(job_id=job_id, run_id=run_id, identity_id=str(user.id)))
     app.logger.setLevel("INFO")
     app.logger.info("Test log message")
     sleep(1)  # Wait for log to be indexed

@@ -10,10 +10,10 @@
 """Service definitions."""
 
 import uuid
-from datetime import datetime
 
 import sqlalchemy as sa
 from flask import current_app
+from invenio_access.permissions import system_user_id
 from invenio_db import db
 from invenio_records_resources.services.base import LinksTemplate
 from invenio_records_resources.services.base.utils import map_search_params
@@ -265,7 +265,9 @@ class RunsService(BaseService):
             job=job,
             id=str(uuid.uuid4()),
             task_id=str(uuid.uuid4()),
-            started_by_id=identity.id,
+            started_by_id=(
+                None if identity.id == system_user_id else identity.id
+            ),  # None because column expects Integer FK but is nullable
             status=RunStatusEnum.QUEUED,
             **valid_data,
         )
@@ -274,7 +276,7 @@ class RunsService(BaseService):
         uow.register(
             TaskOp.for_async_apply(
                 execute_run,
-                kwargs={"run_id": run.id},
+                kwargs={"run_id": run.id, "identity_id": identity.id},
                 task_id=str(run.task_id),
                 queue=run.queue,
             )
@@ -322,7 +324,9 @@ class RunsService(BaseService):
             job=job,
             id=str(uuid.uuid4()),
             task_id=str(uuid.uuid4()),
-            started_by_id=identity.id,
+            started_by_id=(
+                None if identity.id == system_user_id else identity.id
+            ),  # None because column expects Integer FK but is nullable
             status=RunStatusEnum.QUEUED,
             title=f"Run {parent_run_id} — Subtask",
             args=args or {},
