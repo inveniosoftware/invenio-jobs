@@ -44,3 +44,11 @@ class ScheduleUISchema(OneOfSchema):
 
     interval = fields.Nested(IntervalScheduleUISchema, dump_only=True)
     crontab = fields.Nested(CrontabScheduleUISchema, dump_only=True)
+    custom_args = fields.Raw(
+        load_default=dict,
+        allow_none=True,
+        metadata={
+            "title": "Custom args",
+            "description": "Advanced configuration for seasoned administrators.",
+        },
+    )

@@ -5,12 +5,30 @@
 // under the terms of the MIT License; see LICENSE file for more details.
 
 import React from "react";
+import _get from "lodash/get";
 import PropTypes from "prop-types";
-import { Modal, Dropdown, Input, Button, Icon } from "semantic-ui-react";
+import {
+  Modal,
+  Dropdown,
+  Input,
+  Button,
+  Icon,
+  Accordion,
+  Divider,
+  Message,
+  Header,
+} from "semantic-ui-react";
 import { i18next } from "@translations/invenio_jobs/i18next";
+import { Trans } from "react-i18next";
 import { Formik, Form, Field } from "formik";
-import { http, withCancel, ErrorMessage } from "react-invenio-forms";
-import { NotificationContext } from "@js/invenio_administration";
+import { http, withCancel, ErrorMessage, TextArea } from "react-invenio-forms";
+import {
+  NotificationContext,
+  mapFormFields,
+  generateFieldProps,
+} from "@js/invenio_administration";
+import ReactJson from "@microlink/react-json-view";
+import { Form as SemanticForm } from "semantic-ui-react";
 
 export class ScheduleJobModal extends React.Component {
   constructor(props) {
@@ -18,6 +36,8 @@ export class ScheduleJobModal extends React.Component {
     this.state = {
       loading: false,
       error: undefined,
+      jsonError: undefined,
+      activeIndex: -1,
     };
   }
 
@@ -48,12 +68,26 @@ export class ScheduleJobModal extends React.Component {
       return acc;
     }, {});
 
+    var jsonCustomArgs = {};
+    if (values.custom_args != null) {
+      try {
+        jsonCustomArgs = JSON.parse(values.custom_args);
+      } catch (error) {
+        this.setState({
+          loading: false,
+          jsonError:
+            "Invalid JSON in Custom Args field. Please fix the format.",
+        });
+        return;
+      }
+    }
     const payload = {
       ...data,
       schedule: {
         type: selectedOption,
         ...filteredValues,
       },
+      custom_args: jsonCustomArgs,
     };
 
     this.cancellableAction = withCancel(http.put(apiUrl, payload));
@@ -77,16 +111,27 @@ export class ScheduleJobModal extends React.Component {
     }
   };
 
+  handleClick = (e, titleProps) => {
+    const { index } = titleProps;
+    const { activeIndex } = this.state;
+    const newIndex = activeIndex === index ? -1 : index;
+
+    this.setState({ activeIndex: newIndex });
+  };
+
   render() {
     const { data, payloadSchema, actionCancelCallback } = this.props;
     const { error, loading } = this.state;
 
     const options = payloadSchema
-      ? Object.keys(payloadSchema).map((type) => ({
-          key: type,
-          text: type.charAt(0).toUpperCase() + type.slice(1),
-          value: type,
-        }))
+      ? Object.entries(payloadSchema)
+          .filter(([_, obj]) => obj.type !== "dict")
+          .map(([key, _]) => key)
+          .map((type) => ({
+            key: type,
+            text: type.charAt(0).toUpperCase() + type.slice(1),
+            value: type,
+          }))
       : [];
 
     const initialValues = {
@@ -94,89 +139,147 @@ export class ScheduleJobModal extends React.Component {
       ...data.schedule,
     };
 
+    const jsonData = JSON.parse(data.default_args);
+    const { activeIndex } = this.state;
+
     return (
       <Formik initialValues={initialValues} onSubmit={this.handleSubmit}>
-        {({ values, setFieldValue, handleSubmit }) => (
-          <Form>
-            {error && (
+        {(formikProps) => {
+          const { values, setFieldValue, handleSubmit } = formikProps;
+
+          return (
+            <Form>
+              {error && (
+                <Modal.Content>
+                  <ErrorMessage
+                    header={i18next.t("Unable to set schedule.")}
+                    content={i18next.t(error)}
+                    icon="exclamation"
+                    className="text-align-left"
+                    negative
+                  />
+                </Modal.Content>
+              )}
               <Modal.Content>
-                <ErrorMessage
-                  header={i18next.t("Unable to set schedule.")}
-                  content={i18next.t(error)}
-                  icon="exclamation"
-                  className="text-align-left"
-                  negative
+                <Dropdown
+                  placeholder="Select a schedule type"
+                  fluid
+                  selection
+                  options={options}
+                  className="mb-10"
+                  onChange={(e, { value }) =>
+                    setFieldValue("selectedOption", value)
+                  }
+                  value={values.selectedOption}
                 />
-              </Modal.Content>
-            )}
-            <Modal.Content>
-              <Dropdown
-                placeholder="Select a schedule type"
-                fluid
-                selection
-                options={options}
-                className="mb-10"
-                onChange={(e, { value }) =>
-                  setFieldValue("selectedOption", value)
-                }
-                value={values.selectedOption}
-              />
-              {values.selectedOption &&
-                payloadSchema[values.selectedOption] && (
-                  <>
-                    {Object.keys(
-                      payloadSchema[values.selectedOption].properties
-                    )
-                      .sort(
-                        (a, b) =>
-                          payloadSchema[values.selectedOption].properties[a]
-                            .metadata.order -
-                          payloadSchema[values.selectedOption].properties[b]
-                            .metadata.order
+                {values.selectedOption &&
+                  payloadSchema[values.selectedOption] && (
+                    <>
+                      {Object.keys(
+                        payloadSchema[values.selectedOption].properties
                       )
-                      .map((property) => (
-                        <Field
-                          key={property}
-                          name={property}
-                          render={({ field }) => (
-                            <Input
-                              {...field}
-                              label={
-                                payloadSchema[values.selectedOption].properties[
-                                  property
-                                ].metadata?.title
-                              }
-                              className="m-5"
-                              type={
-                                payloadSchema[values.selectedOption].properties[
-                                  property
-                                ].type === "string"
-                                  ? "text"
-                                  : "number"
-                              }
-                            />
-                          )}
-                        />
-                      ))}
-                  </>
-                )}
-            </Modal.Content>
-            <Modal.Actions>
-              <Button
-                icon="cancel"
-                onClick={actionCancelCallback}
-                content={i18next.t("Cancel")}
-                loading={loading}
-                floated="left"
-                size="medium"
-              />
-              <Button positive type="submit" onClick={handleSubmit}>
-                <Icon name="check" />
-                {i18next.t("Save")}
-              </Button>
-            </Modal.Actions>
-          </Form>
-        )}
+                        .sort(
+                          (a, b) =>
+                            payloadSchema[values.selectedOption].properties[a]
+                              .metadata.order -
+                            payloadSchema[values.selectedOption].properties[b]
+                              .metadata.order
+                        )
+                        .map((property) => (
+                          <Field
+                            key={property}
+                            name={property}
+                            render={({ field }) => (
+                              <Input
+                                {...field}
+                                label={
+                                  payloadSchema[values.selectedOption]
+                                    .properties[property].metadata?.title
+                                }
+                                className="m-5"
+                                type={
+                                  payloadSchema[values.selectedOption]
+                                    .properties[property].type === "string"
+                                    ? "text"
+                                    : "number"
+                                }
+                              />
+                            )}
+                          />
+                        ))}
+                    </>
+                  )}
+                <SemanticForm
+                  as={Form}
+                  id="action-form"
+                  onSubmit={handleSubmit}
+                >
+                  <Accordion fluid styled>
+                    <Accordion.Title
+                      active={activeIndex === 0}
+                      index={0}
+                      onClick={this.handleClick}
+                    >
+                      <Icon name="dropdown" />
+                      {i18next.t("Advanced configuration")}
+                    </Accordion.Title>
+                    <Accordion.Content active={activeIndex === 0}>
+                      <Header size="tiny">
+                        {i18next.t("Reference configuration of this job:")}
+                      </Header>
+                      <ReactJson src={jsonData} name={null} />
+                    </Accordion.Content>
+                    <Accordion.Content active={activeIndex === 0}>
+                      <Divider />
+                      <Message info>
+                        <Trans>
+                          <b>Custom args:</b> when provided, the input below
+                          will override any arguments specified above.
+                        </Trans>
+                      </Message>
+                      <TextArea
+                        {...generateFieldProps(
+                          "custom_args",
+                          _get(payloadSchema, "custom_args"),
+                          undefined,
+                          true,
+                          payloadSchema["custom_args"],
+                          formikProps,
+                          payloadSchema,
+                          data,
+                          mapFormFields
+                        )}
+                        fieldSchema={_get(payloadSchema, "custom_args")}
+                      />
+                    </Accordion.Content>
+                    {this.state.jsonError && (
+                      <Message negative>
+                        <Message.Header>
+                          {i18next.t("JSON Error")}
+                        </Message.Header>
+                        <p>{this.state.jsonError}</p>
+                      </Message>
+                    )}
+                  </Accordion>
+                </SemanticForm>
+              </Modal.Content>
+              <Modal.Actions>
+                <Button
+                  icon="cancel"
+                  onClick={actionCancelCallback}
+                  content={i18next.t("Cancel")}
+                  loading={loading}
+                  floated="left"
+                  size="medium"
+                />
+                <Button positive type="submit" onClick={handleSubmit}>
+                  <Icon name="check" />
+                  {i18next.t("Save")}
+                </Button>
+              </Modal.Actions>
+            </Form>
+          );
+        }}
       </Formik>
     );
   }
