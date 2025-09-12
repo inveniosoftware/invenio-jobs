@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2024 CERN.
+# Copyright (C) 2025 Graz University of Technology.
 #
 # Invenio-Jobs is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -100,7 +101,7 @@ def jobs(db, anon_identity):
     common_data = {
         "task": "update_expired_embargos",
         "default_queue": "low",
-        "default_args": {
+        "args": {
             "arg1": "value1",
             "arg2": "value2",
             "kwarg1": "value3",

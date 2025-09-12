@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2024 CERN.
-# Copyright (C) 2024 Graz University of Technology.
+# Copyright (C) 2024-2025 Graz University of Technology.
 #
 # Invenio-Jobs is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -50,9 +50,7 @@ class JobItem(Item):
         if self._obj.last_run:
             job_dict["last_run"] = self._obj.last_run.dump()
             job_dict["last_runs"] = self._obj.last_runs
-        job_dict["default_args"] = json.dumps(
-            self._obj.default_args, default=job_arg_json_dumper
-        )
+        job_dict["args"] = json.dumps(self._obj.args, default=job_arg_json_dumper)
         job_record = AttrDict(job_dict)
 
         self._data = self._schema.dump(
@@ -132,9 +130,7 @@ class JobList(List):
             job_dict = hit.dump()
             job_dict["last_run"] = hit.last_run
             job_dict["last_runs"] = hit.last_runs
-            job_dict["default_args"] = json.dumps(
-                hit.default_args, default=job_arg_json_dumper
-            )
+            job_dict["args"] = json.dumps(hit.args, default=job_arg_json_dumper)
             job_record = AttrDict(job_dict)
             projection = self._schema.dump(
                 job_record,
