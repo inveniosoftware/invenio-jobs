@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2024 CERN.
+# Copyright (C) 2025 Graz University of Technology.
 #
 # Invenio-Jobs is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -9,6 +10,8 @@
 
 from marshmallow import Schema, fields
 from marshmallow_oneofschema import OneOfSchema
+
+from .schema import JobArgumentsSchema
 
 
 class IntervalScheduleUISchema(Schema):
@@ -44,6 +47,14 @@ class ScheduleUISchema(OneOfSchema):
 
     interval = fields.Nested(IntervalScheduleUISchema, dump_only=True)
     crontab = fields.Nested(CrontabScheduleUISchema, dump_only=True)
+    args = fields.Nested(
+        lambda: JobArgumentsSchema,
+        metadata={
+            "type": "dynamic",
+            "endpoint": "/api/tasks/<item_id>/args",
+            "depends_on": "task",
+        },
+    )
     custom_args = fields.Raw(
         load_default=dict,
         allow_none=True,
@@ -52,3 +63,4 @@ class ScheduleUISchema(OneOfSchema):
             "description": "Advanced configuration for seasoned administrators.",
         },
     )
+    run_args = fields.Raw(load_default=dict)

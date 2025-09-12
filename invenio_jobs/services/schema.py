@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2024 CERN.
+# Copyright (C) 2025 Graz University of Technology.
 #
 # Invenio-Jobs is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -170,6 +171,7 @@ class JobSchema(Schema, FieldPermissionsMixin):
     )
 
     default_args = fields.Raw(dump_only=True, dump_default=dict, load_default=dict)
+    run_args = fields.Raw(load_default=dict)
 
     schedule = fields.Nested(ScheduleSchema, allow_none=True, load_default=None)
 

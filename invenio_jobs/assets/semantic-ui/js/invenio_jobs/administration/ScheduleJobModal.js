@@ -1,5 +1,6 @@
 // This file is part of InvenioRDM
 // Copyright (C) 2024 CERN
+// Copyright (C) 2025 Graz University of Technology.
 //
 // Invenio RDM Records is free software; you can redistribute it and/or modify it
 // under the terms of the MIT License; see LICENSE file for more details.
@@ -26,6 +27,8 @@ import {
   NotificationContext,
   mapFormFields,
   generateFieldProps,
+  DynamicSubFormField,
+  generateDynamicFieldProps,
 } from "@js/invenio_administration";
 import ReactJson from "@microlink/react-json-view";
 import { Form as SemanticForm } from "semantic-ui-react";
@@ -68,7 +71,7 @@ export class ScheduleJobModal extends React.Component {
       return acc;
     }, {});
 
-    var jsonCustomArgs = {};
+    let jsonCustomArgs = {};
     if (values.custom_args != null) {
       try {
         jsonCustomArgs = JSON.parse(values.custom_args);
@@ -81,13 +84,17 @@ export class ScheduleJobModal extends React.Component {
         return;
       }
     }
+
     const payload = {
       ...data,
       schedule: {
         type: selectedOption,
         ...filteredValues,
       },
-      custom_args: jsonCustomArgs,
+      run_args: {
+        custom_args: jsonCustomArgs,
+        ...values.args,
+      },
     };
 
     this.cancellableAction = withCancel(http.put(apiUrl, payload));
@@ -125,7 +132,7 @@ export class ScheduleJobModal extends React.Component {
 
     const options = payloadSchema
       ? Object.entries(payloadSchema)
-          .filter(([_, obj]) => obj.type !== "dict")
+          .filter(([key, _]) => !key.includes("args"))
           .map(([key, _]) => key)
           .map((type) => ({
             key: type,
@@ -136,10 +143,11 @@ export class ScheduleJobModal extends React.Component {
 
     const initialValues = {
       selectedOption: data?.schedule?.type || "",
+      task: data.task,
       ...data.schedule,
     };
 
-    const jsonData = JSON.parse(data.default_args);
+    const jsonData = JSON.parse(data?.default_args);
     const { activeIndex } = this.state;
 
     return (
@@ -214,6 +222,20 @@ export class ScheduleJobModal extends React.Component {
                   id="action-form"
                   onSubmit={handleSubmit}
                 >
+                  <DynamicSubFormField
+                    {...generateDynamicFieldProps(
+                      "args",
+                      _get(payloadSchema, "args"),
+                      undefined,
+                      true,
+                      payloadSchema["args"],
+                      formikProps,
+                      payloadSchema,
+                      data,
+                      mapFormFields
+                    )}
+                    fieldSchema={_get(payloadSchema, "args")}
+                  />
                   <Accordion fluid styled>
                     <Accordion.Title
                       active={activeIndex === 0}
@@ -235,6 +257,22 @@ export class ScheduleJobModal extends React.Component {
                         <Trans>
                           <b>Custom args:</b> when provided, the input below
                           will override any arguments specified above.
+                        </Trans>
+                      </Message>
+                      <Message info>
+                        <Trans>
+                          <p>
+                            Leaving the field empty will reset the job to the
+                            default arguments.
+                          </p>
+                          <p>Current set custom arguments:</p>
+                          <pre>
+                            {JSON.stringify(
+                              data?.run_args?.custom_args,
+                              null,
+                              2
+                            )}
+                          </pre>
                         </Trans>
                       </Message>
                       <TextArea

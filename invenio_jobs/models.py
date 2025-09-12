@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2024 CERN.
+# Copyright (C) 2025 Graz University of Technology.
 #
 # Invenio-Jobs is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -51,6 +52,7 @@ class Job(db.Model, Timestamp):
     task = db.Column(db.String(255))
     default_queue = db.Column(db.String(64))
     schedule = db.Column(JSON, nullable=True)
+    run_args = db.Column(JSON, nullable=True)
 
     @property
     def last_run(self):
