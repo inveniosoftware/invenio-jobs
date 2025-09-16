@@ -91,6 +91,7 @@ class InvenioLoggingJobs(InvenioLoggingBase):
 
     def init_app(self, app):
         """Flask application initialization."""
+        super().init_app(app)
         self.init_config(app)
 
         if not app.config["JOBS_LOGGING"]:
