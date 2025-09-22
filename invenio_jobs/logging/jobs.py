@@ -108,11 +108,6 @@ class InvenioLoggingJobs(InvenioLoggingBase):
 
     def install_handler(self, app):
         """Install logging handler for jobs."""
-        # Set logging level
-        if app.config["JOBS_LOGGING_LEVEL"] is not None:
-            for h in app.logger.handlers:
-                h.setLevel(app.config["JOBS_LOGGING_LEVEL"])
-
         # Add OpenSearch logging handler if not already added
         if not any(isinstance(h, ContextAwareOSHandler) for h in app.logger.handlers):
             os_handler = ContextAwareOSHandler()
