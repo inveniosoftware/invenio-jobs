@@ -37,6 +37,7 @@ from .errors import (
     RunStatusChangeError,
     RunTooManyResults,
 )
+from datetime import datetime, timezone
 
 
 class BaseService(RecordService):
@@ -447,7 +448,7 @@ class RunsService(BaseService):
                 parent_status = RunStatusEnum.PARTIAL_SUCCESS
             else:
                 parent_status = RunStatusEnum.FAILED
-            finished_at_value = sa.func.now()
+            finished_at_value = datetime.now(timezone.utc)
         else:
             parent_status = RunStatusEnum.RUNNING
             finished_at_value = None
