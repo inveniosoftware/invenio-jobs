@@ -351,7 +351,7 @@ class RunsService(BaseService):
             raise RunStatusChangeError(run, RunStatusEnum.RUNNING)
 
         run.status = RunStatusEnum.RUNNING
-        run.started_at = db.func.now()
+        run.started_at = datetime.now(timezone.utc)
 
         uow.register(ModelCommitOp(run))
         return self.result_item(self, identity, run, links_tpl=self.links_item_tpl)
