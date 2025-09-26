@@ -10,6 +10,7 @@
 """Service definitions."""
 
 import uuid
+from datetime import datetime, timezone
 
 import sqlalchemy as sa
 from flask import current_app
@@ -37,7 +38,6 @@ from .errors import (
     RunStatusChangeError,
     RunTooManyResults,
 )
-from datetime import datetime, timezone
 
 
 class BaseService(RecordService):
