@@ -10,7 +10,7 @@
 """Service definitions."""
 
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime
 
 import sqlalchemy as sa
 from flask import current_app
@@ -351,7 +351,7 @@ class RunsService(BaseService):
             raise RunStatusChangeError(run, RunStatusEnum.RUNNING)
 
         run.status = RunStatusEnum.RUNNING
-        run.started_at = datetime.now(timezone.utc)
+        run.started_at = datetime.utcnow()
 
         uow.register(ModelCommitOp(run))
         return self.result_item(self, identity, run, links_tpl=self.links_item_tpl)
@@ -448,7 +448,7 @@ class RunsService(BaseService):
                 parent_status = RunStatusEnum.PARTIAL_SUCCESS
             else:
                 parent_status = RunStatusEnum.FAILED
-            finished_at_value = datetime.now(timezone.utc)
+            finished_at_value = datetime.utcnow()
         else:
             parent_status = RunStatusEnum.RUNNING
             finished_at_value = None
