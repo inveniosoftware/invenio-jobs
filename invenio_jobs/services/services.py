@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2024 CERN.
 # Copyright (C) 2024 University of Münster.
-# Copyright (C) 2025 Graz University of Technology.
+# Copyright (C) 2025-2026 Graz University of Technology.
 # Copyright (C) 2025 KTH Royal Institute of Technology.
 #
 # Invenio-Jobs is free software; you can redistribute it and/or modify it
@@ -12,7 +12,7 @@
 
 import json
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 
 import sqlalchemy as sa
 from flask import current_app
@@ -362,7 +362,7 @@ class RunsService(BaseService):
             raise RunStatusChangeError(run, RunStatusEnum.RUNNING)
 
         run.status = RunStatusEnum.RUNNING
-        run.started_at = datetime.utcnow()
+        run.started_at = datetime.now(timezone.utc)
 
         uow.register(ModelCommitOp(run))
         return self.result_item(self, identity, run, links_tpl=self.links_item_tpl)
@@ -459,7 +459,7 @@ class RunsService(BaseService):
                 parent_status = RunStatusEnum.PARTIAL_SUCCESS
             else:
                 parent_status = RunStatusEnum.FAILED
-            finished_at_value = datetime.utcnow()
+            finished_at_value = datetime.now(timezone.utc)
         else:
             parent_status = RunStatusEnum.RUNNING
             finished_at_value = None
