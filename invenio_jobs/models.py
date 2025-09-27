@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2024 CERN.
-# Copyright (C) 2025 Graz University of Technology.
+# Copyright (C) 2025-2026 Graz University of Technology.
 #
 # Invenio-Jobs is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -20,7 +20,6 @@ from invenio_accounts.models import User
 from invenio_db import db
 from invenio_users_resources.records import UserAggregate
 from sqlalchemy.dialects import postgresql
-from sqlalchemy_utils import Timestamp
 from sqlalchemy_utils.types import ChoiceType, JSONType, UUIDType
 from werkzeug.utils import cached_property
 
@@ -44,7 +43,7 @@ def _job_has_custom_arguments_set(job):
     return job.run_args and job.run_args.get("custom_args")
 
 
-class Job(db.Model, Timestamp):
+class Job(db.Model, db.Timestamp):
     """Job model."""
 
     __tablename__ = "jobs_job"
@@ -128,7 +127,7 @@ class RunStatusEnum(enum.Enum):
     PARTIAL_SUCCESS = "P"
 
 
-class Run(db.Model, Timestamp):
+class Run(db.Model, db.Timestamp):
     """Run model."""
 
     __tablename__ = "jobs_run"
@@ -147,8 +146,8 @@ class Run(db.Model, Timestamp):
         if self._started_by:
             return UserAggregate.from_model(self._started_by)
 
-    started_at = db.Column(db.DateTime, nullable=True)
-    finished_at = db.Column(db.DateTime, nullable=True)
+    started_at = db.Column(db.UTCDateTime, nullable=True)
+    finished_at = db.Column(db.UTCDateTime, nullable=True)
 
     task_id = db.Column(UUIDType, nullable=True)
     status = db.Column(
