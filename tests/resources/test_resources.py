@@ -13,7 +13,7 @@ from unittest.mock import patch
 
 import pytest
 
-from invenio_jobs.logging.jobs import job_context
+from invenio_jobs.logging.jobs import EMPTY_JOB_CTX, job_context
 from invenio_jobs.tasks import execute_run
 
 
@@ -64,7 +64,14 @@ def test_simple_flow(mock_apply_async, app, db, client, user):
     list_repr = deepcopy(expected_job)
     list_repr.update(
         {
-            "last_run": {"title": "Manual run"},
+            "last_run": {
+                "title": "Manual run",
+                "total_subtasks": 0,
+                "completed_subtasks": 0,
+                "failed_subtasks": 0,
+                "errored_entries": 0,
+                "total_entries": 0,
+            },
             "last_runs": {
                 "cancelled": {},
                 "cancelling": {},
@@ -140,6 +147,13 @@ def test_simple_flow(mock_apply_async, app, db, client, user):
         # No schema assigned as the required `job_arg_schema` was not specified in the request
         "args": {"job_arg_schema": "custom"},
         "queue": "celery",
+        "parent_run_id": None,
+        "total_subtasks": 0,
+        "completed_subtasks": 0,
+        "failed_subtasks": 0,
+        "errored_entries": 0,
+        "total_entries": 0,
+        "subtasks": [],
         "links": {
             "self": f"https://127.0.0.1:5000/api/jobs/{job_id}/runs/{run_id}",
             "logs": f"https://127.0.0.1:5000/api/logs/jobs?q={run_id}",
@@ -182,6 +196,13 @@ def test_simple_flow(mock_apply_async, app, db, client, user):
         "queue": "celery",
         "created": res.json["created"],
         "updated": res.json["updated"],
+        "parent_run_id": None,
+        "total_subtasks": 0,
+        "completed_subtasks": 0,
+        "failed_subtasks": 0,
+        "errored_entries": 0,
+        "total_entries": 0,
+        "subtasks": [],
         "links": {
             "self": f"https://127.0.0.1:5000/api/jobs/{job_id}/runs/{run_id}",
             "logs": f"https://127.0.0.1:5000/api/logs/jobs?q={run_id}",
@@ -195,6 +216,7 @@ def test_simple_flow(mock_apply_async, app, db, client, user):
 
     list_expected_run = deepcopy(expected_run)
     list_expected_run.pop("started_by")
+    list_expected_run.pop("subtasks")
     list_expected_run["args"] = {
         "args": {"since": since_arg},
         "job_arg_schema": "custom",
@@ -219,7 +241,7 @@ def test_simple_flow(mock_apply_async, app, db, client, user):
 
     # Search for log jobs, first set the logger level to INFO
     # and log a message by setting the job context
-    job_context.set(dict(job_id=job_id, run_id=run_id))
+    job_context.set(dict(job_id=job_id, run_id=run_id, identity_id=str(user.id)))
     app.logger.setLevel("INFO")
     app.logger.info("Test log message")
     sleep(1)  # Wait for log to be indexed
@@ -227,6 +249,7 @@ def test_simple_flow(mock_apply_async, app, db, client, user):
     assert res.status_code == 200
     assert res.json["hits"]["total"] == 1
     assert res.json["hits"]["hits"][0]["message"] == "Test log message"
+    job_context.set(EMPTY_JOB_CTX)
 
 
 @pytest.mark.skip("Tasks search not needed.")
@@ -402,7 +425,14 @@ def test_jobs_search(client, jobs):
             "type": "interval",
             "hours": 4,
         },
-        "last_run": {"title": "Manual run"},
+        "last_run": {
+            "title": "Manual run",
+            "total_subtasks": 0,
+            "completed_subtasks": 0,
+            "failed_subtasks": 0,
+            "errored_entries": 0,
+            "total_entries": 0,
+        },
         "last_runs": {
             "cancelled": {},
             "cancelling": {},
@@ -439,7 +469,14 @@ def test_jobs_search(client, jobs):
             "day_of_month": "*",
             "month_of_year": "*",
         },
-        "last_run": {"title": "Manual run"},
+        "last_run": {
+            "title": "Manual run",
+            "total_subtasks": 0,
+            "completed_subtasks": 0,
+            "failed_subtasks": 0,
+            "errored_entries": 0,
+            "total_entries": 0,
+        },
         "last_runs": {
             "cancelled": {},
             "cancelling": {},
@@ -469,7 +506,14 @@ def test_jobs_search(client, jobs):
         "default_queue": "low",
         "default_args": '{"since": null}',
         "schedule": None,
-        "last_run": {"title": "Manual run"},
+        "last_run": {
+            "title": "Manual run",
+            "total_subtasks": 0,
+            "completed_subtasks": 0,
+            "failed_subtasks": 0,
+            "errored_entries": 0,
+            "total_entries": 0,
+        },
         "last_runs": {
             "cancelled": {},
             "cancelling": {},

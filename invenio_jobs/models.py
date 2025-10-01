@@ -140,6 +140,26 @@ class Run(db.Model, Timestamp):
     args = db.Column(JSON, default=lambda: dict(), nullable=True)
     queue = db.Column(db.String(64), nullable=False)
 
+    parent_run_id = db.Column(
+        UUIDType, db.ForeignKey("jobs_run.id"), index=True, nullable=True
+    )
+    subtasks = db.relationship(
+        "Run",
+        backref=db.backref("parent_run", remote_side=[id]),
+        cascade="all, delete-orphan",
+        lazy="dynamic",
+    )
+    # Meant to mark if the sibtasks of this run have been all spawned.
+    subtasks_closed = db.Column(db.Boolean, default=False, nullable=False)
+
+    total_subtasks = db.Column(db.Integer, default=0, nullable=False)
+    completed_subtasks = db.Column(db.Integer, default=0, nullable=False)
+    failed_subtasks = db.Column(db.Integer, default=0, nullable=False)
+    errored_entries = db.Column(db.Integer, default=0, nullable=False)
+    inserted_entries = db.Column(db.Integer, default=0, nullable=False)
+    updated_entries = db.Column(db.Integer, default=0, nullable=False)
+    total_entries = db.Column(db.Integer, default=0, nullable=False)
+
     @classmethod
     def create(cls, job, **kwargs):
         """Create a new run."""

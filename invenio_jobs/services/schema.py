@@ -224,6 +224,40 @@ class RunSchema(Schema, FieldPermissionsMixin):
 
     task_id = fields.UUID(dump_only=True)
 
+    parent_run_id = fields.UUID(
+        dump_only=True,
+        allow_none=True,
+        metadata={
+            "description": "ID of the parent run if this is a subtask.",
+            "title": "Parent Run ID",
+        },
+    )
+    subtasks = fields.List(
+        fields.Nested(lambda: RunSchema(exclude=("subtasks",))),
+        dump_only=True,
+        metadata={"description": "List of subtasks for this run."},
+    )
+
+    total_subtasks = fields.Integer(dump_only=True, default=0)
+    completed_subtasks = fields.Integer(dump_only=True, default=0)
+    failed_subtasks = fields.Integer(dump_only=True, default=0)
+    errored_entries = fields.Integer(
+        dump_only=True,
+        default=0,
+        metadata={
+            "description": "Number of entries that failed during processing.",
+            "title": "Errored Entries",
+        },
+    )
+    total_entries = fields.Integer(
+        dump_only=True,
+        default=0,
+        metadata={
+            "description": "Total number of entries processed by this run.",
+            "title": "Total Entries",
+        },
+    )
+
     # Input fields
     title = SanitizedUnicode(validate=_not_blank(max=250), dump_default="Manual run")
     args = fields.Nested(
@@ -260,6 +294,7 @@ class LogContextSchema(Schema):
 
     job_id = fields.Str(required=True)
     run_id = fields.Str(required=True)
+    identity_id = fields.Str(required=True)
 
 
 class JobLogEntrySchema(Schema):

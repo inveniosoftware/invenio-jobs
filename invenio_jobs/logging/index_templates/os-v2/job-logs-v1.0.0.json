@@ -14,7 +14,8 @@
           "type": "object",
           "properties": {
             "job_id": { "type": "keyword" },
-            "run_id": { "type": "keyword" }
+            "run_id": { "type": "keyword" },
+            "identity_id": { "type": "keyword" }
           },
           "dynamic": true
         }
