@@ -8,7 +8,7 @@
 Changes
 =======
 
-Version v6.0.0.dev0 (released 2025-09-10)
+Version v6.0.0 (released 2025-10-01)
 
 - feature: add tracking of async subtasks
 
