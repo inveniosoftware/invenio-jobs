@@ -171,7 +171,7 @@ class JobSchema(Schema, FieldPermissionsMixin):
     )
 
     default_args = fields.Raw(dump_only=True, dump_default=dict, load_default=dict)
-    run_args = fields.Raw(load_default=dict)
+    run_args = fields.Dict(allow_none=True)
 
     schedule = fields.Nested(ScheduleSchema, allow_none=True, load_default=None)
 
@@ -186,6 +186,31 @@ class JobSchema(Schema, FieldPermissionsMixin):
             if value:
                 last_runs[key] = RunSchema().dump(value.dump())
         return obj
+
+
+class JobEditSchema(JobSchema):
+    """Schema for Job Edit."""
+
+    task = fields.String(
+        dump_only=True,
+        validate=LazyOneOf(choices=lambda: [name for name, t in Task.all().items()]),
+    )
+    args = fields.Nested(
+        lambda: JobArgumentsSchema,
+        metadata={
+            "type": "dynamic",
+            "endpoint": "/api/tasks/<item_id>/args",
+            "depends_on": "task",
+        },
+    )
+    custom_args = fields.Raw(
+        load_default=dict,
+        allow_none=True,
+        metadata={
+            "title": "Custom args",
+            "description": "Advanced configuration for seasoned administrators.",
+        },
+    )
 
 
 class UserSchema(OneOfSchema):
@@ -253,7 +278,7 @@ class RunSchema(Schema, FieldPermissionsMixin):
         """Choose custom or default args."""
         custom_args = obj.pop("custom_args")
         if custom_args:
-            obj["args"] = json.loads(custom_args)
+            obj["args"]["custom_args"] = json.loads(custom_args)
         return obj
 
 

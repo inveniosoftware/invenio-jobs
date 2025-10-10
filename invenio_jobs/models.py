@@ -74,7 +74,12 @@ class Job(db.Model, Timestamp):
     @property
     def default_args(self):
         """Compute default job arguments."""
-        return Task.get(self.task)._build_task_arguments(job_obj=self)
+        custom_args = None
+        if self.run_args:
+            custom_args = self.run_args.get("custom_args")
+        return Task.get(self.task)._build_task_arguments(
+            custom_args=custom_args, job_obj=self
+        )
 
     @property
     def parsed_schedule(self):

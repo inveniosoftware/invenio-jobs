@@ -33,7 +33,7 @@ class JobEntry(ScheduleEntry):
     @classmethod
     def from_job(cls, job):
         """Create JobEntry from job."""
-        args = json.dumps(job.run_args, default=job_arg_json_dumper)
+        args = json.dumps(job.run_args or job.default_args, default=job_arg_json_dumper)
         args = json.loads(args)
         return cls(
             job=job,
