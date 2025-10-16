@@ -204,8 +204,8 @@ export class RunsLogs extends Component {
                   <Message.Header>
                     {i18next.t("Log Results Truncated")}
                   </Message.Header>
-                  {warnings.map((warning, idx) => (
-                    <p key={idx}>{warning.message}</p>
+                  {warnings.map((warning) => (
+                    <p key={warning.message}>{warning.message}</p>
                   ))}
                 </Message.Content>
               </Message>
@@ -308,4 +308,8 @@ RunsLogs.propTypes = {
   logs: PropTypes.array.isRequired,
   sort: PropTypes.array.isRequired,
   warnings: PropTypes.array,
+};
+
+RunsLogs.defaultProps = {
+  warnings: [],
 };
