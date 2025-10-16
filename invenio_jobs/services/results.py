@@ -11,6 +11,7 @@
 import json
 from collections.abc import Iterable, Sized
 
+from invenio_i18n import gettext as _
 from invenio_records_resources.services.records.results import (
     RecordItem,
     RecordList,
@@ -178,4 +179,19 @@ class AppLogsList(List):
             ].sort  # We want to keep the sort field of the last item to resume search from here with search_after
             if sort:
                 res["hits"]["sort"] = list(sort)
+            if hasattr(self._results, "_truncated") and self._results._truncated:
+                res["warnings"] = [
+                    {
+                        "message": _(
+                            "Too many log results returned (%(total)s). "
+                            "Only the most recent %(max)s results are shown. "
+                            "Please refine your search criteria to reduce the result size.",
+                            total=self._results._total_available,
+                            max=self._results._max_docs,
+                        ),
+                        "type": "truncated_results",
+                        "total_available": self._results._total_available,
+                        "max_results": self._results._max_docs,
+                    }
+                ]
         return res
