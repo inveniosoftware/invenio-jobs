@@ -185,8 +185,7 @@ class AppLogsList(List):
                     {
                         "message": _(
                             "Too many log results returned (%(total)s). "
-                            "Only the most recent %(max)s results are shown. "
-                            "Please refine your search criteria to reduce the result size.",
+                            "Only the most recent %(max)s results are shown.",
                             total=self._results._total_available,
                             max=self._results._max_docs,
                         ),

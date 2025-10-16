@@ -202,7 +202,7 @@ export class RunsLogs extends Component {
                 <Icon name="exclamation triangle" />
                 <Message.Content>
                   <Message.Header>
-                    {i18next.t("Log Results Truncated")}
+                    {i18next.t("Log results truncated")}
                   </Message.Header>
                   {warnings.map((warning) => (
                     <p key={warning.message}>{warning.message}</p>
@@ -263,8 +263,8 @@ export class RunsLogs extends Component {
                       <Message.Content>
                         <Message.Header>
                           {run.status === "FAILED"
-                            ? i18next.t("Job Failed")
-                            : i18next.t("Job Partially Succeeded")}
+                            ? i18next.t("Job failed")
+                            : i18next.t("Job partially succeeded")}
                         </Message.Header>
                         {run.message && <pre>{run.message}</pre>}
                         {logs.filter((log) => log.level === "ERROR").length >

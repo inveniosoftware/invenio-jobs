@@ -518,13 +518,7 @@ class JobLogService(BaseService):
     """Job log service."""
 
     def search(self, identity, params):
-        """Search for app logs.
-
-        TODO: This implementation collects all logs into a single JSON response,
-        which is suboptimal for large result sets. Consider implementing a streaming
-        approach using JSON-Lines format with PIT (Point in Time) API for better
-        performance and UX. See: https://github.com/inveniosoftware/invenio-jobs/issues/74
-        """
+        """Search for app logs."""
         self.require_permission(identity, "search")
         search_after = params.pop("search_after", None)
         search = self._search(
@@ -534,8 +528,8 @@ class JobLogService(BaseService):
             None,
             permission_action="read",
         )
-        max_docs = current_app.config.get("JOBS_LOGS_MAX_RESULTS", 1_000)
-        batch_size = current_app.config.get("JOBS_LOGS_BATCH_SIZE", 1_000)
+        max_docs = current_app.config["JOBS_LOGS_MAX_RESULTS"]
+        batch_size = current_app.config["JOBS_LOGS_BATCH_SIZE"]
 
         # Clone and strip version before counting
         count_search = search._clone()
