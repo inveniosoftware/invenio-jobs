@@ -1,21 +1,14 @@
 # 
-# Translators:
-# Tibor Simko <tibor.simko@cern.ch>, 2025
-# Bessem Aamira <bessemamira@gmail.com>, 2025
-# Salaheddine Ben Ali <salaheddine.benali@cnudst.tn>, 2025
-# Sam Arbid, 2025
-# 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
 "POT-Creation-Date: 2025-07-08T19:01:15.884Z\n"
 "PO-Revision-Date: 2025-07-08 19:01+0000\n"
-"Last-Translator: Sam Arbid, 2025\n"
-"Language-Team: Arabic (https://app.transifex.com/inveniosoftware/teams/23537/ar/)\n"
+"Language-Team: Chinese Traditional (https://app.transifex.com/inveniosoftware/teams/23537/zh-Hant/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: ar\n"
-"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+"Language: zh-Hant\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 "mime-version: 1.0\n"
 
 msgid "Schedule Job"
@@ -28,22 +21,22 @@ msgid "Status "
 msgstr ""
 
 msgid "Name"
-msgstr "إسم"
+msgstr ""
 
 msgid "Active"
-msgstr "مفعٌل"
+msgstr ""
 
 msgid "Inactive"
-msgstr "غير نشط"
+msgstr ""
 
 msgid "Last run"
-msgstr "senaste körningen"
+msgstr ""
 
 msgid "Started by"
 msgstr ""
 
 msgid "System"
-msgstr "نظام"
+msgstr ""
 
 msgid "Next run"
 msgstr ""
@@ -55,7 +48,7 @@ msgid "Reference configuration of this job:"
 msgstr ""
 
 msgid "Cancel"
-msgstr "إلغاء"
+msgstr ""
 
 msgid ""
 "<0>Custom args:</0> when provided, the input below will override any "
@@ -63,7 +56,7 @@ msgid ""
 msgstr ""
 
 msgid "Run"
-msgstr "شغّل"
+msgstr ""
 
 msgid "Duration"
 msgstr ""
@@ -72,16 +65,16 @@ msgid "Waiting"
 msgstr ""
 
 msgid "Message"
-msgstr "رسالة"
+msgstr ""
 
 msgid "Show less"
-msgstr "أظهر أقل"
+msgstr ""
 
 msgid "Show all"
 msgstr ""
 
 msgid "Success"
-msgstr "نجاح العمليّة"
+msgstr ""
 
 msgid "Job {{title}} has been scheduled."
 msgstr ""
@@ -90,7 +83,7 @@ msgid "Unable to set schedule."
 msgstr ""
 
 msgid "Save"
-msgstr "حفظ"
+msgstr ""
 
 msgid "Queued"
 msgstr ""
@@ -99,16 +92,16 @@ msgid "Running"
 msgstr ""
 
 msgid "Failed"
-msgstr "فشلت"
+msgstr ""
 
 msgid "Warning"
-msgstr "تحذير"
+msgstr ""
 
 msgid "Cancelling"
 msgstr ""
 
 msgid "Cancelled"
-msgstr "ملغى"
+msgstr ""
 
 msgid "Partial Success"
 msgstr ""
