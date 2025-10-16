@@ -36,7 +36,6 @@ from .errors import (
     JobNotFoundError,
     RunNotFoundError,
     RunStatusChangeError,
-    RunTooManyResults,
 )
 
 
@@ -518,7 +517,13 @@ class JobLogService(BaseService):
     """Job log service."""
 
     def search(self, identity, params):
-        """Search for app logs."""
+        """Search for app logs.
+        
+        TODO: This implementation collects all logs into a single JSON response,
+        which is suboptimal for large result sets. Consider implementing a streaming
+        approach using JSON-Lines format with PIT (Point in Time) API for better
+        performance and UX. See: https://github.com/inveniosoftware/invenio-jobs/issues/74
+        """
         self.require_permission(identity, "search")
         search_after = params.pop("search_after", None)
         search = self._search(
@@ -528,23 +533,26 @@ class JobLogService(BaseService):
             None,
             permission_action="read",
         )
-        MAX_DOCS = 50_000
-        BATCH_SIZE = 1_000
+        max_docs = current_app.config.get("JOBS_LOGS_MAX_RESULTS", 1_000)
+        batch_size = current_app.config.get("JOBS_LOGS_BATCH_SIZE", 1_000)
 
         # Clone and strip version before counting
         count_search = search._clone()
         count_search._params.pop("version", None)  # strip unsupported param
         total = count_search.count()
-        if total > MAX_DOCS:
-            raise RunTooManyResults(total=total, max_docs=MAX_DOCS)
 
-        search = search.sort("@timestamp", "_id").extra(size=BATCH_SIZE)
+        # Track if we're truncating results
+        truncated = total > max_docs
+
+        search = search.sort("@timestamp", "_id").extra(size=batch_size)
         if search_after:
             search = search.extra(search_after=search_after)
 
         final_results = None
-        # Keep fetching until no more results
-        while True:
+        fetched_count = 0
+
+        # Keep fetching until we have max_docs or no more results
+        while fetched_count < max_docs:
             results = search.execute()
             hits = results.hits
             if not hits:
@@ -558,7 +566,22 @@ class JobLogService(BaseService):
                 final_results.hits.extend(hits)
                 final_results.hits.hits.extend(hits.hits)
 
+            fetched_count += len(hits)
+
+            # Stop if we've reached the limit
+            if fetched_count >= max_docs:
+                # Trim to exact max_docs
+                final_results.hits.hits = final_results.hits.hits[:max_docs]
+                final_results.hits[:] = final_results.hits[:max_docs]
+                break
+
             search = search.extra(search_after=hits[-1].meta.sort)
+
+        # Store truncation info in the result for the AppLogsList to use
+        if final_results and truncated:
+            final_results._truncated = True
+            final_results._total_available = total
+            final_results._max_docs = max_docs
 
         return self.result_list(
             self,
