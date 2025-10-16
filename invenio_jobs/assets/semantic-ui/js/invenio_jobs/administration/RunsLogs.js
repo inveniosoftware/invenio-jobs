@@ -242,7 +242,8 @@ export class RunsLogs extends Component {
                             {i18next.t("Not yet started")}
                           </p>
                         )}
-                        {run.message && (
+                        {/* Only show run.message for non-error statuses */}
+                        {run.message && run.status !== "FAILED" && run.status !== "PARTIAL_SUCCESS" && (
                           <Label basic color={iconProps.color}>
                             {run.message}
                           </Label>
@@ -252,6 +253,29 @@ export class RunsLogs extends Component {
                   </List>
                 </Grid.Column>
                 <Grid.Column className="log-table" width={13}>
+                  {/* Display error message for failed jobs */}
+                  {(run.status === "FAILED" || run.status === "PARTIAL_SUCCESS") && (
+                    <Message negative icon>
+                      <Icon name="times circle" />
+                      <Message.Content>
+                        <Message.Header>
+                          {run.status === "FAILED" 
+                            ? i18next.t("Job Failed") 
+                            : i18next.t("Job Partially Succeeded")}
+                        </Message.Header>
+                        {run.message && (
+                          <pre>
+                            {run.message}
+                          </pre>
+                        )}
+                        {logs.filter(log => log.level === "ERROR").length > 0 && (
+                          <p className="text-muted">
+                            {logs.filter(log => log.level === "ERROR").length} {i18next.t("error(s) found in logs below")}
+                          </p>
+                        )}
+                      </Message.Content>
+                    </Message>
+                  )}
                   <Segment>
                     {logs.map((log) => (
                       <div
