@@ -518,7 +518,7 @@ class JobLogService(BaseService):
 
     def search(self, identity, params):
         """Search for app logs.
-        
+
         TODO: This implementation collects all logs into a single JSON response,
         which is suboptimal for large result sets. Consider implementing a streaming
         approach using JSON-Lines format with PIT (Point in Time) API for better

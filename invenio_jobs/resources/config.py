@@ -41,7 +41,7 @@ error_handlers = {
     ),
     errors.RunStatusChangeError: create_error_handler(
         lambda e: HTTPJSONException(code=400, description=e.description)
-    )
+    ),
 }
 
 
