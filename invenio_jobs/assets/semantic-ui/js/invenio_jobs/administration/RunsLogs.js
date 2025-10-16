@@ -26,7 +26,7 @@ export class RunsLogs extends Component {
   constructor(props) {
     super(props);
 
-    const { logs, run, sort } = props;
+    const { logs, run, sort, warnings } = props;
 
     this.state = {
       error: null,
@@ -38,6 +38,7 @@ export class RunsLogs extends Component {
       })),
       run,
       sort,
+      warnings: warnings || [],
       runDuration: this.getDurationInMinutes(run.started_at, run.finished_at),
       formatted_started_at: this.formatDatetime(run.started_at),
     };
@@ -150,6 +151,7 @@ export class RunsLogs extends Component {
       run,
       runDuration,
       formatted_started_at: formattedStartedAt,
+      warnings,
     } = this.state;
     const levelClass = {
       DEBUG: "",
@@ -195,6 +197,19 @@ export class RunsLogs extends Component {
               {run.title}
             </Header>
             <Divider />
+            {warnings.length > 0 && (
+              <Message warning icon>
+                <Icon name="exclamation triangle" />
+                <Message.Content>
+                  <Message.Header>
+                    {i18next.t("Log Results Truncated")}
+                  </Message.Header>
+                  {warnings.map((warning, idx) => (
+                    <p key={idx}>{warning.message}</p>
+                  ))}
+                </Message.Content>
+              </Message>
+            )}
             {error && (
               <Message negative>
                 <Message.Header>
@@ -267,4 +282,5 @@ RunsLogs.propTypes = {
   run: PropTypes.object.isRequired,
   logs: PropTypes.array.isRequired,
   sort: PropTypes.array.isRequired,
+  warnings: PropTypes.array,
 };
