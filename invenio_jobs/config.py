@@ -89,3 +89,9 @@ JOBS_LOGGING_INDEX = "job-logs"
 
 JOBS_LOGGING_RETENTION_DAYS = 90
 """Retention period for job logs in days."""
+
+JOBS_LOGS_MAX_RESULTS = 500
+"""Maximum number of log results to return in a single search."""
+
+JOBS_LOGS_BATCH_SIZE = 1_000
+"""Batch size for fetching log results from the search backend."""
