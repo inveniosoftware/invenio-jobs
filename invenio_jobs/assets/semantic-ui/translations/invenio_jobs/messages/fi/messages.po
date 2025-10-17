@@ -1,120 +1,116 @@
 # 
 # Translators:
-# Rim Sharif, 2025
-# Mattias Vesterlund, 2025
-# Tibor Simko <tibor.simko@cern.ch>, 2025
-# Sam Arbid, 2025
-# Lina Andrén, 2025
+# Matti Lassila <matti.lassila@gmail.com>, 2025
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
 "POT-Creation-Date: 2025-07-08T19:01:15.884Z\n"
 "PO-Revision-Date: 2025-07-08 19:01+0000\n"
-"Last-Translator: Lina Andrén, 2025\n"
-"Language-Team: Swedish (https://app.transifex.com/inveniosoftware/teams/23537/sv/)\n"
+"Last-Translator: Matti Lassila <matti.lassila@gmail.com>, 2025\n"
+"Language-Team: Finnish (https://app.transifex.com/inveniosoftware/teams/23537/fi/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: sv\n"
+"Language: fi\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "mime-version: 1.0\n"
 
 msgid "Schedule Job"
-msgstr "Schemalägg jobb"
+msgstr "Ajasta tehtävä"
 
 msgid "Job Details"
-msgstr "Jobbdetaljer"
+msgstr "Tehtävän tiedot"
 
 msgid "Status "
-msgstr "Status"
+msgstr "Tila "
 
 msgid "Name"
-msgstr "Namn"
+msgstr "Nimi"
 
 msgid "Active"
-msgstr "Aktiv"
+msgstr "Aktiivinen"
 
 msgid "Inactive"
-msgstr "Inaktiv"
+msgstr "Ei aktiivinen"
 
 msgid "Last run"
-msgstr "Senaste körning"
+msgstr "Viimeisin ajo"
 
 msgid "Started by"
-msgstr "Startad av"
+msgstr "Käynnisti"
 
 msgid "System"
-msgstr "System"
+msgstr "Järjestelmä"
 
 msgid "Next run"
-msgstr "Nästa körning"
+msgstr "Seuraava ajo"
 
 msgid "Advanced configuration"
-msgstr "Avancerad konfiguration"
+msgstr "Lisäasetukset"
 
 msgid "Reference configuration of this job:"
-msgstr "Referenskonfiguration för detta jobb:"
+msgstr "Tämän tehtävän viiteasetukset:"
 
 msgid "Cancel"
-msgstr "Avbryt"
+msgstr "Peruuta"
 
 msgid ""
 "<0>Custom args:</0> when provided, the input below will override any "
 "arguments specified above."
 msgstr ""
-"<0>Anpassade argument:</0> om angivet, kommer inmatningen nedan att ersätta "
-"alla argument som anges ovan."
+"<0>Mukautetut argumentit:</0> jos annettu, alla oleva syöte korvaa yllä "
+"määritetyt argumentit."
 
 msgid "Run"
-msgstr "Kör"
+msgstr "Suorita"
 
 msgid "Duration"
-msgstr "Varaktighet"
+msgstr "Kesto"
 
 msgid "Waiting"
-msgstr "Väntar"
+msgstr "Odottaa"
 
 msgid "Message"
-msgstr "Meddelande"
+msgstr "Viesti"
 
 msgid "Show less"
-msgstr "Visa mindre"
+msgstr "Näytä vähemmän"
 
 msgid "Show all"
-msgstr "Visa alla"
+msgstr "Näytä kaikki"
 
 msgid "Success"
-msgstr "Genomförd"
+msgstr "Onnistui"
 
 msgid "Job {{title}} has been scheduled."
-msgstr "Jobbet {{title}} har schemalagts."
+msgstr "Tehtävä {{title}} on ajastettu."
 
 msgid "Unable to set schedule."
-msgstr "Kunde inte ställa in schema."
+msgstr "Aikataulun asettaminen epäonnistui."
 
 msgid "Save"
-msgstr "Spara"
+msgstr "Tallenna"
 
 msgid "Queued"
-msgstr "Ställd i kö"
+msgstr "Jonossa"
 
 msgid "Running"
-msgstr "Körs"
+msgstr "Käynnissä"
 
 msgid "Failed"
-msgstr "Misslyckades"
+msgstr "Epäonnistui"
 
 msgid "Warning"
-msgstr "Varning"
+msgstr "Varoitus"
 
 msgid "Cancelling"
-msgstr "Avbryter"
+msgstr "Peruutetaan"
 
 msgid "Cancelled"
-msgstr "Avbruten"
+msgstr "Peruttu"
 
 msgid "Partial Success"
-msgstr "Delvis genomförd"
+msgstr "Osittainen onnistuminen"
 
 msgid "Stop"
-msgstr "Stoppa"
+msgstr "Pysäytä"
