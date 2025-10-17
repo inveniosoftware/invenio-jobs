@@ -3,13 +3,14 @@
 # Tibor Simko <tibor.simko@cern.ch>, 2025
 # Bessem Aamira <bessemamira@gmail.com>, 2025
 # Salaheddine Ben Ali <salaheddine.benali@cnudst.tn>, 2025
+# Sam Arbid, 2025
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
 "POT-Creation-Date: 2025-07-08T19:01:15.884Z\n"
 "PO-Revision-Date: 2025-07-08 19:01+0000\n"
-"Last-Translator: Salaheddine Ben Ali <salaheddine.benali@cnudst.tn>, 2025\n"
+"Last-Translator: Sam Arbid, 2025\n"
 "Language-Team: Arabic (https://app.transifex.com/inveniosoftware/teams/23537/ar/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -36,7 +37,7 @@ msgid "Inactive"
 msgstr "غير نشط"
 
 msgid "Last run"
-msgstr ""
+msgstr "senaste körningen"
 
 msgid "Started by"
 msgstr ""
