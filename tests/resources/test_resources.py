@@ -6,6 +6,7 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 
 """Resource tests."""
+
 from copy import deepcopy
 from datetime import datetime, timedelta, timezone
 from time import sleep
@@ -13,7 +14,7 @@ from unittest.mock import patch
 
 import pytest
 
-from invenio_jobs.logging.jobs import EMPTY_JOB_CTX, job_context
+from invenio_jobs.logging.jobs import EMPTY_JOB_CTX, job_context, set_job_context
 from invenio_jobs.tasks import execute_run
 
 
@@ -241,9 +242,9 @@ def test_simple_flow(mock_apply_async, app, db, client, user):
 
     # Search for log jobs, first set the logger level to INFO
     # and log a message by setting the job context
-    job_context.set(dict(job_id=job_id, run_id=run_id, identity_id=str(user.id)))
-    app.logger.setLevel("INFO")
-    app.logger.info("Test log message")
+    with set_job_context(dict(job_id=job_id, run_id=run_id, identity_id=str(user.id))):
+        app.logger.setLevel("INFO")
+        app.logger.info("Test log message")
     sleep(1)  # Wait for log to be indexed
     res = client.get(f"/logs/jobs?q={job_id}")
     assert res.status_code == 200
