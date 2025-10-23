@@ -26,7 +26,7 @@ export class RunsLogs extends Component {
   constructor(props) {
     super(props);
 
-    const { logs, run, sort } = props;
+    const { logs, run, sort, warnings } = props;
 
     this.state = {
       error: null,
@@ -38,6 +38,7 @@ export class RunsLogs extends Component {
       })),
       run,
       sort,
+      warnings: warnings || [],
       runDuration: this.getDurationInMinutes(run.started_at, run.finished_at),
       formatted_started_at: this.formatDatetime(run.started_at),
     };
@@ -150,6 +151,7 @@ export class RunsLogs extends Component {
       run,
       runDuration,
       formatted_started_at: formattedStartedAt,
+      warnings,
     } = this.state;
     const levelClass = {
       DEBUG: "",
@@ -195,6 +197,19 @@ export class RunsLogs extends Component {
               {run.title}
             </Header>
             <Divider />
+            {warnings.length > 0 && (
+              <Message warning icon>
+                <Icon name="exclamation triangle" />
+                <Message.Content>
+                  <Message.Header>
+                    {i18next.t("Log results truncated")}
+                  </Message.Header>
+                  {warnings.map((warning) => (
+                    <p key={warning.message}>{warning.message}</p>
+                  ))}
+                </Message.Content>
+              </Message>
+            )}
             {error && (
               <Message negative>
                 <Message.Header>
@@ -227,16 +242,41 @@ export class RunsLogs extends Component {
                             {i18next.t("Not yet started")}
                           </p>
                         )}
-                        {run.message && (
-                          <Label basic color={iconProps.color}>
-                            {run.message}
-                          </Label>
-                        )}
+                        {/* Only show run.message for non-error statuses */}
+                        {run.message &&
+                          run.status !== "FAILED" &&
+                          run.status !== "PARTIAL_SUCCESS" && (
+                            <Label basic color={iconProps.color}>
+                              {run.message}
+                            </Label>
+                          )}
                       </List.Content>
                     </List.Item>
                   </List>
                 </Grid.Column>
                 <Grid.Column className="log-table" width={13}>
+                  {/* Display error message for failed jobs */}
+                  {(run.status === "FAILED" ||
+                    run.status === "PARTIAL_SUCCESS") && (
+                    <Message negative icon>
+                      <Icon name="times circle" />
+                      <Message.Content>
+                        <Message.Header>
+                          {run.status === "FAILED"
+                            ? i18next.t("Job failed")
+                            : i18next.t("Job partially succeeded")}
+                        </Message.Header>
+                        {run.message && <pre>{run.message}</pre>}
+                        {logs.filter((log) => log.level === "ERROR").length >
+                          0 && (
+                          <p className="text-muted">
+                            {logs.filter((log) => log.level === "ERROR").length}{" "}
+                            {i18next.t("error(s) found in logs below")}
+                          </p>
+                        )}
+                      </Message.Content>
+                    </Message>
+                  )}
                   <Segment>
                     {logs.map((log) => (
                       <div
@@ -267,4 +307,9 @@ RunsLogs.propTypes = {
   run: PropTypes.object.isRequired,
   logs: PropTypes.array.isRequired,
   sort: PropTypes.array.isRequired,
+  warnings: PropTypes.array,
+};
+
+RunsLogs.defaultProps = {
+  warnings: [],
 };
