@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2024 CERN.
+# Copyright (C) 2025 KTH Royal Institute of Technology.
 #
 # Invenio-Jobs is free software; you can redistribute it and/or
 # modify it under the terms of the MIT License; see LICENSE file for more
@@ -15,7 +16,6 @@ from invenio_i18n import lazy_gettext as _
 
 from invenio_jobs.administration.jobs import JobsAdminMixin
 from invenio_jobs.proxies import current_jobs_logs_service, current_runs_service
-from invenio_jobs.services.errors import RunTooManyResults
 
 
 class RunsDetailsView(JobsAdminMixin, AdminResourceListView):
@@ -37,7 +37,7 @@ class RunsDetailsView(JobsAdminMixin, AdminResourceListView):
     def get_context(self, **kwargs):
         """Compute admin view context."""
         pid_value = kwargs.get("pid_value", "")
-        logs, sort = self._get_logs(pid_value)
+        logs, sort, warnings = self._get_logs(pid_value)
         if not logs:
             logs = []
             job_id = ""
@@ -50,22 +50,19 @@ class RunsDetailsView(JobsAdminMixin, AdminResourceListView):
         ctx["logs"] = logs
         ctx["run"] = run_dict
         ctx["sort"] = sort
+        ctx["warnings"] = warnings
         return ctx
 
     def _get_logs(self, pid_value):
         """Retrieve and format logs."""
         params = dict(q=f'"{pid_value}"')
-        try:
-            logs_result = current_jobs_logs_service.search(g.identity, params)
-        except RunTooManyResults as e:
-            # If too many results, return empty list
-            # This should be improved https://github.com/inveniosoftware/invenio-jobs/issues/74
-            abort(413, description=e.description)
+        logs_result = current_jobs_logs_service.search(g.identity, params)
         result_dict = logs_result.to_dict()
         logs = result_dict["hits"]["hits"]
         sort = result_dict["hits"].get("sort")
+        warnings = result_dict.get("warnings", [])
 
-        return logs, sort
+        return logs, sort, warnings
 
     def _get_run_dict(self, job_id, pid_value):
         """Retrieve and format run dictionary."""
