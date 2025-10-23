@@ -10,6 +10,7 @@
 
 """Service definitions."""
 
+import json
 import uuid
 from datetime import datetime
 
@@ -104,6 +105,8 @@ class JobsService(BaseService):
             raise_errors=True,
         )
 
+        print(valid_data)
+
         job = Job(**valid_data)
         uow.register(ModelCommitOp(job))
         return self.result_item(self, identity, job, links_tpl=self.links_item_tpl)
@@ -153,12 +156,32 @@ class JobsService(BaseService):
         job = get_job(id_)
         return self.result_item(self, identity, job, links_tpl=self.links_item_tpl)
 
+    def _process_update_arguments(self, job, data):
+        """Restructure arguments received from UI.
+
+        This allows storing the job arguments in a single logical column.
+        """
+        if "args" in data:
+            args = data.pop("args")
+            data["run_args"] = {
+                **args,
+            }
+            custom_args = json.loads(data.pop("custom_args", {}))
+            if custom_args:
+                data["run_args"]["custom_args"] = custom_args
+            elif job.run_args and "custom_args" in job.run_args:
+                # if job already has custom_args, and we receive empty custom_args from UI
+                # assume that we should keep the previous set custom_args
+                data["run_args"]["custom_args"] = job.run_args.get("custom_args")
+
     @unit_of_work()
     def update(self, identity, id_, data, uow=None):
         """Update a job."""
         self.require_permission(identity, "update")
 
         job = get_job(id_)
+
+        self._process_update_arguments(job, data)
 
         valid_data, errors = self.schema.load(
             data,
@@ -249,12 +272,27 @@ class RunsService(BaseService):
             self, identity, run_record, links_tpl=self.links_item_tpl
         )
 
+    def _process_run_arguments(self, job, data):
+        """Process Run arguments received from UI.
+
+        If custom_args are set in the Job and not in the Run, use the ones from Job.
+        """
+        if (
+            "custom_args" not in data
+            and job.run_args
+            and job.run_args.get("custom_args")
+        ):
+            data["custom_args"] = json.dumps(job.run_args.get("custom_args"))
+
     @with_job_context(EMPTY_JOB_CTX)
     @unit_of_work()
     def create(self, identity, job_id, data, uow=None):
         """Create a run."""
         self.require_permission(identity, "create")
         job = get_job(job_id)
+
+        self._process_run_arguments(job, data)
+
         # TODO: See if we need extra validation (e.g. tasks, args, etc.)
         valid_data, errors = self.schema.load(
             data,
