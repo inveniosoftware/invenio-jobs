@@ -99,8 +99,6 @@ class FakeSearch:
 @pytest.mark.usefixtures("app")
 def test_job_logs_search_limits_to_max_docs(monkeypatch, anon_identity, app):
     """Service returns only the most recent max_docs hits with a warning."""
-    service = current_jobs_logs_service
-
     original_max = app.config.get("JOBS_LOGS_MAX_RESULTS")
     original_batch = app.config.get("JOBS_LOGS_BATCH_SIZE")
     app.config["JOBS_LOGS_MAX_RESULTS"] = 5
@@ -115,12 +113,12 @@ def test_job_logs_search_limits_to_max_docs(monkeypatch, anon_identity, app):
         created_searches.append(search)
         return search
 
-    monkeypatch.setattr(service.__class__, "_search", fake_search)
-
     payload = None
     try:
         with app.app_context():
-            result = service.search(anon_identity, {"q": "test"})
+            service = current_jobs_logs_service._get_current_object()
+            monkeypatch.setattr(service.__class__, "_search", fake_search)
+            result = current_jobs_logs_service.search(anon_identity, {"q": "test"})
             payload = result.to_dict()
     finally:
         app.config["JOBS_LOGS_MAX_RESULTS"] = original_max
@@ -152,8 +150,6 @@ def test_job_logs_search_limits_to_max_docs(monkeypatch, anon_identity, app):
 @pytest.mark.usefixtures("app")
 def test_job_logs_search_returns_all_when_under_limit(monkeypatch, anon_identity, app):
     """Service returns all results when total is below max_docs."""
-    service = current_jobs_logs_service
-
     original_max = app.config.get("JOBS_LOGS_MAX_RESULTS")
     original_batch = app.config.get("JOBS_LOGS_BATCH_SIZE")
     app.config["JOBS_LOGS_MAX_RESULTS"] = 5
@@ -164,12 +160,12 @@ def test_job_logs_search_returns_all_when_under_limit(monkeypatch, anon_identity
     def fake_search(self, *args, **kwargs):
         return FakeSearch(hits)
 
-    monkeypatch.setattr(service.__class__, "_search", fake_search)
-
     payload = None
     try:
         with app.app_context():
-            result = service.search(anon_identity, {"q": "test"})
+            service = current_jobs_logs_service._get_current_object()
+            monkeypatch.setattr(service.__class__, "_search", fake_search)
+            result = current_jobs_logs_service.search(anon_identity, {"q": "test"})
             payload = result.to_dict()
     finally:
         app.config["JOBS_LOGS_MAX_RESULTS"] = original_max
