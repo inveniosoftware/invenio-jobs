@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2024 CERN.
+# Copyright (C) 2025 KTH Royal Institute of Technology.
 #
 # Invenio-Jobs is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -89,3 +90,9 @@ JOBS_LOGGING_INDEX = "job-logs"
 
 JOBS_LOGGING_RETENTION_DAYS = 90
 """Retention period for job logs in days."""
+
+JOBS_LOGS_MAX_RESULTS = 2_000
+"""Maximum total number of log results to return in a single search request."""
+
+JOBS_LOGS_BATCH_SIZE = 500
+"""Number of log results to fetch per batch from the search backend."""

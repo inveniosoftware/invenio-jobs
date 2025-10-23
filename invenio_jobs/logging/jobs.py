@@ -19,7 +19,7 @@ from contextvars import ContextVar
 from datetime import datetime
 from functools import wraps
 
-from flask import current_app
+from flask import current_app, has_app_context
 from invenio_logging.ext import InvenioLoggingBase
 from invenio_search import current_search_client
 from invenio_search.utils import prefix_index
@@ -38,7 +38,8 @@ class ContextAwareOSHandler(logging.Handler):
 
     def emit(self, record):
         """Emit log record after enriching it with global context."""
-        if job_context.get() is not EMPTY_JOB_CTX:
+        # Only log when we have both job context and app context
+        if job_context.get() is not EMPTY_JOB_CTX and has_app_context():
             enriched_log = self.enrich_log(record)
             self.index_in_os(enriched_log)
 

@@ -9,6 +9,11 @@
 Changes
 =======
 
+Version v4.4.0 (released 2025-10-23)
+
+- fix: Handle large log results in job details admin panel
+
+
 Version v4.3.3 (released 2025-10-21)
 
 - i18n: pulled translations

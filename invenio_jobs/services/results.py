@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2024 CERN.
 # Copyright (C) 2024 Graz University of Technology.
+# Copyright (C) 2025 KTH Royal Institute of Technology.
 #
 # Invenio-Jobs is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -11,6 +12,7 @@
 import json
 from collections.abc import Iterable, Sized
 
+from invenio_i18n import gettext as _
 from invenio_records_resources.services.records.results import (
     RecordItem,
     RecordList,
@@ -178,4 +180,18 @@ class AppLogsList(List):
             ].sort  # We want to keep the sort field of the last item to resume search from here with search_after
             if sort:
                 res["hits"]["sort"] = list(sort)
+            if hasattr(self._results, "_truncated") and self._results._truncated:
+                res["warnings"] = [
+                    {
+                        "message": _(
+                            "Too many log results returned (%(total)s). "
+                            "Only the most recent %(max)s results are shown.",
+                            total=self._results._total_available,
+                            max=self._results._max_docs,
+                        ),
+                        "type": "truncated_results",
+                        "total_available": self._results._total_available,
+                        "max_results": self._results._max_docs,
+                    }
+                ]
         return res
