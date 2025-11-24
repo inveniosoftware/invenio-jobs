@@ -7,48 +7,63 @@
 
 """Service links."""
 
-from invenio_records_resources.services.base import Link
+from invenio_records_resources.services import EndpointLink
 
 
-class JobLink(Link):
-    """Shortcut for writing Job links."""
-
-    @staticmethod
-    def vars(record, vars):
-        """Variables for the URI template."""
-        vars.update({"id": str(record.id)})
-
-
-class RunLink(Link):
+class JobEndpointLink(EndpointLink):
     """Shortcut for writing Run links."""
 
+    def __init__(self, *args, **kwargs):
+        """Constructor."""
+        # Dirty but simpler
+        kwargs.setdefault("params", [])
+        kwargs["params"].append("job_id")
+        super().__init__(*args, **kwargs)
+
     @staticmethod
     def vars(record, vars):
-        """Variables for the URI template."""
+        """Update vars used to expand the link."""
+        vars.update({"job_id": str(record.id)})
+
+
+class RunEndpointLink(EndpointLink):
+    """Shortcut for writing Run links."""
+
+    def __init__(self, *args, **kwargs):
+        """Constructor."""
+        # Dirty but simpler
+        kwargs.setdefault("params", [])
+        kwargs["params"].extend(["job_id", "run_id"])
+        super().__init__(*args, **kwargs)
+
+    @staticmethod
+    def vars(record, vars):
+        """Update vars used to expand the link."""
         vars.update(
             {
-                "id": str(record.id),
                 "job_id": str(record.job_id),
+                "run_id": str(record.id),
             }
         )
 
 
-def pagination_links(tpl):
-    """Create pagination links (prev/selv/next) from the same template."""
-    return {
-        "prev": Link(
-            tpl,
-            when=lambda pagination, ctx: pagination.has_prev,
-            vars=lambda pagination, vars: vars["args"].update(
-                {"page": pagination.prev_page.page}
-            ),
-        ),
-        "self": Link(tpl),
-        "next": Link(
-            tpl,
-            when=lambda pagination, ctx: pagination.has_next,
-            vars=lambda pagination, vars: vars["args"].update(
-                {"page": pagination.next_page.page}
-            ),
-        ),
-    }
+def vars_func_set_querystring(func_qs=lambda obj, vars: {}):
+    """Fill in querystring parameters easily.
+
+    `func_qs` is a function that takes:
+    - `obj`: the target object
+    - `var`: the dict of values that can be used to expand the endpoint route
+
+    It returns a dict of values that will be merged with the sub-dict at
+    vars["args"]. vars["args"] is a special dict whose values will expand
+    into querystring parameters when the url is built.
+
+    Overall, the returned function by `vars_func_set_querystring` is meant to
+    be passed to an `EndpointLink`'s `vars` parameter.
+    """
+
+    def _inner(obj, vars):
+        vars.setdefault("args", {})
+        vars["args"].update(func_qs(obj, vars))
+
+    return _inner

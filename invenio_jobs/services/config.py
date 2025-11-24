@@ -12,17 +12,17 @@ from functools import partial
 
 from invenio_i18n import gettext as _
 from invenio_records_resources.records.systemfields import IndexField
+from invenio_records_resources.services import EndpointLink, pagination_endpoint_links
 from invenio_records_resources.services.base import ServiceConfig
 from invenio_records_resources.services.base.config import ConfiguratorMixin, FromConfig
 from invenio_records_resources.services.records.config import (
     SearchOptions as SearchOptionsBase,
 )
-from invenio_records_resources.services.records.links import pagination_links
 from sqlalchemy import asc, desc
 
 from ..models import Job, Run, Task
 from . import results
-from .links import JobLink, RunLink
+from .links import JobEndpointLink, RunEndpointLink, vars_func_set_querystring
 from .permissions import (
     JobLogsPermissionPolicy,
     JobPermissionPolicy,
@@ -70,7 +70,7 @@ class TasksServiceConfig(ServiceConfig, ConfiguratorMixin):
     result_list_cls = results.List
 
     links_item = None
-    links_search = pagination_links("{+api}/tasks{?args*}")
+    links_search = pagination_endpoint_links("tasks.search")
 
 
 class JobSearchOptions(SearchOptionsBase):
@@ -105,12 +105,17 @@ class JobsServiceConfig(ServiceConfig, ConfiguratorMixin):
     result_list_cls = results.JobList
 
     links_item = {
-        "self": JobLink("{+api}/jobs/{id}"),
-        "runs": JobLink("{+api}/jobs/{id}/runs"),
-        "self_admin_html": JobLink("{+ui}/administration/jobs/{id}"),
+        "self": JobEndpointLink("jobs.read"),
+        "runs": JobEndpointLink("job_runs.search"),
+        # JobsDetailsView went for pid_value as URL var ...
+        "self_admin_html": EndpointLink(
+            "administration.job-details",
+            params=["pid_value"],
+            vars=lambda obj, vars: vars.update(pid_value=obj.id),
+        ),
     }
 
-    links_search = pagination_links("{+api}/jobs{?args*}")
+    links_search = pagination_endpoint_links("jobs.search")
 
 
 class RunSearchOptions(SearchOptionsBase):
@@ -145,12 +150,14 @@ class RunsServiceConfig(ServiceConfig, ConfiguratorMixin):
     result_list_cls = results.List
 
     links_item = {
-        "self": RunLink("{+api}/jobs/{job_id}/runs/{id}"),
-        "stop": RunLink("{+api}/jobs/{job_id}/runs/{id}/actions/stop"),
-        "logs": RunLink("{+api}/logs/jobs?q={id}"),
+        "self": RunEndpointLink("job_runs.read"),
+        "stop": RunEndpointLink("job_runs.stop"),
+        "logs": EndpointLink(
+            "jobs-logs.search",
+            vars=vars_func_set_querystring(lambda obj, vars: {"q": obj.id}),
+        ),
     }
-
-    links_search = pagination_links("{+api}/jobs/{job_id}{?args*}")
+    links_search = pagination_endpoint_links("job_runs.search", params=["job_id"])
 
 
 class JobLogSearchOptions(SearchOptionsBase):
