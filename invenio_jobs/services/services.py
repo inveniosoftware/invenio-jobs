@@ -235,7 +235,13 @@ class RunsService(BaseService):
             identity,
             runs,
             params=search_params,
-            links_tpl=LinksTemplate(self.config.links_search, context={"args": params}),
+            links_tpl=LinksTemplate(
+                self.config.links_search,
+                context={
+                    "args": params,
+                    "job_id": job_id,
+                },
+            ),
             links_item_tpl=self.links_item_tpl,
         )
 
