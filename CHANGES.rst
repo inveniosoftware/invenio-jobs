@@ -9,6 +9,12 @@
 Changes
 =======
 
+Version v4.4.0 (released 2025-11-24)
+
+- tests: fix logging crash when no app context
+- fix: Handle large log results in job details admin panel
+
+
 Version v4.3.3 (released 2025-10-21)
 
 - i18n: pulled translations
