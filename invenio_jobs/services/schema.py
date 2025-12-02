@@ -350,7 +350,7 @@ class JobLogEntrySchema(Schema):
     function = fields.Str(required=True)
     line = fields.Int(required=True)
     context = fields.Nested(LogContextSchema, required=True)
-    sort = fields.List(fields.Field, dump_only=True)
+    sort = fields.List(fields.Raw, dump_only=True)
 
     def dump(self, obj, **kwargs):
         """Ensure @timestamp is a datetime object and serialize properly."""
