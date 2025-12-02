@@ -278,12 +278,12 @@ class RunSchema(Schema, FieldPermissionsMixin):
         metadata={"description": "List of subtasks for this run."},
     )
 
-    total_subtasks = fields.Integer(dump_only=True, default=0)
-    completed_subtasks = fields.Integer(dump_only=True, default=0)
-    failed_subtasks = fields.Integer(dump_only=True, default=0)
+    total_subtasks = fields.Integer(dump_only=True, dump_default=0)
+    completed_subtasks = fields.Integer(dump_only=True, dump_default=0)
+    failed_subtasks = fields.Integer(dump_only=True, dump_default=0)
     errored_entries = fields.Integer(
         dump_only=True,
-        default=0,
+        dump_default=0,
         metadata={
             "description": "Number of entries that failed during processing.",
             "title": "Errored Entries",
@@ -291,7 +291,7 @@ class RunSchema(Schema, FieldPermissionsMixin):
     )
     total_entries = fields.Integer(
         dump_only=True,
-        default=0,
+        dump_default=0,
         metadata={
             "description": "Total number of entries processed by this run.",
             "title": "Total Entries",
