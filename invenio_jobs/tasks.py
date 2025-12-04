@@ -19,6 +19,7 @@ from invenio_jobs.errors import TaskExecutionError, TaskExecutionPartialError
 from invenio_jobs.logging.jobs import set_job_context
 from invenio_jobs.models import Run, RunStatusEnum
 from invenio_jobs.proxies import current_jobs
+from invenio_jobs.utils import send_run_notification
 
 
 # TODO 1. Move to service? 2. Don't use kwargs?
@@ -83,6 +84,8 @@ def execute_run(self, run_id, identity_id, kwargs=None):
                 finished_at=datetime.utcnow(),
                 message=message,
             )
+            # Send email notification
+            send_run_notification(run, run.job)
             raise e
         except (TaskExecutionPartialError, TaskExecutionError) as e:
             sentry_event_id = getattr(g, "sentry_event_id", None)
@@ -104,6 +107,8 @@ def execute_run(self, run_id, identity_id, kwargs=None):
                 message=message,
                 errored_entries=errored_entries_count,
             )
+            # Send email notification
+            send_run_notification(run, run.job)
             return
         except Exception as e:
             sentry_event_id = getattr(g, "sentry_event_id", None)
@@ -121,6 +126,8 @@ def execute_run(self, run_id, identity_id, kwargs=None):
                 finished_at=datetime.utcnow(),
                 message=message,
             )
+            # Send email notification
+            send_run_notification(run, run.job)
             return
         finally:
             db.session.execute(
@@ -132,3 +139,5 @@ def execute_run(self, run_id, identity_id, kwargs=None):
             status=RunStatusEnum.SUCCESS,
             finished_at=datetime.utcnow(),
         )
+        # Send email notification
+        send_run_notification(run, run.job)

@@ -50,6 +50,8 @@ def test_simple_flow(mock_apply_async, app, db, client, user):
             "runs": f"https://127.0.0.1:5000/api/jobs/{job_id}/runs",
             "self_admin_html": f"https://127.0.0.1:5000/administration/jobs/{job_id}",
         },
+        "notification_emails": None,
+        "notification_statuses": None,
     }
 
     assert res.json == expected_job
@@ -328,6 +330,8 @@ def test_jobs_create(db, client):
             "self": f"https://127.0.0.1:5000/api/jobs/{res.json['id']}",
             "self_admin_html": f"https://127.0.0.1:5000/administration/jobs/{res.json['id']}",
         },
+        "notification_emails": None,
+        "notification_statuses": None,
     }
 
     # Test full job payload
@@ -360,6 +364,8 @@ def test_jobs_create(db, client):
             "self": f"https://127.0.0.1:5000/api/jobs/{res.json['id']}",
             "self_admin_html": f"https://127.0.0.1:5000/administration/jobs/{res.json['id']}",
         },
+        "notification_emails": None,
+        "notification_statuses": None,
     }
 
 
@@ -395,6 +401,8 @@ def test_jobs_update(db, client, jobs):
             "self": f"https://127.0.0.1:5000/api/jobs/{jobs.simple.id}",
             "self_admin_html": f"https://127.0.0.1:5000/administration/jobs/{res.json['id']}",
         },
+        "notification_emails": None,
+        "notification_statuses": None,
     }
     assert res.json == updated_job
 
@@ -450,6 +458,8 @@ def test_jobs_search(client, jobs):
             "self": f"https://127.0.0.1:5000/api/jobs/{jobs.interval.id}",
             "self_admin_html": f"https://127.0.0.1:5000/administration/jobs/{jobs.interval.id}",
         },
+        "notification_emails": None,
+        "notification_statuses": None,
     }
 
     crontab_job_res = next((j for j in hits if j["id"] == jobs.crontab.id), None)
@@ -494,6 +504,8 @@ def test_jobs_search(client, jobs):
             "self": f"https://127.0.0.1:5000/api/jobs/{jobs.crontab.id}",
             "self_admin_html": f"https://127.0.0.1:5000/administration/jobs/{jobs.crontab.id}",
         },
+        "notification_emails": None,
+        "notification_statuses": None,
     }
 
     simple_job_res = next((j for j in hits if j["id"] == jobs.simple.id), None)
@@ -531,6 +543,8 @@ def test_jobs_search(client, jobs):
             "self": f"https://127.0.0.1:5000/api/jobs/{jobs.simple.id}",
             "self_admin_html": f"https://127.0.0.1:5000/administration/jobs/{jobs.simple.id}",
         },
+        "notification_emails": None,
+        "notification_statuses": None,
     }
 
     # Test filtering
