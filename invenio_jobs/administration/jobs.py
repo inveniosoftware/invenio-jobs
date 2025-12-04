@@ -18,7 +18,7 @@ from invenio_administration.views.base import (
 from invenio_i18n import lazy_gettext as _
 
 from invenio_jobs.config import JOBS_QUEUES
-from invenio_jobs.models import Task
+from invenio_jobs.models import RunStatusEnum, Task
 from invenio_jobs.services.schema import JobEditSchema, JobSchema, RunSchema
 from invenio_jobs.services.ui_schema import ScheduleUISchema
 
@@ -166,8 +166,38 @@ class JobsFormMixin:
                 "order": 5,
                 "text": _("Active"),
             },
-            "created": {"order": 7},
-            "updated": {"order": 8},
+            "notification_emails": {
+                "order": 6,
+                "text": _("Notification emails"),
+                "description": _(
+                    "Email addresses to notify about this job's status. Leave empty to disable notifications."
+                ),
+                "type": "dropdown",
+                "multiple": True,
+                "allowAdditions": True,
+                "search": True,
+            },
+            "notification_statuses": {
+                "order": 7,
+                "text": _("Notification statuses"),
+                "description": _(
+                    "Which run statuses should trigger email notifications. Leave empty to disable notifications."
+                ),
+                "placeholder": "Select statuses to notify",
+                "options": [
+                    {"title_l10n": status.name, "id": status.name}
+                    for status in (
+                        RunStatusEnum.SUCCESS,
+                        RunStatusEnum.PARTIAL_SUCCESS,
+                        RunStatusEnum.FAILED,
+                    )
+                ],
+                "type": "dropdown",
+                "multiple": True,
+                "search": True,
+            },
+            "created": {"order": 8},
+            "updated": {"order": 9},
         }
 
 

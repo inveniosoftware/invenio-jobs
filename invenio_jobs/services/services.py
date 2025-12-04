@@ -31,6 +31,7 @@ from invenio_records_resources.services.uow import (
 
 from invenio_jobs.logging.jobs import EMPTY_JOB_CTX, with_job_context
 from invenio_jobs.tasks import execute_run
+from invenio_jobs.utils import send_run_notification
 
 from ..api import AttrDict
 from ..models import Job, Run, RunStatusEnum, Task
@@ -474,6 +475,11 @@ class RunsService(BaseService):
             )
         )
         db.session.execute(update_parent_stmt)
+        # Send email notification if parent run is finished
+        if subtasks_closed and finished:
+            parent_run = db.session.get(Run, parent_id)
+            if parent_run:
+                send_run_notification(parent_run, parent_run.job)
 
         uow.register(ModelCommitOp(run))
 

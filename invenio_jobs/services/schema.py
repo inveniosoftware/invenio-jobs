@@ -175,8 +175,62 @@ class JobSchema(Schema, FieldPermissionsMixin):
 
     schedule = fields.Nested(ScheduleSchema, allow_none=True, load_default=None)
 
+    # API fields (flat structure for compatibility with admin forms)
+    notification_emails = fields.List(
+        fields.Email(),
+        allow_none=True,
+        load_default=None,
+        metadata={
+            "title": "Notification emails",
+            "description": "Email addresses to notify about this job's status. Leave empty to disable notifications.",
+        },
+    )
+
+    notification_statuses = fields.List(
+        fields.String(
+            validate=LazyOneOf(
+                choices=lambda: [status.name for status in RunStatusEnum]
+            )
+        ),
+        allow_none=True,
+        load_default=None,
+        metadata={
+            "title": "Notification statuses",
+            "description": "Which run statuses should trigger email notifications (e.g., FAILED, SUCCESS, PARTIAL_SUCCESS). Leave empty to disable notifications.",
+        },
+    )
+
     last_run = fields.Nested(lambda: RunSchema, dump_only=True)
     last_runs = fields.Raw(dump_only=True)
+
+    @post_load
+    def nest_notifications(self, data, many=False, **kwargs):
+        """Convert flat notification fields to nested structure for storage."""
+        if "notification_emails" in data or "notification_statuses" in data:
+            notifications = {}
+            # Always pop the fields, even if they are None
+            emails = data.pop("notification_emails", None)
+            statuses = data.pop("notification_statuses", None)
+
+            if emails:
+                notifications["emails"] = emails
+            if statuses:
+                notifications["statuses"] = statuses
+
+            data["notifications"] = notifications if notifications else None
+        return data
+
+    @pre_dump
+    def unflatten_notifications(self, obj, many=False, **kwargs):
+        """Convert nested notifications to flat fields for API output."""
+        notifications = obj.get("notifications")
+        if notifications:
+            obj["notification_emails"] = notifications.get("emails")
+            obj["notification_statuses"] = notifications.get("statuses")
+        else:
+            obj["notification_emails"] = None
+            obj["notification_statuses"] = None
+        return obj
 
     @pre_dump
     def dump_last_runs(self, obj, many=False, **kwargs):
