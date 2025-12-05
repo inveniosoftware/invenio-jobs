@@ -7,6 +7,7 @@
 # Translators:
 # BEN TERCÜME, 2025
 # Ben Translation and Interpreting Services <info@bentercume.com>, 2025
+# Eylül-1 -, 2025
 # 
 #, fuzzy
 msgid ""
@@ -15,7 +16,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: info@inveniosoftware.org\n"
 "POT-Creation-Date: 2025-07-08 19:01+0000\n"
 "PO-Revision-Date: 2025-07-08 19:01+0000\n"
-"Last-Translator: Ben Translation and Interpreting Services <info@bentercume.com>, 2025\n"
+"Last-Translator: Eylül-1 -, 2025\n"
 "Language-Team: Turkish (https://app.transifex.com/inveniosoftware/teams/23537/tr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -26,23 +27,23 @@ msgstr ""
 
 #: invenio_jobs/config.py:37
 msgid "Default"
-msgstr ""
+msgstr "Varsayılan"
 
 #: invenio_jobs/config.py:38
 msgid "Default queue"
-msgstr ""
+msgstr "Varsayılan kuyruk"
 
 #: invenio_jobs/config.py:42
 msgid "Low"
-msgstr ""
+msgstr "Düşük"
 
 #: invenio_jobs/config.py:43
 msgid "Low priority queue"
-msgstr ""
+msgstr "Düşük öncelikli kuyruk"
 
 #: invenio_jobs/administration/jobs.py:71 invenio_jobs/config.py:57
 msgid "Jobs"
-msgstr ""
+msgstr "İşler"
 
 #: invenio_jobs/administration/jobs.py:73 invenio_jobs/config.py:61
 msgid "Last run"
@@ -51,16 +52,18 @@ msgstr "Son çalıştırılma"
 #: invenio_jobs/administration/jobs.py:74
 #: invenio_jobs/administration/jobs.py:99 invenio_jobs/config.py:65
 msgid "Started by"
-msgstr ""
+msgstr "Başlatan"
 
 #: invenio_jobs/administration/jobs.py:75 invenio_jobs/config.py:69
 msgid "Next run"
-msgstr ""
+msgstr "Sonraki çalıştırılma"
 
 #: invenio_jobs/jobs.py:42
 msgid ""
 "YYYY-MM-DD HH:mm format. Leave empty to continue since last successful run."
 msgstr ""
+"YYYY-AA-GG SS:dd biçimi. Son başarılı çalıştırmadan bu yana devam etmek için"
+" boş bırakın."
 
 #: invenio_jobs/administration/jobs.py:43
 msgid "Schedule"
@@ -68,7 +71,7 @@ msgstr "Zamanla"
 
 #: invenio_jobs/administration/jobs.py:49
 msgid "Configure and run"
-msgstr ""
+msgstr "Yapılandır ve çalıştır"
 
 #: invenio_jobs/administration/jobs.py:50
 msgid "Run now"
@@ -80,11 +83,11 @@ msgstr "Durum"
 
 #: invenio_jobs/administration/jobs.py:96
 msgid "Run (ISO UTC)"
-msgstr ""
+msgstr "Çalıştır (ISO UTC)"
 
 #: invenio_jobs/administration/jobs.py:97
 msgid "Duration"
-msgstr ""
+msgstr "Süre"
 
 #: invenio_jobs/administration/jobs.py:98
 msgid "Message"
@@ -100,31 +103,31 @@ msgstr "Başlık"
 
 #: invenio_jobs/administration/jobs.py:142
 msgid "A title of the job."
-msgstr ""
+msgstr "İşin başlığı."
 
 #: invenio_jobs/administration/jobs.py:146
 msgid "Description"
-msgstr "Tanım"
+msgstr "Açıklama"
 
 #: invenio_jobs/administration/jobs.py:147
 msgid "A short description about the job."
-msgstr ""
+msgstr "İşle ilgili kısa bir açıklama."
 
 #: invenio_jobs/administration/jobs.py:151
 msgid "Queue"
-msgstr ""
+msgstr "Kuyruk"
 
 #: invenio_jobs/administration/jobs.py:152
 msgid "A queue for the job run."
-msgstr ""
+msgstr "İş çalıştırma kuyruğu."
 
 #: invenio_jobs/administration/jobs.py:158
 msgid "Task"
-msgstr ""
+msgstr "Görev"
 
 #: invenio_jobs/administration/jobs.py:159
 msgid "A task for the job run."
-msgstr ""
+msgstr "İş çalıştırma görevi."
 
 #: invenio_jobs/administration/jobs.py:165
 msgid "Active"
@@ -150,27 +153,27 @@ msgstr "Oluşturulma"
 
 #: invenio_jobs/services/config.py:167
 msgid "Timestamp"
-msgstr ""
+msgstr "Zaman damgası"
 
 #: invenio_jobs/services/errors.py:29
 #, python-brace-format
 msgid "Job with ID {id} does not exist."
-msgstr ""
+msgstr "{id} kimlik numaralı iş mevcut değil."
 
 #: invenio_jobs/services/errors.py:38
 #, python-brace-format
 msgid "Run with ID {id} does not exist."
-msgstr ""
+msgstr "{id} kimlik numaralı çalıştırma mevcut değil."
 
 #: invenio_jobs/services/errors.py:40
 #, python-brace-format
 msgid "Run with ID {id} for job {job_id} does not exist."
-msgstr ""
+msgstr "{job_id} işine ait {id} kimlik numaralı çalıştırma mevcut değil."
 
 #: invenio_jobs/services/errors.py:52
 #, python-brace-format
 msgid "You cannot change run status from {old} to {new}."
-msgstr ""
+msgstr "Çalışmayı {old} durumundan {new} durumuna değiştiremezsiniz."
 
 #: invenio_jobs/services/schema.py:33
 #, python-brace-format
