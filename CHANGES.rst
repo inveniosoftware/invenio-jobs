@@ -9,6 +9,10 @@
 Changes
 =======
 
+Version v4.4.1 (released 2025-12-08)
+
+- i18n: pulled translations
+
 Version v4.4.0 (released 2025-11-24)
 
 - tests: fix logging crash when no app context
