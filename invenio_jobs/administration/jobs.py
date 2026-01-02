@@ -86,6 +86,7 @@ class JobsDetailsView(JobsAdminMixin, AdminResourceListView):
     resource_config = "runs_resource"
     title = "Job Details"
     disabled = lambda _: True
+    display_delete = True
 
     template = "invenio_jobs/system/jobs/jobs-details.html"
 
