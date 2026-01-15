@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2024 CERN.
+# Copyright (C) 2025 Graz University of Technology.
 #
 # Invenio-Jobs is free software; you can redistribute it and/or
 # modify it under the terms of the MIT License; see LICENSE file for more
@@ -66,6 +67,8 @@ class JobsListView(JobsAdminMixin, AdminResourceListView):
     icon = "settings"
     template = "invenio_jobs/system/jobs/jobs-search.html"
     create_view_name = "jobs-create"
+
+    display_delete = True
 
     item_field_list = {
         "job": {"text": _("Jobs"), "order": 1, "width": 3},
