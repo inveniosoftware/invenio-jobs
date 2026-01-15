@@ -3,6 +3,7 @@
 # Copyright (C) 2024 CERN.
 # Copyright (C) 2024 Graz University of Technology.
 # Copyright (C) 2025 KTH Royal Institute of Technology.
+# Copyright (c) 2025 CESNET z.s.p.o.
 #
 # Invenio-Jobs is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -18,6 +19,7 @@ from invenio_records_resources.services.records.results import (
     RecordList,
 )
 
+from invenio_jobs.models import Job
 from invenio_jobs.utils import job_arg_json_dumper
 
 from ..api import AttrDict
@@ -129,6 +131,7 @@ class JobList(List):
     @property
     def hits(self):
         """Iterator over the hits."""
+        Job.bulk_load_last_runs(self.items)
         for hit in self.items:
             # Project the hit
             job_dict = hit.dump()
