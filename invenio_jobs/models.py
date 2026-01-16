@@ -51,6 +51,7 @@ class Job(db.Model, Timestamp):
     task = db.Column(db.String(255))
     default_queue = db.Column(db.String(64))
     schedule = db.Column(JSON, nullable=True)
+    notifications = db.Column(JSON, nullable=True, default=None)
 
     @property
     def last_run(self):

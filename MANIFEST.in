@@ -27,3 +27,4 @@ recursive-include tests *.py
 recursive-include invenio_jobs *.py
 recursive-include invenio_jobs *.json
 recursive-include invenio_jobs *.pot
+recursive-include invenio_jobs *.txt
