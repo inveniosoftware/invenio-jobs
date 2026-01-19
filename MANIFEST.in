@@ -24,6 +24,7 @@ recursive-include invenio_jobs *.js
 recursive-include invenio_jobs/translations *.po *.pot *.mo
 recursive-include invenio_jobs *.po
 recursive-include tests *.py
+recursive-include invenio_jobs *.less
 recursive-include invenio_jobs *.py
 recursive-include invenio_jobs *.json
 recursive-include invenio_jobs *.pot

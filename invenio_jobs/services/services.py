@@ -545,6 +545,9 @@ class JobLogService(BaseService):
         # Track if we're truncating results
         truncated = total > max_docs
 
+        # Sort chronologically by timestamp and _id
+        # Note: Hierarchical grouping by task hierarchy is handled client-side
+        # in the UI via buildLogTree() function
         search = search.sort("@timestamp", "_id").extra(size=batch_size)
         if search_after:
             search = search.extra(search_after=search_after)

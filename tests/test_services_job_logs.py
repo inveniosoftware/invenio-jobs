@@ -11,6 +11,7 @@ from datetime import datetime, timezone
 import pytest
 
 from invenio_jobs.api import AttrDict
+from invenio_jobs.logging.jobs import get_next_sequence, reset_sequence
 from invenio_jobs.proxies import current_jobs_logs_service
 
 
@@ -184,3 +185,89 @@ def test_job_logs_search_returns_all_when_under_limit(monkeypatch, anon_identity
     assert "warnings" not in payload
 
     assert payload["hits"]["sort"] == hits[2].meta.sort  # Last hit (log-1)
+
+
+def test_sequence_counter():
+    """Test that sequence counter increments correctly and resets."""
+    reset_sequence()
+    assert get_next_sequence() == 1
+    assert get_next_sequence() == 2
+    assert get_next_sequence() == 3
+    reset_sequence()
+    assert get_next_sequence() == 1
+    assert get_next_sequence() == 2
+
+
+def _make_hit_with_lineage(idx, task_id, parent_task_id=None, root_task_id=None):
+    """Create a fake search hit with task lineage metadata."""
+    timestamp = datetime(2025, 1, 1, tzinfo=timezone.utc).timestamp() + idx
+    sort_value = [
+        root_task_id or task_id,
+        task_id,
+        idx,
+        timestamp,
+        f"id-{idx}",
+    ]
+    hit = AttrDict(
+        {
+            "@timestamp": datetime.fromtimestamp(timestamp, timezone.utc).isoformat(),
+            "level": "INFO",
+            "message": f"log-{idx}",
+            "module": "tests",
+            "function": "fn",
+            "line": idx,
+            "context": {
+                "job_id": "job-123",
+                "run_id": "run-456",
+                "identity_id": "user-789",
+                "task_id": task_id,
+                "parent_task_id": parent_task_id,
+                "root_task_id": root_task_id or task_id,
+                "task_name": f"task-{task_id}",
+                "producer_seq": idx,
+            },
+            "sort": sort_value,
+        }
+    )
+    hit.meta = AttrDict({"sort": sort_value})
+    return hit
+
+
+@pytest.mark.usefixtures("app")
+def test_job_logs_search_with_task_lineage(monkeypatch, anon_identity, app):
+    """Service returns logs with task lineage metadata."""
+    service = current_jobs_logs_service
+
+    original_max = app.config.get("JOBS_LOGS_MAX_RESULTS")
+    original_batch = app.config.get("JOBS_LOGS_BATCH_SIZE")
+    app.config["JOBS_LOGS_MAX_RESULTS"] = 10
+    app.config["JOBS_LOGS_BATCH_SIZE"] = 10
+
+    # Create hits with task lineage
+    hits = [
+        _make_hit_with_lineage(1, "task-A", None, "task-A"),
+        _make_hit_with_lineage(2, "task-A", None, "task-A"),
+        _make_hit_with_lineage(1, "task-B", "task-A", "task-A"),
+        _make_hit_with_lineage(2, "task-B", "task-A", "task-A"),
+    ]
+
+    def fake_search(self, *args, **kwargs):
+        return FakeSearch(hits)
+
+    monkeypatch.setattr(service.__class__, "_search", fake_search)
+
+    payload = None
+    try:
+        with app.app_context():
+            result = service.search(anon_identity, {"q": "test"})
+            payload = result.to_dict()
+    finally:
+        app.config["JOBS_LOGS_MAX_RESULTS"] = original_max
+        app.config["JOBS_LOGS_BATCH_SIZE"] = original_batch
+
+    assert payload["hits"]["total"] == len(hits)
+    assert len(payload["hits"]["hits"]) == len(hits)
+    # Verify task lineage fields are present
+    first_hit = payload["hits"]["hits"][0]
+    assert "task_id" in first_hit["context"]
+    assert "root_task_id" in first_hit["context"]
