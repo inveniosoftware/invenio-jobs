@@ -545,6 +545,18 @@ class JobLogService(BaseService):
         # Track if we're truncating results
         truncated = total > max_docs
 
+        # Sort chronologically by timestamp and _id
+        # Note: Hierarchical grouping by task hierarchy is handled client-side
+        # in the UI via buildLogTree() function
+        # This is not done in the backend by updating the sort parameters due
+        # to 2 main reasons:
+        # 1 - For dynamically loading the logs while the jobs is being executed
+        # we use the search_after parameter that will return only new values,
+        # meaning that they cant be properly grouped in the backend without the
+        # risk of being splitted by this.
+        # 2 - By changing the sort order from timestamp to prioritize the 
+        # task_id, the logs will loose the chronological order. There is no easy
+        # way to group by task_id and prioritize by timestamp.
         search = search.sort("@timestamp", "_id").extra(size=batch_size)
         if search_after:
             search = search.extra(search_after=search_after)
