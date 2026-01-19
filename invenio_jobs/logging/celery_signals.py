@@ -23,7 +23,7 @@ def capture_context(sender=None, headers=None, body=None, **kwargs):
     if (
         "context" not in headers and job_context.get() is not EMPTY_JOB_CTX
     ):  # Ensure context is only added if missing
-        headers["context"] = job_context.get()
+        headers["context"] = dict(job_context.get())
 
 
 # Restore context when a task starts executing
@@ -35,6 +35,12 @@ def restore_context(task=None, **kwargs):
     if job_context.get() is EMPTY_JOB_CTX:
         task_context = getattr(task.request, "context", None)
         if task_context:
+            # Update context with current task's metadata from Celery's own request
+            task_context = dict(task_context)
+            task_context["task_id"] = str(task.request.id)
+            task_context["parent_task_id"] = (
+                str(task.request.parent_id) if task.request.parent_id else None
+            )
             token = job_context.set(task_context)
             # Store token in task.request
             task.request._job_context_token = token

@@ -22,25 +22,62 @@ import { http, withCancel } from "react-invenio-forms";
 import { DateTime } from "luxon";
 import { i18next } from "@translations/invenio_jobs/i18next";
 
+/**
+ * TaskGroup component - displays logs for a single task group
+ * @param {Object} taskGroup - Task group containing taskId, taskName, parentTaskId, and logs
+ * @param {Object} levelClass - Mapping of log levels to CSS classes
+ */
+const TaskGroup = ({ taskGroup, levelClass }) => (
+  <div className={taskGroup.parentTaskId ? "subtask-container" : ""}>
+    {taskGroup.logs.map((log) => (
+      <div
+        key={`${log.timestamp}-${log.level}-${log.message}`}
+        className={`log-line ${log.level.toLowerCase()}`}
+      >
+        <span className="log-timestamp">[{log.formatted_timestamp}]</span>{" "}
+        <span className={levelClass[log.level] || ""}>{log.level}</span>{" "}
+        <span className="log-message">{log.message}</span>
+      </div>
+    ))}
+  </div>
+);
+
+TaskGroup.propTypes = {
+  taskGroup: PropTypes.shape({
+    taskId: PropTypes.string.isRequired,
+    parentTaskId: PropTypes.string,
+    logs: PropTypes.array.isRequired,
+  }).isRequired,
+  levelClass: PropTypes.object.isRequired,
+};
+
 export class RunsLogs extends Component {
   constructor(props) {
     super(props);
 
     const { logs, run, sort, warnings } = props;
 
+    const formattedLogs = logs.map((log) => ({
+      ...log,
+      formatted_timestamp: DateTime.fromISO(log.timestamp).toFormat(
+        "yyyy-MM-dd HH:mm"
+      ),
+    }));
+
     this.state = {
       error: null,
-      logs: logs.map((log) => ({
-        ...log,
-        formatted_timestamp: DateTime.fromISO(log.timestamp).toFormat(
-          "yyyy-MM-dd HH:mm"
-        ),
-      })),
+      logs: formattedLogs,
       run,
       sort,
       warnings: warnings || [],
       runDuration: this.getDurationInMinutes(run.started_at, run.finished_at),
       formatted_started_at: this.formatDatetime(run.started_at),
+    };
+
+    // Cache for memoized log tree
+    this.logTreeCache = {
+      logs: null,
+      tree: null,
     };
   }
 
@@ -60,6 +97,18 @@ export class RunsLogs extends Component {
     this.statusFetchCancel?.cancel();
   }
 
+  getLogTree() {
+    const { logs } = this.state;
+    // Return cached tree if logs haven't changed
+    if (this.logTreeCache.logs === logs) {
+      return this.logTreeCache.tree;
+    }
+    // Rebuild tree and update cache
+    const tree = this.buildLogTree(logs);
+    this.logTreeCache = { logs, tree };
+    return tree;
+  }
+
   getDurationInMinutes(startedAt, finishedAt) {
     if (!startedAt) return 0;
     const start = DateTime.fromISO(startedAt);
@@ -70,6 +119,32 @@ export class RunsLogs extends Component {
   formatDatetime(ts) {
     return ts ? DateTime.fromISO(ts).toFormat("yyyy-MM-dd HH:mm") : null;
   }
+
+  buildLogTree = (logs) => {
+    /**
+     * Build flat task groups from log list.
+     * Returns array of task groups, each with taskId, parentTaskId, and logs.
+     * Root tasks have parentTaskId == null; subtasks have parentTaskId set.
+     */
+    const taskGroups = {};
+
+    logs.forEach((log) => {
+      const context = log.context || {};
+      const taskId = context.task_id || "unknown";
+
+      if (!taskGroups[taskId]) {
+        taskGroups[taskId] = {
+          taskId,
+          parentTaskId: context.parent_task_id || null,
+          logs: [],
+        };
+      }
+
+      taskGroups[taskId].logs.push(log);
+    });
+
+    return Object.values(taskGroups);
+  };
 
   fetchLogs = async (runId, sort) => {
     try {
@@ -153,6 +228,7 @@ export class RunsLogs extends Component {
       formatted_started_at: formattedStartedAt,
       warnings,
     } = this.state;
+    const logTree = this.getLogTree();
     const levelClass = {
       DEBUG: "",
       INFO: "primary",
@@ -254,7 +330,7 @@ export class RunsLogs extends Component {
                     </List.Item>
                   </List>
                 </Grid.Column>
-                <Grid.Column className="log-table" width={13}>
+                <Grid.Column className="job-log-table" width={13}>
                   {/* Display error message for failed jobs */}
                   {(run.status === "FAILED" ||
                     run.status === "PARTIAL_SUCCESS") && (
@@ -278,19 +354,15 @@ export class RunsLogs extends Component {
                     </Message>
                   )}
                   <Segment>
-                    {logs.map((log) => (
-                      <div
-                        key={`${log.timestamp}-${log.level}-${log.message}`}
-                        className={`log-line ${log.level.toLowerCase()}`}
-                      >
-                        <span className="log-timestamp">
-                          [{log.formatted_timestamp}]
-                        </span>{" "}
-                        <span className={levelClass[log.level] || ""}>
-                          {log.level}
-                        </span>{" "}
-                        <span className="log-message">{log.message}</span>
-                      </div>
+                    {logTree.map((taskGroup) => (
+                      <React.Fragment key={taskGroup.taskId}>
+                        {!taskGroup.parentTaskId &&
+                          logTree.indexOf(taskGroup) > 0 && <Divider />}
+                        <TaskGroup
+                          taskGroup={taskGroup}
+                          levelClass={levelClass}
+                        />
+                      </React.Fragment>
                     ))}
                   </Segment>
                 </Grid.Column>

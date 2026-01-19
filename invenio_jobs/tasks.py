@@ -67,6 +67,10 @@ def execute_run(self, run_id, identity_id, kwargs=None):
             "run_id": str(run_id),
             "job_id": str(run.job.id),
             "identity_id": str(identity_id),
+            "task_id": str(self.request.id),
+            "parent_task_id": (
+                str(self.request.parent_id) if self.request.parent_id else None
+            ),
         }
     ):
         update_run(

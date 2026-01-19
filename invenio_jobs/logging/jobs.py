@@ -44,6 +44,8 @@ class ContextAwareOSHandler(logging.Handler):
 
     def enrich_log(self, record):
         """Enrich log record with contextvars' global context."""
+        context = dict(job_context.get())
+
         log_data = {
             "timestamp": datetime.now().isoformat(),
             "level": record.levelname,
@@ -51,7 +53,7 @@ class ContextAwareOSHandler(logging.Handler):
             "module": record.module,
             "function": record.funcName,
             "line": record.lineno,
-            "context": job_context.get(),
+            "context": context,
         }
         serialized_data = JobLogEntrySchema().load(log_data)
         return serialized_data
