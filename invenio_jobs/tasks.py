@@ -16,7 +16,7 @@ from flask import current_app, g
 from invenio_db import db
 
 from invenio_jobs.errors import TaskExecutionError, TaskExecutionPartialError
-from invenio_jobs.logging.jobs import set_job_context
+from invenio_jobs.logging.jobs import reset_sequence, set_job_context
 from invenio_jobs.models import Run, RunStatusEnum
 from invenio_jobs.proxies import current_jobs
 
@@ -51,13 +51,26 @@ def execute_run(self, run_id, identity_id, kwargs=None):
     """Execute and manage a run state and task."""
     run = Run.query.filter_by(id=run_id).one_or_none()
     task = current_jobs.registry.get(run.job.task).task
+
+    # Extract Celery task metadata for lineage tracking
+    task_id = str(self.request.id)
+    parent_task_id = str(self.request.parent_id) if self.request.parent_id else None
+    root_task_id = str(getattr(self.request, "root_id", task_id))
+    task_name = self.name
+
     with set_job_context(
         {
             "run_id": str(run_id),
             "job_id": str(run.job.id),
             "identity_id": str(identity_id),
+            "task_id": task_id,
+            "parent_task_id": parent_task_id,
+            "root_task_id": root_task_id,
+            "task_name": task_name,
         }
     ):
+        # Reset sequence counter for this task
+        reset_sequence()
         update_run(run, status=RunStatusEnum.RUNNING, started_at=datetime.utcnow())
         try:
             current_app.logger.debug(

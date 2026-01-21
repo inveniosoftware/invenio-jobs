@@ -32,6 +32,22 @@ from .. import config
 EMPTY_JOB_CTX = object()
 job_context = ContextVar("job_context", default=EMPTY_JOB_CTX)
 
+# Context variable for sequence counter (isolated per task execution)
+task_sequence = ContextVar("task_sequence", default=0)
+
+
+def get_next_sequence():
+    """Get next sequence number for current task (context-isolated)."""
+    current = task_sequence.get()
+    next_seq = current + 1
+    task_sequence.set(next_seq)
+    return next_seq
+
+
+def reset_sequence():
+    """Reset sequence counter for new task."""
+    task_sequence.set(0)
+
 
 class ContextAwareOSHandler(logging.Handler):
     """Custom logging handler that enriches logs with global context and indexes them in OS."""
@@ -44,6 +60,9 @@ class ContextAwareOSHandler(logging.Handler):
 
     def enrich_log(self, record):
         """Enrich log record with contextvars' global context."""
+        context = dict(job_context.get())
+        context["producer_seq"] = get_next_sequence()
+
         log_data = {
             "timestamp": datetime.now().isoformat(),
             "level": record.levelname,
@@ -51,7 +70,7 @@ class ContextAwareOSHandler(logging.Handler):
             "module": record.module,
             "function": record.funcName,
             "line": record.lineno,
-            "context": job_context.get(),
+            "context": context,
         }
         serialized_data = JobLogEntrySchema().load(log_data)
         return serialized_data

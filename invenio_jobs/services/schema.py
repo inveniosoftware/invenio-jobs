@@ -295,6 +295,11 @@ class LogContextSchema(Schema):
     job_id = fields.Str(required=True)
     run_id = fields.Str(required=True)
     identity_id = fields.Str(required=True)
+    task_id = fields.Str(allow_none=True)
+    parent_task_id = fields.Str(allow_none=True)
+    root_task_id = fields.Str(allow_none=True)
+    task_name = fields.Str(allow_none=True)
+    producer_seq = fields.Int(allow_none=True)
 
 
 class JobLogEntrySchema(Schema):
