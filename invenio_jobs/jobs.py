@@ -101,7 +101,10 @@ class JobType(ABC):
         if custom_args:
             return custom_args
 
-        if since is None and job_obj.last_runs["success"]:
+        last_success = job_obj.last_runs.get("success")
+
+        if since is None and last_success and last_success.started_at:
+
             """
             The most common case: `since` has not been manually specified by the user, so we
             set it to the start time of the last successful job.
@@ -110,7 +113,7 @@ class JobType(ABC):
             For comparison with other dates in job implementors, it's useful to have TZ info in the timestamp.
             """
 
-            since = job_obj.last_runs["success"].started_at.replace(tzinfo=timezone.utc)
+            since = last_success.started_at.replace(tzinfo=timezone.utc)
 
         """
         Otherwise, since is already specified as a datetime with a timezone (see PredefinedArgsSchema) or we have never
