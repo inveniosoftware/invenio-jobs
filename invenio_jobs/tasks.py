@@ -26,23 +26,32 @@ def update_run(run, **kwargs):
     """Method to update and commit run updates."""
     if not run:
         return
+
     has_active_subtasks = (
         run.subtasks.filter(
             Run.status.in_([RunStatusEnum.RUNNING.value, RunStatusEnum.QUEUED.value])
         ).count()
         > 0
     )
+
     current_app.logger.info(
         f"Updating run {run.id} with status {run.status} and active subtasks: {has_active_subtasks}"
     )
-    if has_active_subtasks:
-        # If there are active subtasks, we keep the run status as RUNNING and simply update the errored entries, if present.
-        if errored_entries := kwargs.get("errored_entries", None):
+
+    new_status = kwargs.get("status")
+    if has_active_subtasks and new_status != RunStatusEnum.RUNNING:
+        # If subtasks are active, only update errored_entries
+        if errored_entries := kwargs.get("errored_entries"):
             run.errored_entries += errored_entries
-            db.session.commit()
+        db.session.commit()
         return
+
+    # Update all fields (either no active subtasks, or setting status to RUNNING)
     for kw, value in kwargs.items():
-        setattr(run, kw, value)
+        if kw == "errored_entries":
+            run.errored_entries += value
+        else:
+            setattr(run, kw, value)
     db.session.commit()
 
 
