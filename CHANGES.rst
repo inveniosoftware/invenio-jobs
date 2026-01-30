@@ -1,6 +1,6 @@
 ..
     Copyright (C) 2024-2025 CERN.
-    Copyright (C) 2024-2025 Graz University of Technology.
+    Copyright (C) 2024-2026 Graz University of Technology.
     Copyright (C) 2025 KTH Royal Institute of Technology.
 
     Invenio-Jobs is free software; you can redistribute it and/or modify it
@@ -8,6 +8,18 @@
 
 Changes
 =======
+
+Version v7.0.0 (released 2026-01-30)
+
+- chore(setup): bump dependencies
+- chore(black): update formatting to >= 26.0
+- fix: ChangedInMarshmallow4Warning
+- fix: RemovedInMarshmallow4Warning
+- fix(chore): DeprecationWarning stdlib
+- feat: commandline client for jobs
+- feat: add delete button to job detail in administration
+- feat: option to edit job args
+- chore: deprecate Link usage
 
 Version v6.1.0 (released 2025-10-23)
 
