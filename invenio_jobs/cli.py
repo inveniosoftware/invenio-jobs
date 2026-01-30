@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2024 CERN.
+# Copyright (C) 2026 Graz University of Technology.
 #
 # Invenio-Jobs is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 
 """Invenio Jobs CLI."""
+
 from __future__ import annotations
 
 import os
@@ -392,7 +394,6 @@ def update_job(job_id):
 @with_appcontext
 def schedule_job(job_id, schedule, yes, tz=None):
     """Schedule a job using crontab format."""
-
     # if timezone is not provided, use BABEL_DEFAULT_TIMEZONE if set, otherwise use UTC timezone
     tz = tz or current_app.config.get("BABEL_DEFAULT_TIMEZONE")
     if tz:

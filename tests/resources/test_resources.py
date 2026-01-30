@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2024 CERN.
-# Copyright (C) 2025 Graz University of Technology.
+# Copyright (C) 2025-2026 Graz University of Technology.
 #
 # Invenio-Jobs is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 
 """Resource tests."""
+
 from copy import deepcopy
 from datetime import datetime, timedelta, timezone
 from time import sleep
@@ -254,15 +255,14 @@ def test_simple_flow(mock_apply_async, app, db, client, user):
         "test_flag": True,
         "since": "2025-11-20T12:18:00+00:00",
     }
-    job_payload[
-        "custom_args"
-    ] = """
+    custom_args = """
     {
         "custom_arg1": "value1",
         "custom_arg2": {"nested_arg1": "nested_value1"},
         "test_flag": false
     }
     """
+    job_payload["custom_args"] = custom_args
     res = client.put(
         f"/jobs/{job_id}",
         json={**job_payload, "active": True},
