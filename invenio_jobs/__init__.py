@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright (C) 2024 CERN.
+# Copyright (C) 2024-2026 CERN.
 # Copyright (C) 2024-2026 Graz University of Technology.
 # Copyright (C) 2025 KTH Royal Institute of Technology.
 #
@@ -11,6 +11,6 @@
 
 from .ext import InvenioJobs
 
-__version__ = "7.0.0"
+__version__ = "7.0.1"
 
 __all__ = ("__version__", "InvenioJobs")

@@ -9,6 +9,10 @@
 Changes
 =======
 
+Version v7.0.1 (released 2026-02-16)
+
+- fix: updated last_success condition and update_run
+
 Version v7.0.0 (released 2026-01-30)
 
 - chore(setup): bump dependencies
