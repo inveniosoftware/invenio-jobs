@@ -9,6 +9,10 @@
 Changes
 =======
 
+Version v6.1.1 (released 2026-02-17)
+
+- jobs: updated last_success condition and update_run
+
 Version v6.1.0 (released 2025-10-23)
 
 - fix: Handle large log results in job details admin panel
