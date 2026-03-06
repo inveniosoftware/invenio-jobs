@@ -11,6 +11,7 @@ import ast
 from datetime import datetime
 
 from flask import current_app, render_template
+from invenio_i18n import lazy_gettext as _
 from invenio_mail.tasks import send_email
 from jinja2.sandbox import SandboxedEnvironment
 
@@ -78,24 +79,38 @@ def send_run_notification(run, job):
         # Prepare status-specific content
         status_messages = {
             "SUCCESS": {
-                "title": "Job Completed Successfully",
-                "summary": f"Job '{job.title}' has completed successfully.",
-                "user_message": f"Great news! The job '{job.title}' has finished running and completed successfully.",
-                "action": "You can review the results by clicking the button below.",
+                "title": _("Job Completed Successfully"),
+                "summary": _("Job '{title}' has completed successfully.").format(
+                    title=job.title
+                ),
+                "user_message": _(
+                    "Great news! The job '{title}' has finished running and completed successfully."
+                ).format(title=job.title),
+                "action": _("You can review the results by clicking the button below."),
                 "color": "#28a745",
             },
             "FAILED": {
-                "title": "Job Failed",
-                "summary": f"Job '{job.title}' has failed.",
-                "user_message": f"Unfortunately, the job '{job.title}' encountered an error and could not complete.",
-                "action": "Please review the details below or contact your system administrator if you need assistance.",
+                "title": _("Job Failed"),
+                "summary": _("Job '{title}' has failed.").format(title=job.title),
+                "user_message": _(
+                    "Unfortunately, the job '{title}' encountered an error and could not complete."
+                ).format(title=job.title),
+                "action": _(
+                    "Please review the details below or contact your system administrator if you need assistance."
+                ),
                 "color": "#dc3545",
             },
             "PARTIAL_SUCCESS": {
-                "title": "Job Completed with Errors",
-                "summary": f"Job '{job.title}' completed but encountered errors.",
-                "user_message": f"The job '{job.title}' has finished, but some items could not be processed.",
-                "action": "Please review which items failed and take appropriate action if needed.",
+                "title": _("Job Completed with Errors"),
+                "summary": _("Job '{title}' completed but encountered errors.").format(
+                    title=job.title
+                ),
+                "user_message": _(
+                    "The job '{title}' has finished, but some items could not be processed."
+                ).format(title=job.title),
+                "action": _(
+                    "Please review which items failed and take appropriate action if needed."
+                ),
                 "color": "#ffc107",
             },
         }
@@ -103,10 +118,14 @@ def send_run_notification(run, job):
         status_info = status_messages.get(
             run.status.name,
             {
-                "title": f"Job Status: {run.status.name}",
-                "summary": f"Job '{job.title}' status: {run.status.name}",
-                "user_message": f"The job '{job.title}' has a status update: {run.status.name}",
-                "action": "Please review the details below for more information.",
+                "title": _("Job Status: {status}").format(status=run.status.name),
+                "summary": _("Job '{title}' status: {status}").format(
+                    title=job.title, status=run.status.name
+                ),
+                "user_message": _(
+                    "The job '{title}' has a status update: {status}"
+                ).format(title=job.title, status=run.status.name),
+                "action": _("Please review the details below for more information."),
                 "color": "#6c757d",
             },
         )
