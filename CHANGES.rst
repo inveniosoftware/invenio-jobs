@@ -9,6 +9,10 @@
 Changes
 =======
 
+Version v8.0.1 (released 2026-03-19)
+
+- fix(alembic):  recipes down versions and branch merge
+
 Version v8.0.0 (released 2026-03-09)
 
 - feat(logs): order logs and group by task
