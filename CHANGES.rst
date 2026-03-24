@@ -8,6 +8,15 @@
 Changes
 =======
 
+Version v5.0.1 (released 2026-03-24)
+
+- chore: reformat with black v26
+- fix(setup): pin setuptools for the removed pkg_resources
+- i18n: pulled translations
+- tests: fix logging crash when no app context
+- fix: Handle large log results in job details admin panel
+- i18n: pulled translations (#116)
+
 Version v5.0.0 (released 2025-09-09)
 
 - setup: bump major version of invenio-users-resources
