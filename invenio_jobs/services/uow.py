@@ -6,6 +6,7 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 
 """Unit of work."""
+
 from invenio_records_resources.services.uow import Operation
 
 from invenio_jobs.logging.jobs import job_context

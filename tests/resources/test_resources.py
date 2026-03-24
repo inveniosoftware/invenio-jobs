@@ -6,6 +6,7 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 
 """Resource tests."""
+
 from copy import deepcopy
 from datetime import datetime, timedelta, timezone
 from time import sleep
