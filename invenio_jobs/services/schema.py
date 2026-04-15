@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2024 CERN.
 # Copyright (C) 2025 Graz University of Technology.
+# Copyright (C) 2026 KTH Royal Institute of Technology.
 #
 # Invenio-Jobs is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -31,7 +32,8 @@ def _not_blank(**kwargs):
     max_ = kwargs.get("max", "")
     return validate.Length(
         error=_(
-            "Field cannot be blank or longer than {max_} characters.".format(max_=max_)
+            "Field cannot be blank or longer than %(max_)s characters.",
+            max_=max_,
         ),
         min=1,
         **kwargs,

@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2024 CERN.
 # Copyright (C) 2024 University of Münster.
+# Copyright (C) 2026 KTH Royal Institute of Technology.
 #
 # Invenio-Jobs is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -25,9 +26,7 @@ class JobNotFoundError(JobsError):
 
     def __init__(self, id):
         """Initialise error."""
-        super().__init__(
-            description=_("Job with ID {id} does not exist.").format(id=id)
-        )
+        super().__init__(description=_("Job with ID %(id)s does not exist.", id=id))
 
 
 class RunNotFoundError(JobsError):
@@ -35,10 +34,14 @@ class RunNotFoundError(JobsError):
 
     def __init__(self, id, job_id=None):
         """Initialise error."""
-        description = _("Run with ID {id} does not exist.")
+        description = _("Run with ID %(id)s does not exist.", id=id)
         if job_id:
-            description = _("Run with ID {id} for job {job_id} does not exist.")
-        super().__init__(description=description.format(id=id, job_id=job_id))
+            description = _(
+                "Run with ID %(id)s for job %(job_id)s does not exist.",
+                id=id,
+                job_id=job_id,
+            )
+        super().__init__(description=description)
 
 
 class RunStatusChangeError(JobsError):
@@ -49,8 +52,10 @@ class RunStatusChangeError(JobsError):
         self.run = run
         self.new_status = new_status
         super().__init__(
-            description=_("You cannot change run status from {old} to {new}.").format(
-                old=run.status, new=new_status
+            description=_(
+                "You cannot change run status from %(old)s to %(new)s.",
+                old=run.status,
+                new=new_status,
             )
         )
 
@@ -62,6 +67,10 @@ class RunTooManyResults(JobsError):
         """Initialise error."""
         super().__init__(
             description=_(
-                f"Too many log results returned ({total}). The maximum allowed is {max_docs}. Please refine your search criteria to reduce the result size."
+                "Too many log results returned (%(total)s). The maximum allowed "
+                "is %(max_docs)s. Please refine your search criteria to reduce "
+                "the result size.",
+                total=total,
+                max_docs=max_docs,
             )
         )
