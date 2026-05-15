@@ -2,6 +2,7 @@
 # This file is part of Invenio.
 # Copyright (C) 2016-2018 CERN.
 # Copyright (C) 2024 Graz University of Technology.
+# Copyright (C) 2026 CESNET z.s.p.o.
 #
 # Invenio is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -21,7 +22,10 @@ from invenio_jobs.models import RunStatusEnum
 revision = "356496a01197"
 down_revision = "371f4cbcb73d"
 branch_labels = ()
-depends_on = None
+depends_on = [
+    # invenio_accounts/alembic/9848d0149abd_create_accounts_tables.py
+    "9848d0149abd"
+]
 
 
 def upgrade():
