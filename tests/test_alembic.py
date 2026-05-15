@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2023 CERN.
 # Copyright (C) 2024 Graz University of Technology.
+# Copyright (C) 2026 CESNET z.s.p.o.
 #
 # Invenio-Github is free software; you can redistribute it and/or modify
 # it under the terms of the MIT License; see LICENSE file for more details.
@@ -11,7 +12,6 @@ import pytest
 from invenio_db.utils import alembic_test_context, drop_alembic_version_table
 
 
-@pytest.mark.skip("endles loop")
 def test_alembic(base_app, database):
     """Test alembic recipes."""
     db = database
@@ -38,7 +38,7 @@ def test_alembic(base_app, database):
 
     # Try to upgrade and downgrade
     ext.alembic.stamp()
-    ext.alembic.downgrade(target="1753948224")
+    ext.alembic.downgrade(target="1f896f6990b8")
     ext.alembic.upgrade()
     assert len(ext.alembic.compare_metadata()) == 0
 
