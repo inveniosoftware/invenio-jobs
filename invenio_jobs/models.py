@@ -2,6 +2,7 @@
 #
 # Copyright (C) 2024 CERN.
 # Copyright (C) 2025-2026 Graz University of Technology.
+# Copyright (C) 2026 CESNET z.s.p.o.
 #
 # Invenio-Jobs is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -175,13 +176,25 @@ class Run(db.Model, db.Timestamp):
     # Meant to mark if the sibtasks of this run have been all spawned.
     subtasks_closed = db.Column(db.Boolean, default=False, nullable=False)
 
-    total_subtasks = db.Column(db.Integer, default=0, nullable=False)
-    completed_subtasks = db.Column(db.Integer, default=0, nullable=False)
-    failed_subtasks = db.Column(db.Integer, default=0, nullable=False)
-    errored_entries = db.Column(db.Integer, default=0, nullable=False)
-    inserted_entries = db.Column(db.Integer, default=0, nullable=False)
-    updated_entries = db.Column(db.Integer, default=0, nullable=False)
-    total_entries = db.Column(db.Integer, default=0, nullable=False)
+    total_subtasks = db.Column(
+        db.Integer, default=0, server_default="0", nullable=False
+    )
+    completed_subtasks = db.Column(
+        db.Integer, default=0, server_default="0", nullable=False
+    )
+    failed_subtasks = db.Column(
+        db.Integer, default=0, server_default="0", nullable=False
+    )
+    errored_entries = db.Column(
+        db.Integer, default=0, server_default="0", nullable=False
+    )
+    inserted_entries = db.Column(
+        db.Integer, default=0, server_default="0", nullable=False
+    )
+    updated_entries = db.Column(
+        db.Integer, default=0, server_default="0", nullable=False
+    )
+    total_entries = db.Column(db.Integer, default=0, server_default="0", nullable=False)
 
     @classmethod
     def create(cls, job, **kwargs):
