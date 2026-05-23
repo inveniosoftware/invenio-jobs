@@ -1,7 +1,8 @@
-// This file is part of React-Invenio-jobs
-//
-// Invenio-jobs is free software; you can redistribute it and/or modify it
-// under the terms of the MIT License; see LICENSE file for more details.
+/*
+ * SPDX-FileCopyrightText: 2024 CERN.
+ * SPDX-FileCopyrightText: 2025 Graz University of Technology.
+ * SPDX-License-Identifier: MIT
+ */
 
 const { writeFileSync } = require("fs");
 const packageJson = require("../package");

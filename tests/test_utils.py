@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2025 CERN.
+# SPDX-License-Identifier: MIT
+
 import json
 from datetime import datetime, timedelta, timezone
 
