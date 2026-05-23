@@ -1,6 +1,7 @@
 # SPDX-FileCopyrightText: 2024 CERN.
 # SPDX-License-Identifier: MIT
 
+exclude .git-blame-ignore-revs
 include .dockerignore
 include .editorconfig
 include .tx/config
