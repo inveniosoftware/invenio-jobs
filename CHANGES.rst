@@ -9,6 +9,14 @@
 Changes
 =======
 
+Version v9.0.0 (released 2026-05-29)
+
+- chore(setup): bump dependencies
+- chore: switch to opensearch2 in tests
+- fix(tests): alembic bug workaround
+- fix: Using server defaults in model
+- fix: added missing alembic dependency on invenio-accounts
+
 Version v8.0.1 (released 2026-03-19)
 
 - fix(alembic):  recipes down versions and branch merge
