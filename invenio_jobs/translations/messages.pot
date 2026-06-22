@@ -1,178 +1,310 @@
 # Translations template for invenio-jobs.
-# Copyright (C) 2025 CERN
+# Copyright (C) 2026 CERN
 # This file is distributed under the same license as the invenio-jobs
 # project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: invenio-jobs 4.1.0\n"
+"Project-Id-Version: invenio-jobs 10.0.0\n"
 "Report-Msgid-Bugs-To: info@inveniosoftware.org\n"
-"POT-Creation-Date: 2025-07-08 19:01+0000\n"
+"POT-Creation-Date: 2026-06-22 20:49+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 
-#: invenio_jobs/config.py:37
+#: invenio_jobs/config.py:34
 msgid "Default"
 msgstr ""
 
-#: invenio_jobs/config.py:38
+#: invenio_jobs/config.py:35
 msgid "Default queue"
 msgstr ""
 
-#: invenio_jobs/config.py:42
+#: invenio_jobs/config.py:39
 msgid "Low"
 msgstr ""
 
-#: invenio_jobs/config.py:43
+#: invenio_jobs/config.py:40
 msgid "Low priority queue"
 msgstr ""
 
-#: invenio_jobs/administration/jobs.py:71 invenio_jobs/config.py:57
+#: invenio_jobs/administration/jobs.py:69 invenio_jobs/config.py:54
 msgid "Jobs"
 msgstr ""
 
-#: invenio_jobs/administration/jobs.py:73 invenio_jobs/config.py:61
+#: invenio_jobs/administration/jobs.py:71 invenio_jobs/config.py:58
 msgid "Last run"
 msgstr ""
 
-#: invenio_jobs/administration/jobs.py:74
-#: invenio_jobs/administration/jobs.py:99 invenio_jobs/config.py:65
+#: invenio_jobs/administration/jobs.py:72
+#: invenio_jobs/administration/jobs.py:98 invenio_jobs/config.py:62
 msgid "Started by"
 msgstr ""
 
-#: invenio_jobs/administration/jobs.py:75 invenio_jobs/config.py:69
+#: invenio_jobs/administration/jobs.py:73 invenio_jobs/config.py:66
 msgid "Next run"
 msgstr ""
 
-#: invenio_jobs/jobs.py:42
+#: invenio_jobs/jobs.py:38
 msgid ""
-"YYYY-MM-DD HH:mm format. Leave empty to continue since last successful "
-"run."
+"YYYY-MM-DDThh:mm:ss+00:00 format (ISO 8601 in UTC). Leave empty to "
+"continue since last successful run."
 msgstr ""
 
-#: invenio_jobs/administration/jobs.py:43
+#: invenio_jobs/utils.py:78
+msgid "Job Completed Successfully"
+msgstr ""
+
+#: invenio_jobs/utils.py:79
+#, python-brace-format
+msgid "Job '{title}' has completed successfully."
+msgstr ""
+
+#: invenio_jobs/utils.py:83
+#, python-brace-format
+msgid ""
+"Great news! The job '{title}' has finished running and completed "
+"successfully."
+msgstr ""
+
+#: invenio_jobs/utils.py:85
+msgid "You can review the results by clicking the button below."
+msgstr ""
+
+#: invenio_jobs/utils.py:89
+msgid "Job Failed"
+msgstr ""
+
+#: invenio_jobs/utils.py:90
+#, python-brace-format
+msgid "Job '{title}' has failed."
+msgstr ""
+
+#: invenio_jobs/utils.py:92
+#, python-brace-format
+msgid ""
+"Unfortunately, the job '{title}' encountered an error and could not "
+"complete."
+msgstr ""
+
+#: invenio_jobs/utils.py:95
+msgid ""
+"Please review the details below or contact your system administrator if "
+"you need assistance."
+msgstr ""
+
+#: invenio_jobs/utils.py:100
+msgid "Job Completed with Errors"
+msgstr ""
+
+#: invenio_jobs/utils.py:101
+#, python-brace-format
+msgid "Job '{title}' completed but encountered errors."
+msgstr ""
+
+#: invenio_jobs/utils.py:105
+#, python-brace-format
+msgid "The job '{title}' has finished, but some items could not be processed."
+msgstr ""
+
+#: invenio_jobs/utils.py:108
+msgid "Please review which items failed and take appropriate action if needed."
+msgstr ""
+
+#: invenio_jobs/utils.py:117
+#, python-brace-format
+msgid "Job Status: {status}"
+msgstr ""
+
+#: invenio_jobs/utils.py:118
+#, python-brace-format
+msgid "Job '{title}' status: {status}"
+msgstr ""
+
+#: invenio_jobs/utils.py:122
+#, python-brace-format
+msgid "The job '{title}' has a status update: {status}"
+msgstr ""
+
+#: invenio_jobs/utils.py:124
+msgid "Please review the details below for more information."
+msgstr ""
+
+#: invenio_jobs/administration/jobs.py:39
 msgid "Schedule"
 msgstr ""
 
-#: invenio_jobs/administration/jobs.py:49
+#: invenio_jobs/administration/jobs.py:45
 msgid "Configure and run"
 msgstr ""
 
-#: invenio_jobs/administration/jobs.py:50
+#: invenio_jobs/administration/jobs.py:46
 msgid "Run now"
 msgstr ""
 
-#: invenio_jobs/administration/jobs.py:72
+#: invenio_jobs/administration/jobs.py:70
 msgid "Status"
 msgstr ""
 
-#: invenio_jobs/administration/jobs.py:96
+#: invenio_jobs/administration/jobs.py:95
 msgid "Run (ISO UTC)"
 msgstr ""
 
-#: invenio_jobs/administration/jobs.py:97
+#: invenio_jobs/administration/jobs.py:96
 msgid "Duration"
 msgstr ""
 
-#: invenio_jobs/administration/jobs.py:98
+#: invenio_jobs/administration/jobs.py:97
 msgid "Message"
 msgstr ""
 
-#: invenio_jobs/administration/jobs.py:100
+#: invenio_jobs/administration/jobs.py:99
 msgid "Action"
 msgstr ""
 
-#: invenio_jobs/administration/jobs.py:141 invenio_jobs/services/config.py:85
+#: invenio_jobs/administration/jobs.py:140 invenio_jobs/services/config.py:81
 msgid "Title"
 msgstr ""
 
-#: invenio_jobs/administration/jobs.py:142
+#: invenio_jobs/administration/jobs.py:141
 msgid "A title of the job."
 msgstr ""
 
-#: invenio_jobs/administration/jobs.py:146
+#: invenio_jobs/administration/jobs.py:145
 msgid "Description"
 msgstr ""
 
-#: invenio_jobs/administration/jobs.py:147
+#: invenio_jobs/administration/jobs.py:146
 msgid "A short description about the job."
 msgstr ""
 
-#: invenio_jobs/administration/jobs.py:151
+#: invenio_jobs/administration/jobs.py:150
 msgid "Queue"
 msgstr ""
 
-#: invenio_jobs/administration/jobs.py:152
+#: invenio_jobs/administration/jobs.py:151
 msgid "A queue for the job run."
 msgstr ""
 
-#: invenio_jobs/administration/jobs.py:158
+#: invenio_jobs/administration/jobs.py:157
 msgid "Task"
 msgstr ""
 
-#: invenio_jobs/administration/jobs.py:159
+#: invenio_jobs/administration/jobs.py:158
 msgid "A task for the job run."
 msgstr ""
 
-#: invenio_jobs/administration/jobs.py:165
+#: invenio_jobs/administration/jobs.py:164
 msgid "Active"
 msgstr ""
 
-#: invenio_jobs/services/config.py:42 invenio_jobs/services/config.py:82
-#: invenio_jobs/services/config.py:122 invenio_jobs/services/config.py:163
+#: invenio_jobs/administration/jobs.py:168
+msgid "Notification emails"
+msgstr ""
+
+#: invenio_jobs/administration/jobs.py:170
+msgid ""
+"Email addresses to notify about this job's status. Leave empty to disable"
+" notifications."
+msgstr ""
+
+#: invenio_jobs/administration/jobs.py:179
+msgid "Notification statuses"
+msgstr ""
+
+#: invenio_jobs/administration/jobs.py:181
+msgid ""
+"Which run statuses should trigger email notifications. Leave empty to "
+"disable notifications."
+msgstr ""
+
+#: invenio_jobs/administration/jobs.py:238
+msgid "Current Job Configuration"
+msgstr ""
+
+#: invenio_jobs/administration/jobs.py:239
+msgid "The configuration used for this Job."
+msgstr ""
+
+#: invenio_jobs/administration/jobs.py:243
+msgid "Custom Arguments"
+msgstr ""
+
+#: invenio_jobs/administration/jobs.py:245
+msgid ""
+"When provided, the input below will override any arguments specified "
+"above."
+msgstr ""
+
+#: invenio_jobs/services/config.py:38 invenio_jobs/services/config.py:78
+#: invenio_jobs/services/config.py:123 invenio_jobs/services/config.py:166
 msgid "Ascending"
 msgstr ""
 
-#: invenio_jobs/services/config.py:46 invenio_jobs/services/config.py:83
-#: invenio_jobs/services/config.py:123 invenio_jobs/services/config.py:164
+#: invenio_jobs/services/config.py:42 invenio_jobs/services/config.py:79
+#: invenio_jobs/services/config.py:124 invenio_jobs/services/config.py:167
 msgid "Descending"
 msgstr ""
 
-#: invenio_jobs/services/config.py:50
+#: invenio_jobs/services/config.py:46
 msgid "Name"
 msgstr ""
 
-#: invenio_jobs/services/config.py:125
+#: invenio_jobs/services/config.py:126
 msgid "Created"
 msgstr ""
 
-#: invenio_jobs/services/config.py:167
+#: invenio_jobs/services/config.py:170
 msgid "Timestamp"
 msgstr ""
 
-#: invenio_jobs/services/errors.py:29
-#, python-brace-format
-msgid "Job with ID {id} does not exist."
+#: invenio_jobs/services/errors.py:25
+#, python-format
+msgid "Job with ID %(id)s does not exist."
 msgstr ""
 
-#: invenio_jobs/services/errors.py:38
-#, python-brace-format
-msgid "Run with ID {id} does not exist."
+#: invenio_jobs/services/errors.py:33
+#, python-format
+msgid "Run with ID %(id)s does not exist."
 msgstr ""
 
-#: invenio_jobs/services/errors.py:40
-#, python-brace-format
-msgid "Run with ID {id} for job {job_id} does not exist."
+#: invenio_jobs/services/errors.py:36
+#, python-format
+msgid "Run with ID %(id)s for job %(job_id)s does not exist."
 msgstr ""
 
 #: invenio_jobs/services/errors.py:52
-#, python-brace-format
-msgid "You cannot change run status from {old} to {new}."
+#, python-format
+msgid "You cannot change run status from %(old)s to %(new)s."
 msgstr ""
 
-#: invenio_jobs/services/schema.py:33
-#, python-brace-format
-msgid "Field cannot be blank or longer than {max_} characters."
+#: invenio_jobs/services/errors.py:66
+#, python-format
+msgid ""
+"Too many log results returned (%(total)s). The maximum allowed is "
+"%(max_docs)s. Please refine your search criteria to reduce the result "
+"size."
 msgstr ""
 
-#: invenio_jobs/templates/semantic-ui/invenio_jobs/system/jobs/jobs-details.html:18
+#: invenio_jobs/services/results.py:183
+#, python-format
+msgid ""
+"Too many log results returned (%(total)s). Only the most recent %(max)s "
+"results are shown."
+msgstr ""
+
+#: invenio_jobs/services/schema.py:31
+#, python-format
+msgid "Field cannot be blank or longer than %(max_)s characters."
+msgstr ""
+
+#: invenio_jobs/templates/semantic-ui/invenio_jobs/system/jobs/jobs-details.html:17
 msgid "Back"
 msgstr ""
 
