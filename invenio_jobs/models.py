@@ -36,8 +36,11 @@ def _dump_dict(model):
     return {c.key: getattr(model, c.key) for c in sa.inspect(model).mapper.column_attrs}
 
 
-def _job_has_custom_arguments_set(job):
-    return job.run_args and job.run_args.get("custom_args")
+def _split_task_arguments(task_arguments=None):
+    """Split task arguments from custom arguments."""
+    task_arguments = deepcopy(task_arguments or {})
+    custom_args = task_arguments.pop("custom_args", None)
+    return task_arguments, custom_args
 
 
 class Job(db.Model, db.Timestamp):
@@ -75,11 +78,9 @@ class Job(db.Model, db.Timestamp):
     @property
     def default_args(self):
         """Compute default job arguments."""
-        custom_args = None
-        if self.run_args:
-            custom_args = self.run_args.get("custom_args")
+        task_arguments, custom_args = _split_task_arguments(self.run_args)
         return Task.get(self.task)._build_task_arguments(
-            custom_args=custom_args, job_obj=self
+            custom_args=custom_args, job_obj=self, **task_arguments
         )
 
     @property
@@ -195,16 +196,11 @@ class Run(db.Model, db.Timestamp):
     @classmethod
     def create(cls, job, **kwargs):
         """Create a new run."""
-        if "args" not in kwargs and not _job_has_custom_arguments_set(job):
-            kwargs["args"] = cls.generate_args(job)
-        elif (
-            "args" not in kwargs or not kwargs.get("args").get("custom_args")
-        ) and _job_has_custom_arguments_set(job):
+        task_arguments = kwargs.get("args")
+        if task_arguments is None:
             task_arguments = job.run_args
-            kwargs["args"] = cls.generate_args(job, task_arguments=task_arguments)
-        else:
-            task_arguments = deepcopy(kwargs["args"])
-            kwargs["args"] = cls.generate_args(job, task_arguments=task_arguments)
+
+        kwargs["args"] = cls.generate_args(job, task_arguments=task_arguments)
         if "queue" not in kwargs:
             kwargs["queue"] = job.default_queue
         return cls(job=job, **kwargs)
@@ -212,8 +208,9 @@ class Run(db.Model, db.Timestamp):
     @classmethod
     def generate_args(cls, job, task_arguments=None):
         """Generate new run args."""
+        task_arguments, custom_args = _split_task_arguments(task_arguments)
         args = Task.get(job.task)._build_task_arguments(
-            job_obj=job, **task_arguments or {}
+            job_obj=job, custom_args=custom_args, **task_arguments
         )
 
         args = json.dumps(args, default=job_arg_json_dumper)

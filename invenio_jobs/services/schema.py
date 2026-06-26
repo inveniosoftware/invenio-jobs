@@ -170,6 +170,7 @@ class JobSchema(Schema, FieldPermissionsMixin):
 
     default_args = fields.Raw(dump_only=True, dump_default=dict, load_default=dict)
     run_args = fields.Dict(allow_none=True)
+    args = fields.Dict(dump_only=True)
 
     schedule = fields.Nested(ScheduleSchema, allow_none=True, load_default=None)
 
@@ -237,6 +238,12 @@ class JobSchema(Schema, FieldPermissionsMixin):
         for key, value in last_runs.items():
             if value:
                 last_runs[key] = RunSchema().dump(value.dump())
+        return obj
+
+    @pre_dump
+    def dump_run_args(self, obj, many=False, **kwargs):
+        """Expose stored job arguments for admin edit forms."""
+        obj["args"] = obj.get("run_args") or {}
         return obj
 
     @pre_load

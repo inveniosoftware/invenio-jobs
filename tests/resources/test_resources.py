@@ -41,6 +41,7 @@ def test_simple_flow(mock_apply_async, app, db, client, user):
         "default_queue": "low",
         "default_args": '{"since": null}',
         "run_args": None,
+        "args": {},
         "schedule": {"type": "interval", "hours": 4},
         "created": res.json["created"],
         "updated": res.json["updated"],
@@ -67,6 +68,7 @@ def test_simple_flow(mock_apply_async, app, db, client, user):
     expected_job["active"] = True
     expected_job["updated"] = res.json["updated"]
     expected_job["run_args"] = {}
+    expected_job["args"] = {}
 
     assert res.json == expected_job
 
@@ -275,6 +277,7 @@ def test_simple_flow(mock_apply_async, app, db, client, user):
             "test_flag": False,
         },
     }
+    expected_job["args"] = deepcopy(expected_job["run_args"])
     expected_job["default_args"] = (
         '{"test_flag": false, "custom_arg1": "value1", "custom_arg2": {"nested_arg1": "nested_value1"}}'
     )
@@ -387,6 +390,7 @@ def test_jobs_create(db, client):
         "default_queue": "celery",
         "default_args": '{"since": null}',
         "run_args": None,
+        "args": {},
         "schedule": None,
         "created": res.json["created"],
         "updated": res.json["updated"],
@@ -422,6 +426,7 @@ def test_jobs_create(db, client):
         "default_queue": "low",
         "default_args": '{"since": null}',
         "run_args": None,
+        "args": {},
         "schedule": {"type": "interval", "hours": 4},
         "created": res.json["created"],
         "updated": res.json["updated"],
@@ -462,6 +467,7 @@ def test_jobs_update(db, client, jobs):
         "default_queue": "celery",
         "default_args": '{"since": null}',
         "run_args": {},
+        "args": {},
         "schedule": {"type": "interval", "hours": 2},
         "created": jobs.simple["created"],
         "updated": res.json["updated"],
@@ -499,6 +505,7 @@ def test_jobs_search(client, jobs):
         "default_queue": "low",
         "default_args": '{"since": null}',
         "run_args": None,
+        "args": {},
         "schedule": {
             "type": "interval",
             "hours": 4,
@@ -542,6 +549,7 @@ def test_jobs_search(client, jobs):
         "default_queue": "low",
         "default_args": '{"since": null}',
         "run_args": None,
+        "args": {},
         "schedule": {
             "type": "crontab",
             "minute": "0",
@@ -589,6 +597,7 @@ def test_jobs_search(client, jobs):
         "default_queue": "low",
         "default_args": '{"since": null}',
         "run_args": None,
+        "args": {},
         "schedule": None,
         "last_run": {
             "title": "Manual run",
@@ -679,6 +688,7 @@ def test_job_template_args(mock_apply_async, app, db, client, user):
             "kwarg1": "{{ last_run.created.isoformat() if last_run else None }}",
         },
         "run_args": None,
+        "args": {},
         "schedule": None,
         "last_run": None,
         "created": res.json["created"],
