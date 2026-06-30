@@ -6,7 +6,7 @@
 
 import _get from "lodash/get";
 import isEmpty from "lodash/isEmpty";
-import React, { Component } from "react";
+import { Component } from "react";
 import PropTypes from "prop-types";
 import {
   mapFormFields,
@@ -47,9 +47,9 @@ export class RunActionForm extends Component {
       actionSchema,
       actionCancelCallback,
       actionConfig,
-      loading,
-      formData,
-      error,
+      loading = false,
+      formData = {},
+      error = null,
       resource,
       onSubmit,
     } = this.props;
@@ -203,12 +203,4 @@ RunActionForm.propTypes = {
   error: PropTypes.shape({
     content: PropTypes.string,
   }),
-};
-
-RunActionForm.defaultProps = {
-  formFields: {},
-  actionPayload: {},
-  loading: false,
-  formData: {},
-  error: null,
 };
