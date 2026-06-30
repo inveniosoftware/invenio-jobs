@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import React, { Component } from "react";
+import { Component, Fragment } from "react";
 import PropTypes from "prop-types";
 import {
   Label,
@@ -54,7 +54,7 @@ export class RunsLogs extends Component {
   constructor(props) {
     super(props);
 
-    const { logs, run, sort, warnings } = props;
+    const { logs, run, sort, warnings = [] } = props;
 
     const formattedLogs = logs.map((log) => ({
       ...log,
@@ -68,7 +68,7 @@ export class RunsLogs extends Component {
       logs: formattedLogs,
       run,
       sort,
-      warnings: warnings || [],
+      warnings,
       runDuration: this.getDurationInMinutes(run.started_at, run.finished_at),
       formatted_started_at: this.formatDatetime(run.started_at),
     };
@@ -354,14 +354,14 @@ export class RunsLogs extends Component {
                   )}
                   <Segment>
                     {logTree.map((taskGroup) => (
-                      <React.Fragment key={taskGroup.taskId}>
+                      <Fragment key={taskGroup.taskId}>
                         {!taskGroup.parentTaskId &&
                           logTree.indexOf(taskGroup) > 0 && <Divider />}
                         <TaskGroup
                           taskGroup={taskGroup}
                           levelClass={levelClass}
                         />
-                      </React.Fragment>
+                      </Fragment>
                     ))}
                   </Segment>
                 </Grid.Column>
@@ -379,8 +379,4 @@ RunsLogs.propTypes = {
   logs: PropTypes.array.isRequired,
   sort: PropTypes.array.isRequired,
   warnings: PropTypes.array,
-};
-
-RunsLogs.defaultProps = {
-  warnings: [],
 };

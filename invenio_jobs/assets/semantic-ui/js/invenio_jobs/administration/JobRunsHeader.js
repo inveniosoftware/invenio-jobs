@@ -13,7 +13,7 @@ import {
 import { i18next } from "@translations/invenio_jobs/i18next";
 import _isEmpty from "lodash/isEmpty";
 import PropTypes from "prop-types";
-import React, { Component } from "react";
+import { Component } from "react";
 import { Divider, Button, Grid, Header } from "semantic-ui-react";
 import { AdminUIRoutes } from "@js/invenio_administration";
 
@@ -39,16 +39,16 @@ export class JobRunsHeader extends Component {
 
   render() {
     const {
-      actions,
-      apiEndpoint,
-      idKeyPath,
-      listUIEndpoint,
-      resourceName,
-      displayDelete,
-      displayEdit,
-      data,
-      error,
-      loading,
+      actions = [],
+      apiEndpoint = "",
+      idKeyPath = "",
+      listUIEndpoint = "",
+      resourceName = "",
+      displayDelete = false,
+      displayEdit = false,
+      data = null,
+      error = null,
+      loading = false,
     } = this.props;
     return (
       <Loader isLoading={loading}>
@@ -119,17 +119,4 @@ JobRunsHeader.propTypes = {
     }),
   }),
   loading: PropTypes.bool,
-};
-
-JobRunsHeader.defaultProps = {
-  actions: [],
-  apiEndpoint: "",
-  idKeyPath: "",
-  listUIEndpoint: "",
-  resourceName: "",
-  displayDelete: false,
-  displayEdit: false,
-  data: null,
-  error: null,
-  loading: false,
 };
