@@ -29,7 +29,7 @@
           data-fields='{{ fields | tojson }}'
           data-pid='{{ pid_value | tojson }}'
           data-resource-schema='{{ resource_schema | tojson }}'
-          data-title='{{ title or name | tojson }}'
+          data-title='{{ (title or name) | tojson }}'
           data-list-endpoint='{{ list_ui_endpoint }}'
           data-resource-name='{{ resource_name | tojson }}'
           data-pid-path='{{ pid_path | tojson }}'
@@ -62,7 +62,6 @@
   </main>
 {% endblock %}
 
-{% block javascript %}
-  {{ super() }}
+{% block search_javascript %}
   {{ webpack['invenio-jobs-details.js'] }}
 {% endblock %}
