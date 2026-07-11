@@ -170,7 +170,9 @@ class Run(db.Model, db.Timestamp):
         lazy="dynamic",
     )
     # Meant to mark if the sibtasks of this run have been all spawned.
-    subtasks_closed = db.Column(db.Boolean, default=False, nullable=False)
+    subtasks_closed = db.Column(
+        db.Boolean, default=False, nullable=False, server_default="false"
+    )
 
     total_subtasks = db.Column(
         db.Integer, default=0, server_default="0", nullable=False
