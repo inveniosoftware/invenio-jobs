@@ -7,6 +7,12 @@
 Changes
 =======
 
+Version v10.0.1 (released 2026-07-21)
+
+- chore(setup): migrate from setuptools to hatchling
+- chore(packaging): exclude .git-blame-ignore-revs from distribution
+- chore(licenses): update license headers to use SPDX
+
 Version v10.0.0 (released 2026-06-05)
 
 - chore(setup): bump dependencies
