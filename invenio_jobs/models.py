@@ -131,6 +131,14 @@ class Run(db.Model, db.Timestamp):
 
     __tablename__ = "jobs_run"
 
+    __table_args__ = (
+        db.Index(
+            "ix_jobs_run_job_id",
+            "job_id",
+            "created",
+        ),
+    )
+
     id = db.Column(UUIDType, primary_key=True, default=uuid.uuid4)
 
     job_id = db.Column(UUIDType, db.ForeignKey(Job.id))
