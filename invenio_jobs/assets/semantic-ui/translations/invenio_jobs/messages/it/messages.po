@@ -1,4 +1,3 @@
-# 
 # Translators:
 # Tibor Simko <tibor.simko@cern.ch>, 2025
 # Alizee Pace <alizee.pace@gmail.com>, 2025
@@ -6,20 +5,17 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2025-07-08T19:01:15.884Z\n"
+"POT-Creation-Date: 2026-06-22T20:49:53.298Z\n"
 "PO-Revision-Date: 2025-07-08 19:01+0000\n"
 "Last-Translator: Alizee Pace <alizee.pace@gmail.com>, 2025\n"
 "Language-Team: Italian (https://app.transifex.com/inveniosoftware/teams/23537/it/)\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: it\n"
 "Plural-Forms: nplurals=3; plural=n == 1 ? 0 : n != 0 && n % 1000000 == 0 ? 1 : 2;\n"
 "mime-version: 1.0\n"
 
 msgid "Schedule Job"
-msgstr ""
-
-msgid "Job Details"
 msgstr ""
 
 msgid "Status "
@@ -112,4 +108,40 @@ msgid "Partial Success"
 msgstr ""
 
 msgid "Stop"
+msgstr ""
+
+msgid "No logs to display"
+msgstr ""
+
+msgid "Possible reasons include:"
+msgstr ""
+
+msgid "The job has not produced any logs yet."
+msgstr ""
+
+msgid "Logs were deleted due to the retention policy."
+msgstr ""
+
+msgid "Error Fetching Logs"
+msgstr ""
+
+msgid "Job run"
+msgstr ""
+
+msgid "mins"
+msgstr ""
+
+msgid "Not yet started"
+msgstr ""
+
+msgid "Log results truncated"
+msgstr ""
+
+msgid "Job failed"
+msgstr ""
+
+msgid "Job partially succeeded"
+msgstr ""
+
+msgid "error(s) found in logs below"
 msgstr ""

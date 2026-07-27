@@ -1,182 +1,334 @@
 # Translations template for invenio-jobs.
-# Copyright (C) 2025 CERN
+# Copyright (C) 2026 CERN
 # This file is distributed under the same license as the invenio-jobs
 # project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
 # 
 # Translators:
-# BEN TERCÜME, 2025
 # Ben Translation and Interpreting Services <info@bentercume.com>, 2025
+# BEN TERCÜME, 2026
+# Eylül-1 -, 2026
+# Furkan Kalkan <furkan.kalkan3@gmail.com>, 2026
 # 
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: invenio-jobs 4.1.0\n"
+"Project-Id-Version: invenio-jobs 10.0.0\n"
 "Report-Msgid-Bugs-To: info@inveniosoftware.org\n"
-"POT-Creation-Date: 2025-07-08 19:01+0000\n"
+"POT-Creation-Date: 2026-06-22 20:49+0000\n"
 "PO-Revision-Date: 2025-07-08 19:01+0000\n"
-"Last-Translator: Ben Translation and Interpreting Services <info@bentercume.com>, 2025\n"
+"Last-Translator: Furkan Kalkan <furkan.kalkan3@gmail.com>, 2026\n"
 "Language-Team: Turkish (https://app.transifex.com/inveniosoftware/teams/23537/tr/)\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 "Language: tr\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: invenio_jobs/config.py:37
+#: invenio_jobs/config.py:34
 msgid "Default"
-msgstr ""
+msgstr "Varsayılan"
 
-#: invenio_jobs/config.py:38
+#: invenio_jobs/config.py:35
 msgid "Default queue"
-msgstr ""
+msgstr "Varsayılan kuyruk"
 
-#: invenio_jobs/config.py:42
+#: invenio_jobs/config.py:39
 msgid "Low"
-msgstr ""
+msgstr "Düşük"
 
-#: invenio_jobs/config.py:43
+#: invenio_jobs/config.py:40
 msgid "Low priority queue"
-msgstr ""
+msgstr "Düşük öncelikli kuyruk"
 
-#: invenio_jobs/administration/jobs.py:71 invenio_jobs/config.py:57
+#: invenio_jobs/administration/jobs.py:69 invenio_jobs/config.py:54
 msgid "Jobs"
-msgstr ""
+msgstr "İşler"
 
-#: invenio_jobs/administration/jobs.py:73 invenio_jobs/config.py:61
+#: invenio_jobs/administration/jobs.py:71 invenio_jobs/config.py:58
 msgid "Last run"
 msgstr "Son çalıştırılma"
 
-#: invenio_jobs/administration/jobs.py:74
-#: invenio_jobs/administration/jobs.py:99 invenio_jobs/config.py:65
+#: invenio_jobs/administration/jobs.py:72
+#: invenio_jobs/administration/jobs.py:98 invenio_jobs/config.py:62
 msgid "Started by"
-msgstr ""
+msgstr "Başlatan"
 
-#: invenio_jobs/administration/jobs.py:75 invenio_jobs/config.py:69
+#: invenio_jobs/administration/jobs.py:73 invenio_jobs/config.py:66
 msgid "Next run"
-msgstr ""
+msgstr "Sonraki çalıştırılma"
 
-#: invenio_jobs/jobs.py:42
+#: invenio_jobs/jobs.py:38
 msgid ""
-"YYYY-MM-DD HH:mm format. Leave empty to continue since last successful run."
+"YYYY-MM-DDThh:mm:ss+00:00 format (ISO 8601 in UTC). Leave empty to continue "
+"since last successful run."
 msgstr ""
+"YYYY-MM-DDThh:mm:ss+00:00 format (UTC zaman diliminde ISO 8601). Son başarılı çalıştırmadan devam etmek için boş bırakın.\n"
+" "
 
-#: invenio_jobs/administration/jobs.py:43
+#: invenio_jobs/utils.py:78
+msgid "Job Completed Successfully"
+msgstr "Görev başarıyla tamamlandı"
+
+#: invenio_jobs/utils.py:79
+#, python-brace-format
+msgid "Job '{title}' has completed successfully."
+msgstr "'{title}' görevi başarıyla tamamlandı."
+
+#: invenio_jobs/utils.py:83
+#, python-brace-format
+msgid ""
+"Great news! The job '{title}' has finished running and completed "
+"successfully."
+msgstr ""
+"Harika bir haber! '{title}' görevi çalışmasını tamamladı ve başarıyla "
+"sonuçlandı."
+
+#: invenio_jobs/utils.py:85
+msgid "You can review the results by clicking the button below."
+msgstr "Sonuçları incelemek için aşağıdaki düğmeye tıklayabilirsiniz."
+
+#: invenio_jobs/utils.py:89
+msgid "Job Failed"
+msgstr "Görev başarısız oldu"
+
+#: invenio_jobs/utils.py:90
+#, python-brace-format
+msgid "Job '{title}' has failed."
+msgstr "'{title}' görevi başarısız oldu"
+
+#: invenio_jobs/utils.py:92
+#, python-brace-format
+msgid ""
+"Unfortunately, the job '{title}' encountered an error and could not "
+"complete."
+msgstr "Maalesef, '{title}' görevi bir hatayla karşılaştı ve tamamlanamadı."
+
+#: invenio_jobs/utils.py:95
+msgid ""
+"Please review the details below or contact your system administrator if you "
+"need assistance."
+msgstr ""
+"Lütfen aşağıdaki ayrıntıları inceleyin veya yardıma ihtiyacınız varsa sistem"
+" yöneticinizle iletişime geçin."
+
+#: invenio_jobs/utils.py:100
+msgid "Job Completed with Errors"
+msgstr "Görev Hatalar ile Tamamlandı"
+
+#: invenio_jobs/utils.py:101
+#, python-brace-format
+msgid "Job '{title}' completed but encountered errors."
+msgstr "'{title}' görevi tamamlandı, ancak bazı hatalar oluştu."
+
+#: invenio_jobs/utils.py:105
+#, python-brace-format
+msgid "The job '{title}' has finished, but some items could not be processed."
+msgstr "'{title}' görevi tamamlandı, ancak bazı öğeler işlenemedi."
+
+#: invenio_jobs/utils.py:108
+msgid ""
+"Please review which items failed and take appropriate action if needed."
+msgstr ""
+"Lütfen işlenemeyen öğeleri inceleyin ve gerekirse uygun işlemleri "
+"gerçekleştirin."
+
+#: invenio_jobs/utils.py:117
+#, python-brace-format
+msgid "Job Status: {status}"
+msgstr "Görev Durumu: {status}"
+
+#: invenio_jobs/utils.py:118
+#, python-brace-format
+msgid "Job '{title}' status: {status}"
+msgstr "'{title}' görevi durumu: {status}"
+
+#: invenio_jobs/utils.py:122
+#, python-brace-format
+msgid "The job '{title}' has a status update: {status}"
+msgstr "'{title}' görevinin durumu güncellendi: {status}"
+
+#: invenio_jobs/utils.py:124
+msgid "Please review the details below for more information."
+msgstr "Daha fazla bilgi için lütfen aşağıdaki detayları inceleyin."
+
+#: invenio_jobs/administration/jobs.py:39
 msgid "Schedule"
 msgstr "Zamanla"
 
-#: invenio_jobs/administration/jobs.py:49
+#: invenio_jobs/administration/jobs.py:45
 msgid "Configure and run"
-msgstr ""
+msgstr "Yapılandır ve çalıştır"
 
-#: invenio_jobs/administration/jobs.py:50
+#: invenio_jobs/administration/jobs.py:46
 msgid "Run now"
 msgstr "Şimdi çalıştır"
 
-#: invenio_jobs/administration/jobs.py:72
+#: invenio_jobs/administration/jobs.py:70
 msgid "Status"
 msgstr "Durum"
 
-#: invenio_jobs/administration/jobs.py:96
+#: invenio_jobs/administration/jobs.py:95
 msgid "Run (ISO UTC)"
-msgstr ""
+msgstr "Çalıştır (ISO UTC)"
+
+#: invenio_jobs/administration/jobs.py:96
+msgid "Duration"
+msgstr "Süre"
 
 #: invenio_jobs/administration/jobs.py:97
-msgid "Duration"
-msgstr ""
-
-#: invenio_jobs/administration/jobs.py:98
 msgid "Message"
 msgstr "İleti"
 
-#: invenio_jobs/administration/jobs.py:100
+#: invenio_jobs/administration/jobs.py:99
 msgid "Action"
 msgstr "Eylem"
 
-#: invenio_jobs/administration/jobs.py:141 invenio_jobs/services/config.py:85
+#: invenio_jobs/administration/jobs.py:140 invenio_jobs/services/config.py:81
 msgid "Title"
 msgstr "Başlık"
 
-#: invenio_jobs/administration/jobs.py:142
+#: invenio_jobs/administration/jobs.py:141
 msgid "A title of the job."
-msgstr ""
+msgstr "İşin başlığı."
+
+#: invenio_jobs/administration/jobs.py:145
+msgid "Description"
+msgstr "Açıklama"
 
 #: invenio_jobs/administration/jobs.py:146
-msgid "Description"
-msgstr "Tanım"
-
-#: invenio_jobs/administration/jobs.py:147
 msgid "A short description about the job."
-msgstr ""
+msgstr "İşle ilgili kısa bir açıklama."
+
+#: invenio_jobs/administration/jobs.py:150
+msgid "Queue"
+msgstr "Kuyruk"
 
 #: invenio_jobs/administration/jobs.py:151
-msgid "Queue"
-msgstr ""
-
-#: invenio_jobs/administration/jobs.py:152
 msgid "A queue for the job run."
-msgstr ""
+msgstr "İş çalıştırma kuyruğu."
+
+#: invenio_jobs/administration/jobs.py:157
+msgid "Task"
+msgstr "Görev"
 
 #: invenio_jobs/administration/jobs.py:158
-msgid "Task"
-msgstr ""
-
-#: invenio_jobs/administration/jobs.py:159
 msgid "A task for the job run."
-msgstr ""
+msgstr "İş çalıştırma görevi."
 
-#: invenio_jobs/administration/jobs.py:165
+#: invenio_jobs/administration/jobs.py:164
 msgid "Active"
 msgstr "Aktif"
 
-#: invenio_jobs/services/config.py:42 invenio_jobs/services/config.py:82
-#: invenio_jobs/services/config.py:122 invenio_jobs/services/config.py:163
+#: invenio_jobs/administration/jobs.py:168
+msgid "Notification emails"
+msgstr "Bildirim e-postaları"
+
+#: invenio_jobs/administration/jobs.py:170
+msgid ""
+"Email addresses to notify about this job's status. Leave empty to disable "
+"notifications."
+msgstr ""
+"Bu görevin durumu hakkında bildirim gönderilecek e-posta adresleri. "
+"Bildirimleri devre dışı bırakmak için boş bırakın."
+
+#: invenio_jobs/administration/jobs.py:179
+msgid "Notification statuses"
+msgstr "Bildirim durumları"
+
+#: invenio_jobs/administration/jobs.py:181
+msgid ""
+"Which run statuses should trigger email notifications. Leave empty to "
+"disable notifications."
+msgstr ""
+"Hangi çalışma durumlarında e-posta bildirimleri tetikleneceğini belirtir. "
+"Bildirimleri devre dışı bırakmak için boş bırakın."
+
+#: invenio_jobs/administration/jobs.py:238
+msgid "Current Job Configuration"
+msgstr "Mevcut Görev Yapılandırması"
+
+#: invenio_jobs/administration/jobs.py:239
+msgid "The configuration used for this Job."
+msgstr "Bu görev için kullanılan yapılandırma."
+
+#: invenio_jobs/administration/jobs.py:243
+msgid "Custom Arguments"
+msgstr "Özel Argümanlar"
+
+#: invenio_jobs/administration/jobs.py:245
+msgid ""
+"When provided, the input below will override any arguments specified above."
+msgstr ""
+"Girildiğinde, aşağıdaki değerler yukarıda belirtilen tüm argümaların yerine "
+"kullanılacaktır."
+
+#: invenio_jobs/services/config.py:38 invenio_jobs/services/config.py:78
+#: invenio_jobs/services/config.py:123 invenio_jobs/services/config.py:166
 msgid "Ascending"
 msgstr "Artan"
 
-#: invenio_jobs/services/config.py:46 invenio_jobs/services/config.py:83
-#: invenio_jobs/services/config.py:123 invenio_jobs/services/config.py:164
+#: invenio_jobs/services/config.py:42 invenio_jobs/services/config.py:79
+#: invenio_jobs/services/config.py:124 invenio_jobs/services/config.py:167
 msgid "Descending"
 msgstr "Azalan"
 
-#: invenio_jobs/services/config.py:50
+#: invenio_jobs/services/config.py:46
 msgid "Name"
 msgstr "Ad"
 
-#: invenio_jobs/services/config.py:125
+#: invenio_jobs/services/config.py:126
 msgid "Created"
 msgstr "Oluşturulma"
 
-#: invenio_jobs/services/config.py:167
+#: invenio_jobs/services/config.py:170
 msgid "Timestamp"
-msgstr ""
+msgstr "Zaman damgası"
 
-#: invenio_jobs/services/errors.py:29
-#, python-brace-format
-msgid "Job with ID {id} does not exist."
-msgstr ""
+#: invenio_jobs/services/errors.py:25
+#, python-format
+msgid "Job with ID %(id)s does not exist."
+msgstr "%(id)s kimlik numaralı iş mevcut değil."
 
-#: invenio_jobs/services/errors.py:38
-#, python-brace-format
-msgid "Run with ID {id} does not exist."
-msgstr ""
+#: invenio_jobs/services/errors.py:33
+#, python-format
+msgid "Run with ID %(id)s does not exist."
+msgstr "%(id)s kimlik numaralı çalıştırma mevcut değil."
 
-#: invenio_jobs/services/errors.py:40
-#, python-brace-format
-msgid "Run with ID {id} for job {job_id} does not exist."
-msgstr ""
+#: invenio_jobs/services/errors.py:36
+#, python-format
+msgid "Run with ID %(id)s for job %(job_id)s does not exist."
+msgstr "%(job_id)s işine ait %(id)s kimlik numaralı çalıştırma mevcut değil."
 
 #: invenio_jobs/services/errors.py:52
-#, python-brace-format
-msgid "You cannot change run status from {old} to {new}."
+#, python-format
+msgid "You cannot change run status from %(old)s to %(new)s."
+msgstr "Çalışmayı %(old)s durumundan %(new)s durumuna değiştiremezsiniz."
+
+#: invenio_jobs/services/errors.py:66
+#, python-format
+msgid ""
+"Too many log results returned (%(total)s). The maximum allowed is "
+"%(max_docs)s. Please refine your search criteria to reduce the result size."
 msgstr ""
+"Çok fazla log kaydı döndü (%(total)s). İzin verilen en fazla %(max_docs)s.  "
+"Lütfen sonuç sayısını azaltmak için arama ölçütlerinizi daraltın."
 
-#: invenio_jobs/services/schema.py:33
-#, python-brace-format
-msgid "Field cannot be blank or longer than {max_} characters."
-msgstr "Alan boş veya {max_} karakterden fazla olamaz."
+#: invenio_jobs/services/results.py:183
+#, python-format
+msgid ""
+"Too many log results returned (%(total)s). Only the most recent %(max)s "
+"results are shown."
+msgstr ""
+"Çok fazla log kaydı döndü (%(total)s). Yalnızca en son %(max)s kayıt "
+"gösterilmektedir."
 
-#: invenio_jobs/templates/semantic-ui/invenio_jobs/system/jobs/jobs-details.html:18
+#: invenio_jobs/services/schema.py:31
+#, python-format
+msgid "Field cannot be blank or longer than %(max_)s characters."
+msgstr "Alan boş veya %(max_)s karakterden fazla olamaz."
+
+#: invenio_jobs/templates/semantic-ui/invenio_jobs/system/jobs/jobs-details.html:17
 msgid "Back"
 msgstr "Geri"
