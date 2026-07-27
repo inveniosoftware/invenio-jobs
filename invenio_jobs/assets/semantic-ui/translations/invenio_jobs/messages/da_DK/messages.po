@@ -1,117 +1,110 @@
-# Translators:
-# Tibor Simko <tibor.simko@cern.ch>, 2025
-# Bessem Aamira <bessemamira@gmail.com>, 2025
-# Salaheddine Ben Ali <salaheddine.benali@cnudst.tn>, 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
 "POT-Creation-Date: 2026-06-22T20:49:53.298Z\n"
 "PO-Revision-Date: 2025-07-08 19:01+0000\n"
-"Last-Translator: Salaheddine Ben Ali <salaheddine.benali@cnudst.tn>, 2026\n"
-"Language-Team: Arabic (https://app.transifex.com/inveniosoftware/teams/23537/ar/)\n"
+"Language-Team: Danish (Denmark) (https://app.transifex.com/inveniosoftware/teams/23537/da_DK/)\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: ar\n"
-"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+"Language: da_DK\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "mime-version: 1.0\n"
 
 msgid "Schedule Job"
-msgstr "جدولة العمل"
+msgstr ""
 
 msgid "Status "
-msgstr "الحالة"
+msgstr ""
 
 msgid "Name"
-msgstr "إسم"
+msgstr ""
 
 msgid "Active"
-msgstr "مفعٌل"
+msgstr ""
 
 msgid "Inactive"
-msgstr "غير مفعّل"
+msgstr ""
 
 msgid "Last run"
-msgstr "آخر تشغيل"
+msgstr ""
 
 msgid "Started by"
-msgstr "تبدأ بـ"
+msgstr ""
 
 msgid "System"
-msgstr "نظام"
+msgstr ""
 
 msgid "Next run"
-msgstr "التشغيل القادم"
+msgstr ""
 
 msgid "Advanced configuration"
-msgstr "إعدادات متقدّمة"
+msgstr ""
 
 msgid "Reference configuration of this job:"
-msgstr "مرجع إعدادات هذا العمل:"
+msgstr ""
 
 msgid "Cancel"
-msgstr "إلغاء"
+msgstr ""
 
 msgid ""
 "<0>Custom args:</0> when provided, the input below will override any "
 "arguments specified above."
 msgstr ""
-"<0>وسائط مخصصة:</0>عند توفيرها، سيتم تجاوز أي وسائط محددة أعلاه من خلال "
-"الإدخال أدناه."
 
 msgid "Run"
-msgstr "شغّل"
+msgstr ""
 
 msgid "Duration"
-msgstr "المدّة "
+msgstr ""
 
 msgid "Waiting"
-msgstr "في الانتظار"
+msgstr ""
 
 msgid "Message"
-msgstr "إرساليّة"
+msgstr ""
 
 msgid "Show less"
-msgstr "أظهر أقل"
+msgstr ""
 
 msgid "Show all"
-msgstr "أظهر الكل"
+msgstr ""
 
 msgid "Success"
-msgstr "نجاح العمليّة"
+msgstr ""
 
 msgid "Job {{title}} has been scheduled."
-msgstr "المهمّة {{title}} وقع جدولتها."
+msgstr ""
 
 msgid "Unable to set schedule."
-msgstr "تعذّر تحديد الموعد."
+msgstr ""
 
 msgid "Save"
-msgstr "حفظ"
+msgstr ""
 
 msgid "Queued"
-msgstr "على قائمة الانتظار"
+msgstr ""
 
 msgid "Running"
-msgstr "طور التشغيل"
+msgstr ""
 
 msgid "Failed"
-msgstr "فشلت"
+msgstr ""
 
 msgid "Warning"
-msgstr "تحذير"
+msgstr ""
 
 msgid "Cancelling"
-msgstr "إلغاء"
+msgstr ""
 
 msgid "Cancelled"
-msgstr "ملغى"
+msgstr ""
 
 msgid "Partial Success"
-msgstr "نجاح جزئي"
+msgstr ""
 
 msgid "Stop"
-msgstr "قف"
+msgstr ""
 
 msgid "No logs to display"
 msgstr ""

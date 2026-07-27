@@ -1,20 +1,19 @@
-# 
 # Translators:
 # Hermann Schranzhofer <hermann.schranzhofer@tugraz.at>, 2025
 # Tibor Simko <tibor.simko@cern.ch>, 2025
 # David Eckhard <dabombeeer@gmail.com>, 2025
 # Alizee Pace <alizee.pace@gmail.com>, 2025
-# Sarah Wiechers, 2025
-# Adienne Karsten-Welker, 2025
+# Sarah Wiechers, 2026
+# Adienne Karsten-Welker, 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2025-07-08T19:01:15.884Z\n"
+"POT-Creation-Date: 2026-06-22T20:49:53.298Z\n"
 "PO-Revision-Date: 2025-07-08 19:01+0000\n"
-"Last-Translator: Adienne Karsten-Welker, 2025\n"
+"Last-Translator: Adienne Karsten-Welker, 2026\n"
 "Language-Team: German (https://app.transifex.com/inveniosoftware/teams/23537/de/)\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: de\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -22,9 +21,6 @@ msgstr ""
 
 msgid "Schedule Job"
 msgstr "Auftrag planen"
-
-msgid "Job Details"
-msgstr "Jobdetails"
 
 msgid "Status "
 msgstr "Status "
@@ -119,3 +115,39 @@ msgstr "Teilerfolg"
 
 msgid "Stop"
 msgstr "Beenden"
+
+msgid "No logs to display"
+msgstr "Keine Protokolle vorhanden"
+
+msgid "Possible reasons include:"
+msgstr "Mögliche Gründe sind:"
+
+msgid "The job has not produced any logs yet."
+msgstr "Der Job hat noch keine Protokolle erzeugt."
+
+msgid "Logs were deleted due to the retention policy."
+msgstr "Protokolle wurden aufgrund der Aufbewahrungsrichtlinie gelöscht."
+
+msgid "Error Fetching Logs"
+msgstr "Fehler beim Abrufen der Protokolle"
+
+msgid "Job run"
+msgstr "Job-Ausführung"
+
+msgid "mins"
+msgstr "Min."
+
+msgid "Not yet started"
+msgstr "Noch nicht gestartet"
+
+msgid "Log results truncated"
+msgstr "Protokollergebnisse gekürzt"
+
+msgid "Job failed"
+msgstr "Job fehlgeschlagen"
+
+msgid "Job partially succeeded"
+msgstr "Job teilweise erfolgreich"
+
+msgid "error(s) found in logs below"
+msgstr "Fehler in den unten stehenden Protokollen gefunden"

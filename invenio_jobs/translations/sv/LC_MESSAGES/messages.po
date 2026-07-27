@@ -1,186 +1,334 @@
 # Translations template for invenio-jobs.
-# Copyright (C) 2025 CERN
+# Copyright (C) 2026 CERN
 # This file is distributed under the same license as the invenio-jobs
 # project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
 # 
 # Translators:
 # Rim Sharif, 2025
-# Mattias Vesterlund, 2025
 # Tibor Simko <tibor.simko@cern.ch>, 2025
-# Sam Arbid, 2025
+# Sam Arbid, 2026
+# Mattias Vesterlund, 2026
 # 
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: invenio-jobs 4.1.0\n"
+"Project-Id-Version: invenio-jobs 10.0.0\n"
 "Report-Msgid-Bugs-To: info@inveniosoftware.org\n"
-"POT-Creation-Date: 2025-07-08 19:01+0000\n"
+"POT-Creation-Date: 2026-06-22 20:49+0000\n"
 "PO-Revision-Date: 2025-07-08 19:01+0000\n"
-"Last-Translator: Sam Arbid, 2025\n"
+"Last-Translator: Mattias Vesterlund, 2026\n"
 "Language-Team: Swedish (https://app.transifex.com/inveniosoftware/teams/23537/sv/)\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.17.0\n"
+"Generated-By: Babel 2.18.0\n"
 "Language: sv\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: invenio_jobs/config.py:37
+#: invenio_jobs/config.py:34
 msgid "Default"
 msgstr "Standard"
 
-#: invenio_jobs/config.py:38
+#: invenio_jobs/config.py:35
 msgid "Default queue"
 msgstr "Standardkö"
 
-#: invenio_jobs/config.py:42
+#: invenio_jobs/config.py:39
 msgid "Low"
 msgstr "Låg"
 
-#: invenio_jobs/config.py:43
+#: invenio_jobs/config.py:40
 msgid "Low priority queue"
 msgstr "Kö med låg prioritet"
 
-#: invenio_jobs/administration/jobs.py:71 invenio_jobs/config.py:57
+#: invenio_jobs/administration/jobs.py:69 invenio_jobs/config.py:54
 msgid "Jobs"
 msgstr "Jobb"
 
-#: invenio_jobs/administration/jobs.py:73 invenio_jobs/config.py:61
+#: invenio_jobs/administration/jobs.py:71 invenio_jobs/config.py:58
 msgid "Last run"
-msgstr "Sista körningen"
+msgstr "Senaste körningen"
 
-#: invenio_jobs/administration/jobs.py:74
-#: invenio_jobs/administration/jobs.py:99 invenio_jobs/config.py:65
+#: invenio_jobs/administration/jobs.py:72
+#: invenio_jobs/administration/jobs.py:98 invenio_jobs/config.py:62
 msgid "Started by"
 msgstr "Startad av"
 
-#: invenio_jobs/administration/jobs.py:75 invenio_jobs/config.py:69
+#: invenio_jobs/administration/jobs.py:73 invenio_jobs/config.py:66
 msgid "Next run"
 msgstr "Nästa körning"
 
-#: invenio_jobs/jobs.py:42
+#: invenio_jobs/jobs.py:38
 msgid ""
-"YYYY-MM-DD HH:mm format. Leave empty to continue since last successful run."
+"YYYY-MM-DDThh:mm:ss+00:00 format (ISO 8601 in UTC). Leave empty to continue "
+"since last successful run."
 msgstr ""
-"YYYY-MM-DD HH:mm format. Lämna tomt för att fortsätta från senaste lyckade "
-"körning."
+"Format ÅÅÅÅ-MM-DDThh:mm:ss+00:00 (ISO 8601 i UTC). Lämna tomt för att "
+"fortsätta sedan senaste lyckade körning."
 
-#: invenio_jobs/administration/jobs.py:43
+#: invenio_jobs/utils.py:78
+msgid "Job Completed Successfully"
+msgstr "Jobbet slutfördes framgångsrikt"
+
+#: invenio_jobs/utils.py:79
+#, python-brace-format
+msgid "Job '{title}' has completed successfully."
+msgstr "Jobbet '{title}' har slutförts framgångsrikt."
+
+#: invenio_jobs/utils.py:83
+#, python-brace-format
+msgid ""
+"Great news! The job '{title}' has finished running and completed "
+"successfully."
+msgstr ""
+"Goda nyheter! Jobbet '{title}' har körts klart och slutförts framgångsrikt."
+
+#: invenio_jobs/utils.py:85
+msgid "You can review the results by clicking the button below."
+msgstr "Du kan granska resultaten genom att klicka på knappen nedan."
+
+#: invenio_jobs/utils.py:89
+msgid "Job Failed"
+msgstr "Jobbet misslyckades"
+
+#: invenio_jobs/utils.py:90
+#, python-brace-format
+msgid "Job '{title}' has failed."
+msgstr "Jobbet '{title}' har misslyckats."
+
+#: invenio_jobs/utils.py:92
+#, python-brace-format
+msgid ""
+"Unfortunately, the job '{title}' encountered an error and could not "
+"complete."
+msgstr ""
+"Tyvärr uppstod ett fel i jobbet '{title}' och det kunde inte slutföras."
+
+#: invenio_jobs/utils.py:95
+msgid ""
+"Please review the details below or contact your system administrator if you "
+"need assistance."
+msgstr ""
+"Granska informationen nedan eller kontakta systemadministratören om du "
+"behöver hjälp."
+
+#: invenio_jobs/utils.py:100
+msgid "Job Completed with Errors"
+msgstr "Jobbet slutfördes med fel"
+
+#: invenio_jobs/utils.py:101
+#, python-brace-format
+msgid "Job '{title}' completed but encountered errors."
+msgstr "Jobbet '{title}' slutfördes men stötte på fel."
+
+#: invenio_jobs/utils.py:105
+#, python-brace-format
+msgid "The job '{title}' has finished, but some items could not be processed."
+msgstr ""
+"Jobbet '{title}' har slutförts, men vissa objekt kunde inte bearbetas."
+
+#: invenio_jobs/utils.py:108
+msgid ""
+"Please review which items failed and take appropriate action if needed."
+msgstr ""
+"Granska vilka objekt som misslyckades och vidta lämpliga åtgärder vid behov."
+
+#: invenio_jobs/utils.py:117
+#, python-brace-format
+msgid "Job Status: {status}"
+msgstr "Jobbstatus: {status}"
+
+#: invenio_jobs/utils.py:118
+#, python-brace-format
+msgid "Job '{title}' status: {status}"
+msgstr "Status för jobbet '{title}': {status}"
+
+#: invenio_jobs/utils.py:122
+#, python-brace-format
+msgid "The job '{title}' has a status update: {status}"
+msgstr "Jobbet '{title}' har en statusuppdatering: {status}"
+
+#: invenio_jobs/utils.py:124
+msgid "Please review the details below for more information."
+msgstr "Granska detaljerna nedan för mer information."
+
+#: invenio_jobs/administration/jobs.py:39
 msgid "Schedule"
 msgstr "Schema"
 
-#: invenio_jobs/administration/jobs.py:49
+#: invenio_jobs/administration/jobs.py:45
 msgid "Configure and run"
 msgstr "Konfigurera och kör"
 
-#: invenio_jobs/administration/jobs.py:50
+#: invenio_jobs/administration/jobs.py:46
 msgid "Run now"
 msgstr "Kör nu"
 
-#: invenio_jobs/administration/jobs.py:72
+#: invenio_jobs/administration/jobs.py:70
 msgid "Status"
 msgstr "Status"
 
-#: invenio_jobs/administration/jobs.py:96
+#: invenio_jobs/administration/jobs.py:95
 msgid "Run (ISO UTC)"
 msgstr "Kör (ISO UTC)"
 
-#: invenio_jobs/administration/jobs.py:97
+#: invenio_jobs/administration/jobs.py:96
 msgid "Duration"
 msgstr "Varaktighet"
 
-#: invenio_jobs/administration/jobs.py:98
+#: invenio_jobs/administration/jobs.py:97
 msgid "Message"
 msgstr "Meddelande"
 
-#: invenio_jobs/administration/jobs.py:100
+#: invenio_jobs/administration/jobs.py:99
 msgid "Action"
 msgstr "Åtgärd"
 
-#: invenio_jobs/administration/jobs.py:141 invenio_jobs/services/config.py:85
+#: invenio_jobs/administration/jobs.py:140 invenio_jobs/services/config.py:81
 msgid "Title"
 msgstr "Titel"
 
-#: invenio_jobs/administration/jobs.py:142
+#: invenio_jobs/administration/jobs.py:141
 msgid "A title of the job."
 msgstr "En titel för jobbet."
 
-#: invenio_jobs/administration/jobs.py:146
+#: invenio_jobs/administration/jobs.py:145
 msgid "Description"
 msgstr "Beskrivning"
 
-#: invenio_jobs/administration/jobs.py:147
+#: invenio_jobs/administration/jobs.py:146
 msgid "A short description about the job."
 msgstr "En kort beskrivning av jobbet."
 
-#: invenio_jobs/administration/jobs.py:151
+#: invenio_jobs/administration/jobs.py:150
 msgid "Queue"
 msgstr "Kö"
 
-#: invenio_jobs/administration/jobs.py:152
+#: invenio_jobs/administration/jobs.py:151
 msgid "A queue for the job run."
 msgstr "En kö för jobbets körning."
 
-#: invenio_jobs/administration/jobs.py:158
+#: invenio_jobs/administration/jobs.py:157
 msgid "Task"
 msgstr "Uppgift"
 
-#: invenio_jobs/administration/jobs.py:159
+#: invenio_jobs/administration/jobs.py:158
 msgid "A task for the job run."
 msgstr "En uppgift för jobbets körning."
 
-#: invenio_jobs/administration/jobs.py:165
+#: invenio_jobs/administration/jobs.py:164
 msgid "Active"
 msgstr "Aktiv"
 
-#: invenio_jobs/services/config.py:42 invenio_jobs/services/config.py:82
-#: invenio_jobs/services/config.py:122 invenio_jobs/services/config.py:163
+#: invenio_jobs/administration/jobs.py:168
+msgid "Notification emails"
+msgstr "Aviseringar via e-post"
+
+#: invenio_jobs/administration/jobs.py:170
+msgid ""
+"Email addresses to notify about this job's status. Leave empty to disable "
+"notifications."
+msgstr ""
+"E-postadresser som ska aviseras om jobbets status. Lämna tomt för att "
+"inaktivera aviseringar."
+
+#: invenio_jobs/administration/jobs.py:179
+msgid "Notification statuses"
+msgstr "Aviseringsstatusar"
+
+#: invenio_jobs/administration/jobs.py:181
+msgid ""
+"Which run statuses should trigger email notifications. Leave empty to "
+"disable notifications."
+msgstr ""
+"Vilka körningsstatusar som ska utlösa e-postaviseringar. Lämna tomt för att "
+"inaktivera aviseringar."
+
+#: invenio_jobs/administration/jobs.py:238
+msgid "Current Job Configuration"
+msgstr "Aktuell jobbkonfiguration"
+
+#: invenio_jobs/administration/jobs.py:239
+msgid "The configuration used for this Job."
+msgstr "Konfigurationen som används för detta jobb."
+
+#: invenio_jobs/administration/jobs.py:243
+msgid "Custom Arguments"
+msgstr "Anpassade argument"
+
+#: invenio_jobs/administration/jobs.py:245
+msgid ""
+"When provided, the input below will override any arguments specified above."
+msgstr ""
+"När det anges kommer inmatningen nedan att åsidosätta alla argument som "
+"angetts ovan."
+
+#: invenio_jobs/services/config.py:38 invenio_jobs/services/config.py:78
+#: invenio_jobs/services/config.py:123 invenio_jobs/services/config.py:166
 msgid "Ascending"
 msgstr "Stigande"
 
-#: invenio_jobs/services/config.py:46 invenio_jobs/services/config.py:83
-#: invenio_jobs/services/config.py:123 invenio_jobs/services/config.py:164
+#: invenio_jobs/services/config.py:42 invenio_jobs/services/config.py:79
+#: invenio_jobs/services/config.py:124 invenio_jobs/services/config.py:167
 msgid "Descending"
 msgstr "Fallande"
 
-#: invenio_jobs/services/config.py:50
+#: invenio_jobs/services/config.py:46
 msgid "Name"
 msgstr "Namn"
 
-#: invenio_jobs/services/config.py:125
+#: invenio_jobs/services/config.py:126
 msgid "Created"
 msgstr "Skapad"
 
-#: invenio_jobs/services/config.py:167
+#: invenio_jobs/services/config.py:170
 msgid "Timestamp"
 msgstr "Tidsstämpel"
 
-#: invenio_jobs/services/errors.py:29
-#, python-brace-format
-msgid "Job with ID {id} does not exist."
-msgstr "Jobb med ID {id} finns inte."
+#: invenio_jobs/services/errors.py:25
+#, python-format
+msgid "Job with ID %(id)s does not exist."
+msgstr "Jobb med ID %(id)s finns inte."
 
-#: invenio_jobs/services/errors.py:38
-#, python-brace-format
-msgid "Run with ID {id} does not exist."
-msgstr "Körning med ID {id} finns inte."
+#: invenio_jobs/services/errors.py:33
+#, python-format
+msgid "Run with ID %(id)s does not exist."
+msgstr "Körning med ID %(id)s finns inte."
 
-#: invenio_jobs/services/errors.py:40
-#, python-brace-format
-msgid "Run with ID {id} for job {job_id} does not exist."
-msgstr "Körning med ID {id} för jobb {job_id} finns inte."
+#: invenio_jobs/services/errors.py:36
+#, python-format
+msgid "Run with ID %(id)s for job %(job_id)s does not exist."
+msgstr "Körning med ID %(id)s för jobbet %(job_id)s finns inte."
 
 #: invenio_jobs/services/errors.py:52
-#, python-brace-format
-msgid "You cannot change run status from {old} to {new}."
-msgstr "Du kan inte ändra körstatus från {old} till {new}."
+#, python-format
+msgid "You cannot change run status from %(old)s to %(new)s."
+msgstr "Du kan inte ändra körningsstatus från %(old)s till %(new)s."
 
-#: invenio_jobs/services/schema.py:33
-#, python-brace-format
-msgid "Field cannot be blank or longer than {max_} characters."
-msgstr "Fältet får inte vara tomt eller längre än {max_} tecken."
+#: invenio_jobs/services/errors.py:66
+#, python-format
+msgid ""
+"Too many log results returned (%(total)s). The maximum allowed is "
+"%(max_docs)s. Please refine your search criteria to reduce the result size."
+msgstr ""
+"För många loggresultat returnerades (%(total)s). Det högsta tillåtna är "
+"%(max_docs)s. Justera dina sökkriterier för att minska resultatets storlek."
 
-#: invenio_jobs/templates/semantic-ui/invenio_jobs/system/jobs/jobs-details.html:18
+#: invenio_jobs/services/results.py:183
+#, python-format
+msgid ""
+"Too many log results returned (%(total)s). Only the most recent %(max)s "
+"results are shown."
+msgstr ""
+"För många loggresultat returnerades (%(total)s). Endast de senaste %(max)s "
+"resultaten visas."
+
+#: invenio_jobs/services/schema.py:31
+#, python-format
+msgid "Field cannot be blank or longer than %(max_)s characters."
+msgstr "Fältet får inte vara tomt eller längre än %(max_)s tecken."
+
+#: invenio_jobs/templates/semantic-ui/invenio_jobs/system/jobs/jobs-details.html:17
 msgid "Back"
 msgstr "Tillbaka"

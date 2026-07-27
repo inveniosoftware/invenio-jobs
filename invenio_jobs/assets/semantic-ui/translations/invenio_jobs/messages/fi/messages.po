@@ -1,117 +1,115 @@
 # Translators:
-# Tibor Simko <tibor.simko@cern.ch>, 2025
-# Bessem Aamira <bessemamira@gmail.com>, 2025
-# Salaheddine Ben Ali <salaheddine.benali@cnudst.tn>, 2026
+# Matti Lassila <matti.lassila@gmail.com>, 2025
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
 "POT-Creation-Date: 2026-06-22T20:49:53.298Z\n"
 "PO-Revision-Date: 2025-07-08 19:01+0000\n"
-"Last-Translator: Salaheddine Ben Ali <salaheddine.benali@cnudst.tn>, 2026\n"
-"Language-Team: Arabic (https://app.transifex.com/inveniosoftware/teams/23537/ar/)\n"
+"Last-Translator: Matti Lassila <matti.lassila@gmail.com>, 2025\n"
+"Language-Team: Finnish (https://app.transifex.com/inveniosoftware/teams/23537/fi/)\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: ar\n"
-"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+"Language: fi\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "mime-version: 1.0\n"
 
 msgid "Schedule Job"
-msgstr "جدولة العمل"
+msgstr "Ajasta tehtävä"
 
 msgid "Status "
-msgstr "الحالة"
+msgstr "Tila "
 
 msgid "Name"
-msgstr "إسم"
+msgstr "Nimi"
 
 msgid "Active"
-msgstr "مفعٌل"
+msgstr "Aktiivinen"
 
 msgid "Inactive"
-msgstr "غير مفعّل"
+msgstr "Ei aktiivinen"
 
 msgid "Last run"
-msgstr "آخر تشغيل"
+msgstr "Viimeisin ajo"
 
 msgid "Started by"
-msgstr "تبدأ بـ"
+msgstr "Käynnisti"
 
 msgid "System"
-msgstr "نظام"
+msgstr "Järjestelmä"
 
 msgid "Next run"
-msgstr "التشغيل القادم"
+msgstr "Seuraava ajo"
 
 msgid "Advanced configuration"
-msgstr "إعدادات متقدّمة"
+msgstr "Lisäasetukset"
 
 msgid "Reference configuration of this job:"
-msgstr "مرجع إعدادات هذا العمل:"
+msgstr "Tämän tehtävän viiteasetukset:"
 
 msgid "Cancel"
-msgstr "إلغاء"
+msgstr "Peruuta"
 
 msgid ""
 "<0>Custom args:</0> when provided, the input below will override any "
 "arguments specified above."
 msgstr ""
-"<0>وسائط مخصصة:</0>عند توفيرها، سيتم تجاوز أي وسائط محددة أعلاه من خلال "
-"الإدخال أدناه."
+"<0>Mukautetut argumentit:</0> jos annettu, alla oleva syöte korvaa yllä "
+"määritetyt argumentit."
 
 msgid "Run"
-msgstr "شغّل"
+msgstr "Suorita"
 
 msgid "Duration"
-msgstr "المدّة "
+msgstr "Kesto"
 
 msgid "Waiting"
-msgstr "في الانتظار"
+msgstr "Odottaa"
 
 msgid "Message"
-msgstr "إرساليّة"
+msgstr "Viesti"
 
 msgid "Show less"
-msgstr "أظهر أقل"
+msgstr "Näytä vähemmän"
 
 msgid "Show all"
-msgstr "أظهر الكل"
+msgstr "Näytä kaikki"
 
 msgid "Success"
-msgstr "نجاح العمليّة"
+msgstr "Onnistui"
 
 msgid "Job {{title}} has been scheduled."
-msgstr "المهمّة {{title}} وقع جدولتها."
+msgstr "Tehtävä {{title}} on ajastettu."
 
 msgid "Unable to set schedule."
-msgstr "تعذّر تحديد الموعد."
+msgstr "Aikataulun asettaminen epäonnistui."
 
 msgid "Save"
-msgstr "حفظ"
+msgstr "Tallenna"
 
 msgid "Queued"
-msgstr "على قائمة الانتظار"
+msgstr "Jonossa"
 
 msgid "Running"
-msgstr "طور التشغيل"
+msgstr "Käynnissä"
 
 msgid "Failed"
-msgstr "فشلت"
+msgstr "Epäonnistui"
 
 msgid "Warning"
-msgstr "تحذير"
+msgstr "Varoitus"
 
 msgid "Cancelling"
-msgstr "إلغاء"
+msgstr "Peruutetaan"
 
 msgid "Cancelled"
-msgstr "ملغى"
+msgstr "Peruttu"
 
 msgid "Partial Success"
-msgstr "نجاح جزئي"
+msgstr "Osittainen onnistuminen"
 
 msgid "Stop"
-msgstr "قف"
+msgstr "Pysäytä"
 
 msgid "No logs to display"
 msgstr ""

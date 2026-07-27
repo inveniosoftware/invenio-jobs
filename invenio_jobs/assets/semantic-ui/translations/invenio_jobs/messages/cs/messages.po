@@ -1,18 +1,17 @@
-# 
 # Translators:
 # Tibor Simko <tibor.simko@cern.ch>, 2025
 # Jiří Kunčar <jiri.kuncar@gmail.com>, 2025
-# daniela.hornickova, 2025
 # Mirek Simek <miroslav.simek@gmail.com>, 2025
+# daniela.hornickova, 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
-"POT-Creation-Date: 2025-07-08T19:01:15.884Z\n"
+"POT-Creation-Date: 2026-06-22T20:49:53.298Z\n"
 "PO-Revision-Date: 2025-07-08 19:01+0000\n"
-"Last-Translator: Mirek Simek <miroslav.simek@gmail.com>, 2025\n"
+"Last-Translator: daniela.hornickova, 2026\n"
 "Language-Team: Czech (https://app.transifex.com/inveniosoftware/teams/23537/cs/)\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: cs\n"
 "Plural-Forms: nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;\n"
@@ -20,9 +19,6 @@ msgstr ""
 
 msgid "Schedule Job"
 msgstr "Naplánovat úlohu"
-
-msgid "Job Details"
-msgstr "Detaily úlohy"
 
 msgid "Status "
 msgstr "Stav"
@@ -117,3 +113,39 @@ msgstr "Částečný úspěch"
 
 msgid "Stop"
 msgstr "Zastavit"
+
+msgid "No logs to display"
+msgstr "Žádné záznamy k zobrazení"
+
+msgid "Possible reasons include:"
+msgstr "Možné důvody např.:"
+
+msgid "The job has not produced any logs yet."
+msgstr "Úloha zatím nevytvořila žádné záznamy."
+
+msgid "Logs were deleted due to the retention policy."
+msgstr "Záznamy byly smazány kvůli zásadám uchovávání dat."
+
+msgid "Error Fetching Logs"
+msgstr "Chyba při načítání záznamů"
+
+msgid "Job run"
+msgstr "Běh úlohy"
+
+msgid "mins"
+msgstr "minut"
+
+msgid "Not yet started"
+msgstr "Dosud nespuštěno"
+
+msgid "Log results truncated"
+msgstr "Výpis záznamů o operacích byl zkrácen."
+
+msgid "Job failed"
+msgstr "Úloha selhala"
+
+msgid "Job partially succeeded"
+msgstr "Úloha částečně úspěšně dokončena"
+
+msgid "error(s) found in logs below"
+msgstr "V níže uvedených záznamech nalezena(y) chyba(y)"
