@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # Copyright (C) 2024 CERN.
-# Copyright (C) 2024 Graz University of Technology.
+# Copyright (C) 2024-2026 Graz University of Technology.
 # Copyright (C) 2025 KTH Royal Institute of Technology.
 #
 # Invenio-Jobs is free software; you can redistribute it and/or modify it
@@ -14,6 +14,7 @@ on:
   push:
     branches:
       - master
+      - "maint-**"
       - "feature/*"
   pull_request:
     branches:
