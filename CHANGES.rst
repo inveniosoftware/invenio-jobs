@@ -7,6 +7,10 @@
 Changes
 =======
 
+Version v10.1.1 (released 2026-08-05)
+
+- fix: subtasks_closed db-side default
+
 Version v10.1.0 (released 2026-07-28)
 
 - fix(ci): run tests on maint-*
