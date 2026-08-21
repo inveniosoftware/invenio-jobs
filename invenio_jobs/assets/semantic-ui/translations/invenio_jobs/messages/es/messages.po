@@ -2,15 +2,15 @@
 # Zacharias Zacharodimos <zacharias.zacharodimos@cern.ch>, 2025
 # Ignacio Estevo, 2025
 # Tibor Simko <tibor.simko@cern.ch>, 2025
-# Jesús Martín <jesusmartin@sallep.net>, 2025
 # Alizee Pace <alizee.pace@gmail.com>, 2025
+# Jesús Martín <jesusmartin@sallep.net>, 2026
 # 
 msgid ""
 msgstr ""
 "Project-Id-Version: i18next-conv\n"
 "POT-Creation-Date: 2026-06-22T20:49:53.298Z\n"
 "PO-Revision-Date: 2025-07-08 19:01+0000\n"
-"Last-Translator: Alizee Pace <alizee.pace@gmail.com>, 2025\n"
+"Last-Translator: Jesús Martín <jesusmartin@sallep.net>, 2026\n"
 "Language-Team: Spanish (https://app.transifex.com/inveniosoftware/teams/23537/es/)\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -19,10 +19,10 @@ msgstr ""
 "mime-version: 1.0\n"
 
 msgid "Schedule Job"
-msgstr ""
+msgstr "Programar trabajo"
 
 msgid "Status "
-msgstr ""
+msgstr "Estado"
 
 msgid "Name"
 msgstr "Nombre"
@@ -37,19 +37,19 @@ msgid "Last run"
 msgstr "Última actualización"
 
 msgid "Started by"
-msgstr ""
+msgstr "Iniciado por"
 
 msgid "System"
 msgstr "Sistema"
 
 msgid "Next run"
-msgstr ""
+msgstr "Próxima ejecución"
 
 msgid "Advanced configuration"
-msgstr ""
+msgstr "Configuración avanzada"
 
 msgid "Reference configuration of this job:"
-msgstr ""
+msgstr "Configuración de referencia de este trabajo:"
 
 msgid "Cancel"
 msgstr "Cancelar"
@@ -58,15 +58,18 @@ msgid ""
 "<0>Custom args:</0> when provided, the input below will override any "
 "arguments specified above."
 msgstr ""
+"<0>Argumentos personalizados</0>: cuando se proporcionan, la entrada que "
+"aparece a continuación anulará cualquier argumento especificado "
+"anteriormente."
 
 msgid "Run"
 msgstr "Ejecutar"
 
 msgid "Duration"
-msgstr ""
+msgstr "Duración"
 
 msgid "Waiting"
-msgstr ""
+msgstr "En espera"
 
 msgid "Message"
 msgstr "Mensaje"
@@ -75,25 +78,25 @@ msgid "Show less"
 msgstr "Mostrar menos"
 
 msgid "Show all"
-msgstr ""
+msgstr "Mostrar todo"
 
 msgid "Success"
 msgstr "Éxito"
 
 msgid "Job {{title}} has been scheduled."
-msgstr ""
+msgstr "El trabajo {{title}} ha sido programado."
 
 msgid "Unable to set schedule."
-msgstr ""
+msgstr "No se pudo establecer el horario."
 
 msgid "Save"
 msgstr "Guardar"
 
 msgid "Queued"
-msgstr ""
+msgstr "En cola"
 
 msgid "Running"
-msgstr ""
+msgstr "Ejecutando"
 
 msgid "Failed"
 msgstr "Falló"
@@ -102,49 +105,49 @@ msgid "Warning"
 msgstr "Atención"
 
 msgid "Cancelling"
-msgstr ""
+msgstr "Cancelando"
 
 msgid "Cancelled"
 msgstr "Cancelado"
 
 msgid "Partial Success"
-msgstr ""
+msgstr "Éxito parcial"
 
 msgid "Stop"
-msgstr ""
+msgstr "Parar"
 
 msgid "No logs to display"
-msgstr ""
+msgstr "No hay logs para mostrar"
 
 msgid "Possible reasons include:"
-msgstr ""
+msgstr "Entre las posibles razones se incluyen:"
 
 msgid "The job has not produced any logs yet."
-msgstr ""
+msgstr "El proceso aún no ha generado ningún log."
 
 msgid "Logs were deleted due to the retention policy."
-msgstr ""
+msgstr "Los logs se eliminaron debido a la política de retención."
 
 msgid "Error Fetching Logs"
-msgstr ""
+msgstr "Error al obtener los logs"
 
 msgid "Job run"
-msgstr ""
+msgstr "Ejecución del trabajo"
 
 msgid "mins"
-msgstr ""
+msgstr "minutos"
 
 msgid "Not yet started"
-msgstr ""
+msgstr "Aún no ha comenzado"
 
 msgid "Log results truncated"
-msgstr ""
+msgstr "Resultados de los logs truncados"
 
 msgid "Job failed"
-msgstr ""
+msgstr "El trabajo falló"
 
 msgid "Job partially succeeded"
-msgstr ""
+msgstr "El trabajo tuvo éxito parcialmente."
 
 msgid "error(s) found in logs below"
-msgstr ""
+msgstr "error(es) encontrado(s) en los logs"

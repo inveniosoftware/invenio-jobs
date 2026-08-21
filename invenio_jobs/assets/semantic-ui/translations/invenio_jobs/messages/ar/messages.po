@@ -114,37 +114,37 @@ msgid "Stop"
 msgstr "قف"
 
 msgid "No logs to display"
-msgstr ""
+msgstr " لا توجد سجلات لعرضها."
 
 msgid "Possible reasons include:"
-msgstr ""
+msgstr " من الأسباب المحتملة:"
 
 msgid "The job has not produced any logs yet."
-msgstr ""
+msgstr " لم تنتج المهمة أي سجلات حتى الآن."
 
 msgid "Logs were deleted due to the retention policy."
-msgstr ""
+msgstr " تم حذف السجلات وفقًا لسياسة الاحتفاظ بالبيانات."
 
 msgid "Error Fetching Logs"
-msgstr ""
+msgstr " خطأ أثناء جلب السجلات"
 
 msgid "Job run"
-msgstr ""
+msgstr " تشغيل المهمة"
 
 msgid "mins"
-msgstr ""
+msgstr "برهة"
 
 msgid "Not yet started"
-msgstr ""
+msgstr " لم يبدأ بعد"
 
 msgid "Log results truncated"
-msgstr ""
+msgstr " تم اقتطاع نتائج السجل."
 
 msgid "Job failed"
-msgstr ""
+msgstr " فشلت المهمة"
 
 msgid "Job partially succeeded"
-msgstr ""
+msgstr " نجحت المهمة جزئيًا"
 
 msgid "error(s) found in logs below"
-msgstr ""
+msgstr " عُثر على  خطء (أخطاء) في السجلات أدناه"
