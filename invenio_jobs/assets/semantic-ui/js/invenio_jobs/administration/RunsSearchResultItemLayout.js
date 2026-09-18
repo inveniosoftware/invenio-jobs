@@ -6,7 +6,7 @@
 import { NotificationContext } from "@js/invenio_administration";
 import { i18next } from "@translations/invenio_jobs/i18next";
 import PropTypes from "prop-types";
-import React, { Component } from "react";
+import { Component, Fragment } from "react";
 import { DateTime } from "luxon";
 import { UserListItemCompact } from "react-invenio-forms";
 import { withState } from "react-searchkit";
@@ -98,19 +98,19 @@ class SearchResultItemComponent extends Component {
           {msgLinesShown.map((line) => {
             const lineIndex = msgLines.indexOf(line);
             return (
-              <React.Fragment key={`msg-line-${lineIndex}-${line.length}`}>
+              <Fragment key={`msg-line-${lineIndex}-${line.length}`}>
                 {line}
                 <br />
-              </React.Fragment>
+              </Fragment>
             );
           })}
           {msgHasMoreThanMaxLines && (
-            <React.Fragment>
+            <Fragment>
               {!msgShowAll && <div>...</div>}
               <Button as="a" onClick={this.toggleShowAll} size="mini">
                 {msgShowAll ? i18next.t("Show less") : i18next.t("Show all")}
               </Button>
-            </React.Fragment>
+            </Fragment>
           )}
         </Table.Cell>
 
@@ -151,7 +151,5 @@ class SearchResultItemComponent extends Component {
 SearchResultItemComponent.propTypes = {
   result: PropTypes.object.isRequired,
 };
-
-SearchResultItemComponent.defaultProps = {};
 
 export const SearchResultItemLayout = withState(SearchResultItemComponent);

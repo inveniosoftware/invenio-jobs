@@ -17,9 +17,9 @@ administration = WebpackThemeBundle(
                 "invenio-runs-logs-details": "./js/invenio_jobs/administration/RunsLogsView.js",
             },
             dependencies={
-                "react-invenio-forms": "^4.0.0",
-                "react-searchkit": "^3.0.0",
-                "@microlink/react-json-view": "^1.21.3",
+                "react-invenio-forms": "^5.0.0-alpha.3",
+                "react-searchkit": "^4.0.0-alpha.2",
+                "@microlink/react-json-view": "^1.31.18",
             },
             aliases={
                 "@less/invenio_jobs": "less/invenio_jobs",

@@ -7,7 +7,7 @@
 import { BoolFormatter, NotificationContext } from "@js/invenio_administration";
 import { i18next } from "@translations/invenio_jobs/i18next";
 import PropTypes from "prop-types";
-import React, { Component } from "react";
+import { Component } from "react";
 import { UserListItemCompact, toRelativeTime } from "react-invenio-forms";
 import { withState } from "react-searchkit";
 import { DateTime } from "luxon";
@@ -39,7 +39,7 @@ class SearchResultItemComponent extends Component {
 
   handleSuccess = () => {
     // Trigger a soft refresh of the table results
-    const { updateQueryState, currentQueryState } = this.props;
+    const { updateQueryState = () => {}, currentQueryState = {} } = this.props;
     updateQueryState({ ...currentQueryState });
   };
 
@@ -51,8 +51,8 @@ class SearchResultItemComponent extends Component {
       idKeyPath,
       listUIEndpoint,
       resourceName,
-      displayDelete,
-      displayEdit,
+      displayDelete = false,
+      displayEdit = false,
       result,
     } = this.props;
 
@@ -190,13 +190,6 @@ SearchResultItemComponent.propTypes = {
   apiEndpoint: PropTypes.string.isRequired,
   updateQueryState: PropTypes.func,
   currentQueryState: PropTypes.object,
-};
-
-SearchResultItemComponent.defaultProps = {
-  displayEdit: false,
-  displayDelete: false,
-  updateQueryState: () => {},
-  currentQueryState: {},
 };
 
 export const SearchResultItemLayout = withState(SearchResultItemComponent);

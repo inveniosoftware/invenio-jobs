@@ -5,7 +5,7 @@
 
 import { i18next } from "@translations/invenio_jobs/i18next";
 import PropTypes from "prop-types";
-import React, { useState } from "react";
+import { useState } from "react";
 import { http } from "react-invenio-forms";
 import { Button, Icon } from "semantic-ui-react";
 import { withCancel } from "react-invenio-forms";
