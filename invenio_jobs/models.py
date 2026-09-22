@@ -58,15 +58,19 @@ class Job(db.Model, db.Timestamp):
     run_args = db.Column(JSON, nullable=True)
     notifications = db.Column(JSON, nullable=True, default=None)
 
-    @property
+    @cached_property
     def last_run(self):
         """Last run of the job."""
         _run = self.runs.order_by(Run.created.desc()).first()
         return _run if _run else {}
 
-    @property
+    @cached_property
     def last_runs(self):
-        """Last run of the job."""
+        """Last run of the job, per status.
+
+        Only computed when a single job's full data is needed (job detail
+        page, or the "Configure and run" action).
+        """
         _runs = {}
         for status in RunStatusEnum:
             run = (

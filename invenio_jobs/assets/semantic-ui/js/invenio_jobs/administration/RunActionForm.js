@@ -24,15 +24,34 @@ import {
   Divider,
   Message,
   Header,
+  Dimmer,
+  Loader,
 } from "semantic-ui-react";
 import { Form, Formik } from "formik";
 import { Form as SemanticForm } from "semantic-ui-react";
 import { i18next } from "@translations/invenio_jobs/i18next";
 import { Trans } from "react-i18next";
-import { Input, Dropdown, TextArea } from "react-invenio-forms";
+import { Input, Dropdown, TextArea, http } from "react-invenio-forms";
 
 export class RunActionForm extends Component {
-  state = { activeIndex: -1 };
+  state = { activeIndex: -1, resource: null, loadingJob: true, fetchError: null };
+
+  componentDidMount() {
+    this.fetchResource();
+  }
+
+  fetchResource = async () => {
+    const { resource } = this.props;
+    // The `resource` doesn't carry `default_args` (it depends on
+    // walking the job's run history, which is only worth doing for the one
+    // job actually being configured, not for every every job).
+    try {
+      const response = await http.get(resource.links.self);
+      this.setState({ resource: response.data, loadingJob: false });
+    } catch (error) {
+      this.setState({ fetchError: error, loadingJob: false });
+    }
+  };
 
   handleClick = (e, titleProps) => {
     const { index } = titleProps;
@@ -50,11 +69,34 @@ export class RunActionForm extends Component {
       loading = false,
       formData = {},
       error = null,
-      resource,
       onSubmit,
     } = this.props;
+    const { activeIndex, resource, loadingJob, fetchError } = this.state;
+
+    if (loadingJob) {
+      return (
+        <Modal.Content>
+          <Dimmer active inverted>
+            <Loader inverted>{i18next.t("Loading job configuration...")}</Loader>
+          </Dimmer>
+        </Modal.Content>
+      );
+    }
+
+    if (fetchError || !resource) {
+      return (
+        <Modal.Content>
+          <Message
+            negative
+            icon="exclamation"
+            header={i18next.t("Error")}
+            content={i18next.t("Could not load this job's configuration.")}
+          />
+        </Modal.Content>
+      );
+    }
+
     const jsonData = JSON.parse(resource.default_args);
-    const { activeIndex } = this.state;
     return (
       <Formik initialValues={formData} onSubmit={onSubmit}>
         {(props) => {

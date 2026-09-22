@@ -45,6 +45,8 @@ class JobItem(Item):
             return self._data
 
         job_dict = self._obj.dump()
+        # ``last_runs`` and ``default_args`` require walking a job's
+        # run history and are only computed per-job
         if self._obj.last_run:
             job_dict["last_run"] = self._obj.last_run.dump()
             job_dict["last_runs"] = self._obj.last_runs
@@ -126,13 +128,9 @@ class JobList(List):
     def hits(self):
         """Iterator over the hits."""
         for hit in self.items:
-            # Project the hit
+            # Project the hit. Only ``last_run`` is needed to render the jobs list
             job_dict = hit.dump()
             job_dict["last_run"] = hit.last_run
-            job_dict["last_runs"] = hit.last_runs
-            job_dict["default_args"] = json.dumps(
-                hit.default_args, default=job_arg_json_dumper
-            )
             job_record = AttrDict(job_dict)
             projection = self._schema.dump(
                 job_record,
