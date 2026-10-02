@@ -8,6 +8,6 @@
 
 from .ext import InvenioJobs
 
-__version__ = "11.0.4"
+__version__ = "11.1.0"
 
 __all__ = ("__version__", "InvenioJobs")
