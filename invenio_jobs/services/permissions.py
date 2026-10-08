@@ -1,5 +1,6 @@
 # SPDX-FileCopyrightText: 2024 CERN.
 # SPDX-FileCopyrightText: 2024 University of Münster.
+# SPDX-FileCopyrightText: 2026 KTH Royal Institute of Technology.
 # SPDX-License-Identifier: MIT
 
 """Service permissions."""
@@ -45,6 +46,6 @@ class JobLogsPermissionPolicy(BasePermissionPolicy):
 
     can_search = [Administration(), SystemProcess()]
     can_create = [Disable()]  # Logs are crated via python logging
-    can_read = [Disable()]
+    can_read = [Administration(), SystemProcess()]
     can_update = [Disable()]
     can_delete = [Disable()]

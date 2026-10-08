@@ -1,13 +1,37 @@
 # SPDX-FileCopyrightText: 2024 CERN.
-# SPDX-FileCopyrightText: 2025 KTH Royal Institute of Technology.
+# SPDX-FileCopyrightText: 2025-2026 KTH Royal Institute of Technology.
 # SPDX-License-Identifier: MIT
 
 from datetime import datetime, timezone
 
 import pytest
+from invenio_access.models import ActionUsers
+from invenio_access.permissions import system_identity
+from invenio_administration.permissions import administration_access_action
 
 from invenio_jobs.api import AttrDict
 from invenio_jobs.proxies import current_jobs_logs_service
+from invenio_jobs.services.permissions import JobLogsPermissionPolicy
+
+
+def test_job_logs_default_permissions(
+    app, db, user, anon_identity, set_app_config_fn_scoped
+):
+    """Default read permissions must not filter out administrator or system logs."""
+    service = current_jobs_logs_service
+    set_app_config_fn_scoped({"APP_LOGS_PERMISSION_POLICY": JobLogsPermissionPolicy})
+    db.session.add(ActionUsers.allow(administration_access_action, user_id=user.id))
+    db.session.commit()
+
+    for identity in (user.identity, system_identity):
+        assert service.check_permission(identity, "search")
+        assert service.check_permission(identity, "read")
+        policy = service.permission_policy("read", identity=identity)
+        filters = [query.to_dict() for query in policy.query_filters]
+        assert all(query == {"match_all": {}} for query in filters)
+
+    assert not service.check_permission(anon_identity, "search")
+    assert not service.check_permission(anon_identity, "read")
 
 
 @pytest.mark.usefixtures("app")
