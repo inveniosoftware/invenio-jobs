@@ -21,7 +21,8 @@ from invenio_jobs.services.ui_schema import ScheduleUISchema
 class JobsAdminMixin:
     """Common admin properties."""
 
-    api_endpoint = "/jobs"
+    api_endpoint = "/jobs"  # Deprecated
+    api_endpoint_name = "jobs.search"
     resource_config = "jobs_resource"
     pid_path = "id"
 
@@ -255,6 +256,5 @@ class JobsCreateView(JobsAdminMixin, JobsFormMixin, AdminResourceCreateView):
 
     name = "jobs-create"
     url = "/jobs/create"
-    api_endpoint = "/jobs"
     title = "Create Job"
     list_view_name = "jobs"
