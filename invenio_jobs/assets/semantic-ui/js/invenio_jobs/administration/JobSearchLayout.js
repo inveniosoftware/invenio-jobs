@@ -5,11 +5,11 @@
 
 import { SearchAppResultsPane } from "@js/invenio_search_ui/components";
 import PropTypes from "prop-types";
-import React, { Component } from "react";
+import { Component } from "react";
 
 export class JobSearchLayout extends Component {
   render() {
-    const { config, appName } = this.props;
+    const { config, appName = "" } = this.props;
     return (
       <SearchAppResultsPane
         layoutOptions={config.layoutOptions}
@@ -22,8 +22,4 @@ export class JobSearchLayout extends Component {
 JobSearchLayout.propTypes = {
   config: PropTypes.object.isRequired,
   appName: PropTypes.string,
-};
-
-JobSearchLayout.defaultProps = {
-  appName: "",
 };
