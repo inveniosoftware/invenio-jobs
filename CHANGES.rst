@@ -8,6 +8,11 @@
 Changes
 =======
 
+Version v12.0.0 (released 2026-11-10)
+
+- chore(setup): bump dependencies
+- feat: upgrade to react 18
+
 Version v11.1.0 (released 2026-10-02)
 
 - feat(performance): add index on jobs_run for job_id
