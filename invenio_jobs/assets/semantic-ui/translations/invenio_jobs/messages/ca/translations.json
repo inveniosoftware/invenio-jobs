@@ -1,0 +1,12 @@
+{
+  "Name": "Nom",
+  "Active": "Actiu",
+  "Last run": "Darrera execució",
+  "Cancel": "Cancel·la",
+  "Run": "Executar",
+  "Message": "Missatge",
+  "Save": "Desa",
+  "Failed": "No ha funcionat",
+  "Warning": "Atenció",
+  "Cancelled": "Cancel·lat"
+}

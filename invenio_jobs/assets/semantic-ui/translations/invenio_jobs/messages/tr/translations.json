@@ -1,0 +1,16 @@
+{
+  "Name": "Ad",
+  "Active": "Aktif",
+  "Inactive": "Aktif olmayan",
+  "Last run": "Son çalıştırılma",
+  "System": "Sistem",
+  "Cancel": "İptal",
+  "Run": "Çalıştır",
+  "Message": "İleti",
+  "Show less": "Daha az göster",
+  "Success": "Başarı",
+  "Save": "Kaydet",
+  "Failed": "Hata alan",
+  "Warning": "Uyarı",
+  "Cancelled": "İptal edildi"
+}
