@@ -1,0 +1,148 @@
+# Translators:
+# Suthep Yonphimai <tomztt@gmail.com>, 2026
+# 
+msgid ""
+msgstr ""
+"Project-Id-Version: i18next-conv\n"
+"POT-Creation-Date: 2026-06-22T20:49:53.298Z\n"
+"PO-Revision-Date: 2025-07-08 19:01+0000\n"
+"Last-Translator: Suthep Yonphimai <tomztt@gmail.com>, 2026\n"
+"Language-Team: Thai (https://app.transifex.com/inveniosoftware/teams/23537/th/)\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: th\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"mime-version: 1.0\n"
+
+msgid "Schedule Job"
+msgstr "กำหนดเวลางาน"
+
+msgid "Status "
+msgstr "สถานะ "
+
+msgid "Name"
+msgstr "ชื่อ"
+
+msgid "Active"
+msgstr "ใช้งานอยู่"
+
+msgid "Inactive"
+msgstr "ไม่ใช้งาน"
+
+msgid "Last run"
+msgstr "รันล่าสุด"
+
+msgid "Started by"
+msgstr "เริ่มโดย"
+
+msgid "System"
+msgstr "ระบบ"
+
+msgid "Next run"
+msgstr "รันถัดไป"
+
+msgid "Advanced configuration"
+msgstr "การกำหนดค่าขั้นสูง"
+
+msgid "Reference configuration of this job:"
+msgstr "การกำหนดค่าอ้างอิงของงานนี้:"
+
+msgid "Cancel"
+msgstr "ยกเลิก"
+
+msgid ""
+"<0>Custom args:</0> when provided, the input below will override any "
+"arguments specified above."
+msgstr ""
+"<0>อาร์กิวเมนต์แบบกำหนดเอง:</0> เมื่อระบุแล้ว "
+"ข้อมูลด้านล่างจะแทนที่อาร์กิวเมนต์ที่ระบุไว้ด้านบน"
+
+msgid "Run"
+msgstr "รัน"
+
+msgid "Duration"
+msgstr "ระยะเวลา"
+
+msgid "Waiting"
+msgstr "รอ"
+
+msgid "Message"
+msgstr "ข้อความ"
+
+msgid "Show less"
+msgstr "แสดงน้อยลง"
+
+msgid "Show all"
+msgstr "แสดงทั้งหมด"
+
+msgid "Success"
+msgstr "สำเร็จ"
+
+msgid "Job {{title}} has been scheduled."
+msgstr "จัดกำหนดการงาน {{title}} แล้ว"
+
+msgid "Unable to set schedule."
+msgstr "ไม่สามารถตั้งกำหนดการได้"
+
+msgid "Save"
+msgstr "บันทึก"
+
+msgid "Queued"
+msgstr "อยู่ในคิว"
+
+msgid "Running"
+msgstr "กำลังรัน"
+
+msgid "Failed"
+msgstr "ล้มเหลว"
+
+msgid "Warning"
+msgstr "คำเตือน"
+
+msgid "Cancelling"
+msgstr "กำลังยกเลิก"
+
+msgid "Cancelled"
+msgstr "ยกเลิกแล้ว"
+
+msgid "Partial Success"
+msgstr "สำเร็จบางส่วน"
+
+msgid "Stop"
+msgstr "หยุด"
+
+msgid "No logs to display"
+msgstr "ไม่มีบันทึกที่จะแสดง"
+
+msgid "Possible reasons include:"
+msgstr "สาเหตุที่เป็นไปได้ ได้แก่:"
+
+msgid "The job has not produced any logs yet."
+msgstr "งานยังไม่ได้สร้างบันทึกใด"
+
+msgid "Logs were deleted due to the retention policy."
+msgstr "บันทึกถูกลบเนื่องจากนโยบายการเก็บรักษา"
+
+msgid "Error Fetching Logs"
+msgstr "ข้อผิดพลาดในการดึงบันทึก"
+
+msgid "Job run"
+msgstr "การรันงาน"
+
+msgid "mins"
+msgstr "นาที"
+
+msgid "Not yet started"
+msgstr "ยังไม่เริ่ม"
+
+msgid "Log results truncated"
+msgstr "ผลลัพธ์บันทึกถูกตัดทอน"
+
+msgid "Job failed"
+msgstr "งานล้มเหลว"
+
+msgid "Job partially succeeded"
+msgstr "งานสำเร็จบางส่วน"
+
+msgid "error(s) found in logs below"
+msgstr "พบข้อผิดพลาดในบันทึกด้านล่าง"

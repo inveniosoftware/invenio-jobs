@@ -1,0 +1,16 @@
+{
+  "Name": "Név",
+  "Active": "Aktív",
+  "Inactive": "Inaktív",
+  "Last run": "Legutóbbi futtatás",
+  "System": "Rendszer",
+  "Cancel": "Mégsem",
+  "Run": "Futtatás",
+  "Message": "Üzenet",
+  "Show less": "Mutasson kevesebbet",
+  "Success": "Siker",
+  "Save": "Mentés",
+  "Failed": "Sikertelen",
+  "Warning": "Figyelmeztetés",
+  "Cancelled": "Visszavonva"
+}
