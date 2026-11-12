@@ -1,6 +1,5 @@
 {
   "Schedule Job": "Schedule Job",
-  "Job Details": "Job Details",
   "Status ": "Status ",
   "Name": "Name",
   "Active": "Active",
@@ -38,5 +37,9 @@
   "Error Fetching Logs": "Error Fetching Logs",
   "Job run": "Job run",
   "mins": "mins",
-  "Not yet started": "Not yet started"
+  "Not yet started": "Not yet started",
+  "Log results truncated": "Log results truncated",
+  "Job failed": "Job failed",
+  "Job partially succeeded": "Job partially succeeded",
+  "error(s) found in logs below": "error(s) found in logs below"
 }

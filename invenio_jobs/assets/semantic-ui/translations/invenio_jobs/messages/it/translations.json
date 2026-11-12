@@ -1,0 +1,12 @@
+{
+  "Name": "Nome",
+  "Active": "Attivo",
+  "Last run": "Ultima esecuzione",
+  "Cancel": "Annulla",
+  "Run": "Esegui",
+  "Message": "Messaggio",
+  "Save": "Memorizza",
+  "Failed": "Fallito",
+  "Warning": "Attenzione",
+  "Cancelled": "Annullato"
+}

@@ -1,0 +1,16 @@
+{
+  "Name": "Nombre",
+  "Active": "Activo",
+  "Inactive": "No activo",
+  "Last run": "Última actualización",
+  "System": "Sistema",
+  "Cancel": "Cancelar",
+  "Run": "Ejecutar",
+  "Message": "Mensaje",
+  "Show less": "Mostrar menos",
+  "Success": "Éxito",
+  "Save": "Guardar",
+  "Failed": "Falló",
+  "Warning": "Atención",
+  "Cancelled": "Cancelado"
+}
