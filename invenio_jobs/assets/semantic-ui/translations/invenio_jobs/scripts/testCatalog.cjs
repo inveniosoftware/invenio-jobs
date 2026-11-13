@@ -8,6 +8,8 @@ const path = require("node:path");
 const { spawnSync } = require("node:child_process");
 const test = require("node:test");
 const i18next = require("i18next");
+const { Parser } = require("i18next-scanner");
+const { options } = require("../i18next-scanner.config.js");
 
 const source = `msgid ""
 msgstr ""
@@ -64,7 +66,7 @@ test("compile reviewed entries and v4 plurals; fall back for fuzzy entries", asy
       resources: {
         sv: { translation: translations },
         en: {
-          translation: { "Needs review": "Needs review", Missing: "Missing" },
+          translation: { "Needs review": "Needs review", "Missing": "Missing" },
         },
       },
     });
@@ -75,5 +77,34 @@ test("compile reviewed entries and v4 plurals; fall back for fuzzy entries", asy
     assert.equal(runtime.t("item", { count: 2 }), "Saker");
   } finally {
     fs.rmSync(directory, { recursive: true, force: true });
+  }
+});
+
+test("extract complete source messages", () => {
+  const sourceRoot = path.resolve(__dirname, "../../../js");
+  const cases = [
+    [
+      "invenio_jobs/administration/RunsLogs.js",
+      ["{{duration}} mins", "{{count}} error(s) found in logs below"],
+    ],
+    [
+      "invenio_jobs/administration/RunActionForm.js",
+      [
+        "<bold>Custom args:</bold> when provided, the input below will override any arguments specified above.",
+      ],
+    ],
+  ];
+  for (const [filename, messages] of cases) {
+    const parser = new Parser({ ...options, debug: false });
+    const source = fs.readFileSync(path.join(sourceRoot, filename), "utf8");
+    parser.parseFuncFromString(source);
+    parser.parseTransFromString(source);
+    const extracted = parser.get().en.translations;
+    for (const message of messages) {
+      assert.ok(
+        Object.hasOwn(extracted, message) || Object.hasOwn(extracted, `${message}_one`),
+        `${filename}: missing ${message}`
+      );
+    }
   }
 });
