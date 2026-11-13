@@ -1,6 +1,7 @@
 /*
  * SPDX-FileCopyrightText: 2024 CERN
  * SPDX-FileCopyrightText: 2025 KTH Royal Institute of Technology.
+ * SPDX-FileCopyrightText: 2026 KTH Royal Institute of Technology.
  * SPDX-License-Identifier: MIT
  */
 
@@ -309,7 +310,9 @@ export class RunsLogs extends Component {
                               <strong>{formattedStartedAt}</strong>
                             </p>
                             <p className="description">
-                              {runDuration} {i18next.t("mins")}
+                              {i18next.t("{{duration}} mins", {
+                                duration: runDuration,
+                              })}
                             </p>
                           </>
                         ) : (
@@ -345,8 +348,14 @@ export class RunsLogs extends Component {
                         {logs.filter((log) => log.level === "ERROR").length >
                           0 && (
                           <p className="text-muted">
-                            {logs.filter((log) => log.level === "ERROR").length}{" "}
-                            {i18next.t("error(s) found in logs below")}
+                            {i18next.t(
+                              "{{count}} error(s) found in logs below",
+                              {
+                                count: logs.filter(
+                                  (log) => log.level === "ERROR"
+                                ).length,
+                              }
+                            )}
                           </p>
                         )}
                       </Message.Content>
