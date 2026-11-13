@@ -12,7 +12,6 @@
   "Advanced configuration": "Advanced configuration",
   "Reference configuration of this job:": "Reference configuration of this job:",
   "Cancel": "Cancel",
-  "<0>Custom args:</0> when provided, the input below will override any arguments specified above.": "<0>Custom args:</0> when provided, the input below will override any arguments specified above.",
   "Run": "Run",
   "Duration": "Duration",
   "Waiting": "Waiting",
@@ -37,6 +36,12 @@
   "Logs were deleted due to the retention policy.": "Logs were deleted due to the retention policy.",
   "Error Fetching Logs": "Error Fetching Logs",
   "Job run": "Job run",
-  "mins": "mins",
-  "Not yet started": "Not yet started"
+  "Not yet started": "Not yet started",
+  "Log results truncated": "Log results truncated",
+  "Job failed": "Job failed",
+  "Job partially succeeded": "Job partially succeeded",
+  "<bold>Custom args:</bold> when provided, the input below will override any arguments specified above.": "<bold>Custom args:</bold> when provided, the input below will override any arguments specified above.",
+  "{{duration}} mins": "{{duration}} mins",
+  "{{count}} error(s) found in logs below_one": "{{count}} error(s) found in logs below",
+  "{{count}} error(s) found in logs below_other": "{{count}} error(s) found in logs below"
 }

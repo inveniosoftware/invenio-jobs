@@ -5,8 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2025-07-09T07:46:19.258Z\n"
-"PO-Revision-Date: 2025-07-09T07:46:19.259Z\n"
+"POT-Creation-Date: 2026-11-13T22:18:03.519Z\n"
+"PO-Revision-Date: 2026-11-13T22:18:03.519Z\n"
 "Language: en\n"
 
 msgid "Schedule Job"
@@ -47,13 +47,6 @@ msgstr "Reference configuration of this job:"
 
 msgid "Cancel"
 msgstr "Cancel"
-
-msgid ""
-"<0>Custom args:</0> when provided, the input below will override any "
-"arguments specified above."
-msgstr ""
-"<0>Custom args:</0> when provided, the input below will override any "
-"arguments specified above."
 
 msgid "Run"
 msgstr "Run"
@@ -127,8 +120,29 @@ msgstr "Error Fetching Logs"
 msgid "Job run"
 msgstr "Job run"
 
-msgid "mins"
-msgstr "mins"
-
 msgid "Not yet started"
 msgstr "Not yet started"
+
+msgid "Log results truncated"
+msgstr "Log results truncated"
+
+msgid "Job failed"
+msgstr "Job failed"
+
+msgid "Job partially succeeded"
+msgstr "Job partially succeeded"
+
+msgid ""
+"<bold>Custom args:</bold> when provided, the input below will override any "
+"arguments specified above."
+msgstr ""
+"<bold>Custom args:</bold> when provided, the input below will override any "
+"arguments specified above."
+
+msgid "{{duration}} mins"
+msgstr "{{duration}} mins"
+
+msgid "{{count}} error(s) found in logs below"
+msgid_plural "{{count}} error(s) found in logs below"
+msgstr[0] "{{count}} error(s) found in logs below"
+msgstr[1] "{{count}} error(s) found in logs below"
