@@ -1,7 +1,6 @@
 /*
  * SPDX-FileCopyrightText: 2024 CERN
  * SPDX-FileCopyrightText: 2025 KTH Royal Institute of Technology.
- * SPDX-FileCopyrightText: 2026 KTH Royal Institute of Technology.
  * SPDX-License-Identifier: MIT
  */
 
@@ -129,11 +128,10 @@ export class RunActionForm extends Component {
                     <Accordion.Content active={activeIndex === 0}>
                       <Divider />
                       <Message info>
-                        <Trans
-                          i18n={i18next}
-                          defaults="<bold>Custom args:</bold> when provided, the input below will override any arguments specified above."
-                          components={{ bold: <b /> }}
-                        />
+                        <Trans>
+                          <b>Custom args:</b> when provided, the input below
+                          will override any arguments specified above.
+                        </Trans>
                       </Message>
                       <TextArea
                         {...generateFieldProps(

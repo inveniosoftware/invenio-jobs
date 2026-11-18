@@ -1,9 +1,10 @@
 /*
- * SPDX-FileCopyrightText: 2025-2026 KTH Royal Institute of Technology.
+ * SPDX-FileCopyrightText: 2025 KTH Royal Institute of Technology.
  * SPDX-License-Identifier: MIT
  */
 
 const { readdirSync, readFileSync, writeFileSync, existsSync } = require("fs");
+const { gettextToI18next } = require("i18next-conv");
 const path = require("path");
 
 const PACKAGE_MESSAGES_PATH = "./messages";
@@ -14,18 +15,7 @@ const GENERATED_FILE = "_generatedTranslations.js";
 // it accepts the same options as the cli.
 // https://github.com/i18next/i18next-gettext-converter#options
 const options = {
-  compatibilityJSON: "v4",
-  skipUntranslated: true,
-  filter(gettext, locale, callback) {
-    const translations = gettext.catalogs[locale]?.messages?.translations || {};
-    Object.values(translations).forEach((context) => {
-      Object.entries(context).forEach(([key, entry]) => {
-        const flags = (entry.comments?.flag || "").split(/[,\s]+/);
-        if (flags.includes("fuzzy")) delete context[key];
-      });
-    });
-    callback(null, translations);
-  },
+  /* your options here */
 };
 
 async function compileAndCreateFileForLanguage(parentPath, lang) {
@@ -39,7 +29,6 @@ async function compileAndCreateFileForLanguage(parentPath, lang) {
 
   try {
     const poContent = readFileSync(poFilePath);
-    const { gettextToI18next } = await import("i18next-conv");
     const result = await gettextToI18next(lang, poContent, options);
     const parsed = JSON.parse(result);
     const prettyJSON = JSON.stringify(parsed, null, 2) + "\n";
@@ -50,7 +39,7 @@ async function compileAndCreateFileForLanguage(parentPath, lang) {
     return true;
   } catch (error) {
     console.error(`❌ Error processing ${lang}:`, error.message);
-    throw error;
+    return false;
   }
 }
 
