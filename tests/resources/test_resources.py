@@ -1,9 +1,10 @@
-# SPDX-FileCopyrightText: 2024 CERN.
+# SPDX-FileCopyrightText: 2024-2026 CERN.
 # SPDX-FileCopyrightText: 2025-2026 Graz University of Technology.
 # SPDX-License-Identifier: MIT
 
 """Resource tests."""
 
+import json
 from copy import deepcopy
 from datetime import datetime, timedelta, timezone
 from time import sleep
@@ -12,6 +13,7 @@ from unittest.mock import patch
 import pytest
 
 from invenio_jobs.logging.jobs import EMPTY_JOB_CTX, job_context
+from invenio_jobs.models import Run, RunStatusEnum
 from invenio_jobs.tasks import execute_run
 
 
@@ -594,6 +596,43 @@ def test_jobs_search(client, jobs):
     assert res.status_code == 200
     assert res.json["hits"]["total"] == 1
     assert interval_job_res == res.json["hits"]["hits"][0]
+
+
+def test_job_read_default_args_uses_last_successful_run(db, client, jobs):
+    """``since`` comes from the last successful run, on the single-job read only.
+
+    The jobs list skips ``default_args`` (it would walk every job's run history),
+    so the admin "Configure and run" modal fetches the job via ``links.self``.
+    """
+    success_started_at = datetime(2026, 1, 1, 10, 0)
+    db.session.add_all(
+        [
+            Run(
+                job_id=jobs.simple.id,
+                status=RunStatusEnum.SUCCESS,
+                started_at=success_started_at,
+                queue="celery",
+            ),
+            # A newer non-successful run must not be used as ``since``
+            Run(
+                job_id=jobs.simple.id,
+                status=RunStatusEnum.FAILED,
+                started_at=success_started_at + timedelta(days=1),
+                queue="celery",
+            ),
+        ]
+    )
+    db.session.commit()
+
+    res = client.get("/jobs")
+    assert res.status_code == 200
+    for hit in res.json["hits"]["hits"]:
+        assert "last_runs" not in hit
+
+    res = client.get(f"/jobs/{jobs.simple.id}")
+    assert res.status_code == 200
+    expected_since = success_started_at.replace(tzinfo=timezone.utc).isoformat()
+    assert json.loads(res.json["default_args"]) == {"since": expected_since}
 
 
 def test_jobs_delete(db, client, jobs):

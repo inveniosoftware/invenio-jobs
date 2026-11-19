@@ -34,7 +34,12 @@ import { Trans } from "react-i18next";
 import { Input, Dropdown, TextArea, http } from "react-invenio-forms";
 
 export class RunActionForm extends Component {
-  state = { activeIndex: -1, resource: null, loadingJob: true, fetchError: null };
+  state = {
+    activeIndex: -1,
+    resource: null,
+    loadingJob: true,
+    fetchError: null,
+  };
 
   componentDidMount() {
     this.fetchResource();
@@ -77,7 +82,9 @@ export class RunActionForm extends Component {
       return (
         <Modal.Content>
           <Dimmer active inverted>
-            <Loader inverted>{i18next.t("Loading job configuration...")}</Loader>
+            <Loader inverted>
+              {i18next.t("Loading job configuration...")}
+            </Loader>
           </Dimmer>
         </Modal.Content>
       );
