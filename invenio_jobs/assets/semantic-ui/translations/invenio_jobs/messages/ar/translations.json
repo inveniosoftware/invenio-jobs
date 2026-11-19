@@ -1,0 +1,15 @@
+{
+  "Name": "إسم",
+  "Active": "مفعٌل",
+  "Inactive": "غير نشط",
+  "System": "نظام",
+  "Cancel": "إلغاء",
+  "Run": "شغّل",
+  "Message": "رسالة",
+  "Show less": "أظهر أقل",
+  "Success": "نجاح العمليّة",
+  "Save": "حفظ",
+  "Failed": "فشلت",
+  "Warning": "تحذير",
+  "Cancelled": "ملغى"
+}
