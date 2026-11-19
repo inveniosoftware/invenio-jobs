@@ -8,6 +8,11 @@
 Changes
 =======
 
+Version v12.0.2 (released 2026-11-19)
+
+- fix(tests): Check if last successful run is picked up
+- refactor(results): Don't fetch last_runs for list results
+
 Version v12.0.1 (released 2026-11-19)
 
 - fix(template): overwrite correct js bundles
