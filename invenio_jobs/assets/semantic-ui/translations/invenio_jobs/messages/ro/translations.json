@@ -1,0 +1,15 @@
+{
+  "Name": "Nume",
+  "Active": "Activ",
+  "Inactive": "Inactiv",
+  "Last run": "Ultima rulare",
+  "Cancel": "Anulează",
+  "Run": "Rulează",
+  "Message": "Mesaj",
+  "Show less": "Afișează mai puține",
+  "Success": "Succes",
+  "Save": "Salvează",
+  "Failed": "Eșuat",
+  "Warning": "Avertizare",
+  "Cancelled": "Anulat"
+}
