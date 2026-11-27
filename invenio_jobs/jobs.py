@@ -41,6 +41,17 @@ class PredefinedArgsSchema(Schema):
         allow_none=True,
     )
 
+    def __init__(self, *args, **kwargs):
+        """Initialize schema and default job_arg_schema to the class name."""
+        super().__init__(*args, **kwargs)
+        field = self.fields.get("job_arg_schema")
+        if field is not None:
+            base_names = {cls.__name__ for cls in self.__class__.__mro__}
+            if field.dump_default in base_names and field.load_default in base_names:
+                schema_name = self.__class__.__name__
+                field.dump_default = schema_name
+                field.load_default = schema_name
+
 
 class JobType(ABC):
     """Base class to define a job."""
