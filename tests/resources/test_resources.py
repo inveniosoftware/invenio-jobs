@@ -17,6 +17,18 @@ from invenio_jobs.models import Run, RunStatusEnum
 from invenio_jobs.tasks import execute_run
 
 
+@pytest.fixture(scope="module")
+def extra_entry_points(extra_entry_points):
+    """Register custom-schema mock job for resource tests."""
+    return {
+        **extra_entry_points,
+        "invenio_jobs.jobs": [
+            *extra_entry_points["invenio_jobs.jobs"],
+            "custom_embargo_job = mock_module.jobs:MockCustomArgsJob",
+        ],
+    }
+
+
 @patch.object(execute_run, "apply_async")
 def test_simple_flow(mock_apply_async, app, db, client, user):
     """Test simple flow."""
@@ -655,6 +667,81 @@ def test_jobs_delete(db, client, jobs):
     assert res.json["hits"]["total"] == 2
     hits = res.json["hits"]["hits"]
     assert all(j["id"] != jobs.simple.id for j in hits)
+
+
+@patch.object(execute_run, "apply_async")
+def test_custom_predefined_args_schema_run(mock_apply_async, db, client):
+    """Test triggering a run for a job with a PredefinedArgsSchema subclass."""
+    args_res = client.get("/tasks/custom_embargo_job/args")
+    assert args_res.status_code == 200
+    assert args_res.json["job_arg_schema"]["dump_default"] == "CustomArgsSchema"
+    assert args_res.json["job_arg_schema"]["load_default"] == "CustomArgsSchema"
+    assert "dry_run" in args_res.json
+
+    job_res = client.post(
+        "/jobs",
+        json={
+            "title": "Test custom schema job",
+            "task": "custom_embargo_job",
+        },
+    )
+    assert job_res.status_code == 201
+    assert json.loads(job_res.json["default_args"]) == {
+        "since": None,
+        "dry_run": False,
+    }
+    job_id = job_res.json["id"]
+
+    since_arg = "2025-10-29T18:22:39+00:00"
+    run_res = client.post(
+        f"/jobs/{job_id}/runs",
+        json={
+            "title": "Manual custom run",
+            "args": {
+                "since": since_arg,
+                "dry_run": True,
+                "job_arg_schema": args_res.json["job_arg_schema"]["load_default"],
+            },
+            "queue": "celery",
+        },
+    )
+    assert run_res.status_code == 201
+    run_id = run_res.json["id"]
+
+    read_res = client.get(f"/jobs/{job_id}/runs/{run_id}")
+    assert read_res.status_code == 200
+    assert read_res.json["args"] == {
+        "args": {"since": since_arg, "dry_run": True},
+        "job_arg_schema": "custom",
+    }
+
+    # Updating saved job args and triggering a run without per-run args
+    update_res = client.put(
+        f"/jobs/{job_id}",
+        json={
+            "title": "Test custom schema job",
+            "task": "custom_embargo_job",
+            "default_queue": "celery",
+            "args": {
+                "since": since_arg,
+                "dry_run": True,
+                "job_arg_schema": args_res.json["job_arg_schema"]["load_default"],
+            },
+            "custom_args": "{}",
+        },
+    )
+    assert update_res.status_code == 200
+    saved_run_res = client.post(
+        f"/jobs/{job_id}/runs",
+        json={"title": "Saved args run", "queue": "celery"},
+    )
+    assert saved_run_res.status_code == 201
+    saved_read_res = client.get(f"/jobs/{job_id}/runs/{saved_run_res.json['id']}")
+    assert saved_read_res.status_code == 200
+    assert saved_read_res.json["args"] == {
+        "args": {"since": since_arg, "dry_run": True},
+        "job_arg_schema": "custom",
+    }
 
 
 @pytest.mark.skip()
